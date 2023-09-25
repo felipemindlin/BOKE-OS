@@ -34,14 +34,14 @@ void bufferize (){
     
     int i = 0;
     int end_of_buffer = 0;
-    int flag = 0;
+    int put_falg = 0;
     while (i < BUFFER_SIZE) {
         char c = getC();
         end_of_buffer = (i == BUFFER_SIZE-1);
         if (c == '\b'){
             if ( i > 0)
                 i--;
-            else flag = 1;
+            else put_falg = 1;
         } else if (c == '\n'){
             putC(c);
             if ( i == 0 ){
@@ -55,10 +55,10 @@ void bufferize (){
             if (!end_of_buffer)
                 buffer[i++] = c;
             else
-                flag = 1;}
-        if (!flag)
+                put_falg = 1;}
+        if (!put_falg)
             putC(c);
-        flag = 0;
+        put_falg = 0;
     }
     return;
 }

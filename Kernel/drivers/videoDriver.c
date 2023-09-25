@@ -199,9 +199,9 @@ void newline(){
     return;
 }
 
-void tab(){
-    int tabWidth = 15;
-        int spaces = tabWidth - (cursorX / size*8) % tabWidth;
+void tab(){ //descontinuado por mal funcionamiento
+    int tabWidth = 1;
+        int spaces = tabWidth - (cursorX / (size*8)) % tabWidth;
 
         for (int i = 0; i < spaces; i++) {
             drawChar(WHITE, ' ');
@@ -250,16 +250,13 @@ void character(uint64_t hexColor, char c){
         if (c == '\b') { // backspace
             backspace();
             return;
-        }
-        if (c == '\t') { // Tab
-            tab();
+        }else if (c == '\t') { // Tab
+            cursorX += size*8; //tab = 1 espacio
             return;
-        }
-        if (c == '\n') { // Salto de línea
+        } else if (c == '\n') { // Salto de línea
             newline();
             return;
-        }
-        if (c == ' '){
+        } else if (c == ' '){
             cursorX += size*8;
             return;
         }
