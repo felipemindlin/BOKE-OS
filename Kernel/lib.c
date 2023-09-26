@@ -3,6 +3,7 @@
 #include "include/lib.h"
 #include "include/interrupts.h"
 
+
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
