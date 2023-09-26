@@ -854,7 +854,7 @@ void Pong() {
     if ( t == 'T'){
         Training = 1;
     }
-    uint16_t c;
+    uint16_t c = 0;
     char p = 0;
       
     call_clearColor(BACKGROUND_COLOR);

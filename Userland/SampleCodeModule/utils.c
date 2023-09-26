@@ -132,13 +132,13 @@ void print(const char * format, ...){
 
             switch(*format){
                 case 'c': {
-                    char c = va_arg(args, char*);
-                    putC(c);
+                    char *c = va_arg(args, char*);
+                    putC(*c);
                     break;
                 }
                 case 'd': {
-                    int d = va_arg(args, int*);
-                    putInt(d);
+                    int *d = va_arg(args, int*);
+                    putInt(*d);
                     break;
                 }
                 case 's': {
