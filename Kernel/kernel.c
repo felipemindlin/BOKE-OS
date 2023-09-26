@@ -97,60 +97,64 @@ int main()
 	initializeHeap();
 
 	drawWord("\nchar *a = malloc(99);\n");
- 	char *a = malloc(99);
+ 	char *a = malloc(10);
     printMem();
+    drawWord("\n\n");
+	memcpy(a, "asdasdasd", 10);
+	drawWord(a);
+	free(a);
+	drawWord("\n\n");
+	drawWord(a);
+	char *b = malloc(5);
+	memcpy(b, "asda", 5);
+	drawWord(b);
+    // drawWord("\nfree(a);\n");
+    // free(a);
+    // printMem();
 
-    drawWord("\nchar *b = malloc(175);\n");
-    char *b = malloc(175);
-    printMem();
+    // drawWord("\nchar *c = malloc(215);\n");
+    // char *c = malloc(215);
+    // printMem();
 
-    drawWord("\nfree(a);\n");
-    free(a);
-    printMem();
+	// drawWord("\nfree(b);\n");
+    // free(b);
+    // printMem();
 
-    drawWord("\nchar *c = malloc(215);\n");
-    char *c = malloc(215);
-    printMem();
+    // drawWord("\nchar *d = malloc(340);\n");
+    // char *d = malloc(340);
+	// if (d == (void*)-1){
+	// 	drawWordColor(RED,"NOT ENOUGH SPACE");
+	// 	return 1;
+	// }
+    // printMem();
 
-	drawWord("\nfree(b);\n");
-    free(b);
-    printMem();
+    // drawWord("\nchar *e = malloc(120);\n");
+    // char *e = malloc(120);
+    // printMem();
 
-    drawWord("\nchar *d = malloc(340);\n");
-    char *d = malloc(340);
-	if (d == (void*)-1){
-		drawWordColor(RED,"NOT ENOUGH SPACE");
-		return 1;
-	}
-    printMem();
+    // drawWord("\nchar *f = malloc(170);\n");
+    // char *f = malloc(170);
+    // printMem();
 
-    drawWord("\nchar *e = malloc(120);\n");
-    char *e = malloc(120);
-    printMem();
+    // drawWord("\nfree(d);\n");
+	// free(d);
+	// printMem();
 
-    drawWord("\nchar *f = malloc(170);\n");
-    char *f = malloc(170);
-    printMem();
+    // drawWord("\nchar *g = malloc(370);\n");
+    // char *g = malloc(370);
+    // printMem();
 
-    drawWord("\nfree(d);\n");
-	free(d);
-	printMem();
+    // drawWord("\nfree(e);\n");
+    // free(e);
+    // printMem();
 
-    drawWord("\nchar *g = malloc(370);\n");
-    char *g = malloc(370);
-    printMem();
+    // drawWord("\nfree(f);\n");
+    // free(g);
+    // printMem();
 
-    drawWord("\nfree(e);\n");
-    free(e);
-    printMem();
-
-    drawWord("\nfree(f);\n");
-    free(g);
-    printMem();
-
-    drawWord("\nfree(c);\n");
-	free(c);
-    printMem();
+    // drawWord("\nfree(c);\n");
+	// free(c);
+    // printMem();
 
 	// char * a = malloc(99);
 	// char * b = malloc(75);

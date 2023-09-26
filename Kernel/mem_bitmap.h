@@ -76,6 +76,9 @@ uintptr_t free(void * mem){
                 (void*)(c*heap_ptr->block_size + heap_ptr->block_size) > mem )
                     flag_found = 1;
             if (flag_found){
+                for (int i = 0; i < heap_ptr->block_size; i++){
+                    ((uint8_t*)(c*heap_ptr->block_size))[i]=0;
+                }
                 if (heap_ptr->arr[c] <= 10){
                    heap_ptr->arr[c] = 0;
                    return 0; 
