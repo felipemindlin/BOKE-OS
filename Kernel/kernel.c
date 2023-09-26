@@ -104,7 +104,6 @@ int main()
 	drawWord(a);
 	free(a);
 	drawWord("\n\n");
-	drawWord(a);
 	char *b = malloc(5);
 	memcpy(b, "asda", 5);
 	drawWord(b);
