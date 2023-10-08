@@ -12,11 +12,24 @@
 
 /* Get size_t and NULL from <stddef.h>.  */
 #define INVALID_ADDRESS -1
+#define FREE 0
+#define ALLOCATED 1
+
 #define	__need_size_t
 #define	__need_NULL
 #include <stddef.h>
 
-void initializeHeap();
+typedef struct heap {
+    uintptr_t start;
+    uint64_t size;
+    uintptr_t end;
+    uintptr_t page_qty;
+    uintptr_t page_size;
+    uintptr_t last_freed_page;
+    uint8_t * pages;
+} heap;
+
+void initialize_heap(void * baseAddres, uint64_t mem_ammount);
 void * malloc(uintptr_t bytes);
 uintptr_t free(void * mem);
 

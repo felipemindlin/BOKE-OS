@@ -12,6 +12,7 @@
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
+static void *const systemVar = (void *)0x0000000000005A00;
 
 typedef int (*EntryPoint)();
 
@@ -36,6 +37,9 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
+    
+
+/*	
 	char buffer[10];
 
 	ncPrint("[x64BareBones]");
@@ -46,22 +50,22 @@ void * initializeKernelBinary()
 	ncNewline();
 
 	ncPrint("[Loading modules]");
-	ncNewline();
+	ncNewline();*/
 	void * moduleAddresses[] = {
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
-	ncPrint("[Done]");
+/*	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
 
 	ncPrint("[Initializing kernel's binary]");
 	ncNewline();
-
+*/
 	clearBSS(&bss, &endOfKernel - &bss);
-
+/*
 	ncPrint("  text: 0x");
 	ncPrintHex((uint64_t)&text);
 	ncNewline();
@@ -78,6 +82,7 @@ void * initializeKernelBinary()
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
+	*/
 	return getStackBase();
 	
 }
@@ -86,19 +91,31 @@ int main()
 {
 	load_idt();
 	setFontSize(1);
-	initializeHeap();
+	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
+    uint64_t mem_amount_bytes = (*mem_amount) * (1 << 20);  // bytes
+    uint32_t *userlandSize = (uint32_t *)200000;
+	initialize_heap(*userlandSize, mem_amount_bytes);
 
 	drawWord("\nchar *a = malloc(19);\n");
- 	char *a = malloc(19);
-	for(int i=0; i<19; i++){
-		a[i] = (char) i;
-	}
+ 	int *a;
+	a = malloc(1*sizeof(int));
+	long long asd=a;
+	a[0]=5;
     printMem();
+	drawWord("\na[0]=");
+	drawNumber(a[0]);
+	drawWord("\n\n");
+	free(a);
+	printMem();
+	drawWord("\n\n");
+	drawNumber(asd);
+	drawWord(" -- ");
+	drawNumber(a[0]);
+	drawWord("\n\n");
 	for(int i=0; i<19; i++){
 		drawNumber(a[i]);
 		drawWord(", ");
 	}
-	drawWord("\n\n");
 	while(1);
     drawWord("\n\n");
 	memcpy(a, "asdasdasd", 10);
@@ -197,7 +214,7 @@ int main()
     // drawWord("\n\n");
 
 	// a[3] = 1;
-	// ((EntryPoint)sampleCodeModuleAddress)();
+	((EntryPoint)sampleCodeModuleAddress)();
 	
 	while(1);
 	return 0;
