@@ -91,24 +91,27 @@ int main()
 {
 	load_idt();
 	setFontSize(1);
+	initialize_heap((void *)0x0000000000600000, 0x0000000000020000);
+	char * vec = malloc(20);
+	while(1);
+	/*
 	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
     uint64_t mem_amount_bytes = (*mem_amount) * (1 << 20);  // bytes
-    uint32_t *userlandSize = (uint32_t *)200000;
+    uint32_t *userlandSize = (uint32_t *)0;
 	initialize_heap(*userlandSize, mem_amount_bytes);
 
 	drawWord("\nchar *a = malloc(19);\n");
  	int *a;
 	a = malloc(1*sizeof(int));
-	long long asd=a;
 	a[0]=5;
     printMem();
 	drawWord("\na[0]=");
 	drawNumber(a[0]);
 	drawWord("\n\n");
-	free(a);
+	while(1);
+	/*free(a);
 	printMem();
 	drawWord("\n\n");
-	drawNumber(asd);
 	drawWord(" -- ");
 	drawNumber(a[0]);
 	drawWord("\n\n");
@@ -213,7 +216,7 @@ int main()
     // printMem();
     // drawWord("\n\n");
 
-	// a[3] = 1;
+	// a[3] = 1;*/
 	((EntryPoint)sampleCodeModuleAddress)();
 	
 	while(1);

@@ -2,6 +2,7 @@
 
 #define MAX 1001
 #define PAGE_SIZE 16
+#define MAX_MEM 200000
 
 heap heap_struct;
 
@@ -11,13 +12,38 @@ uintptr_t find_pages(size_t pages_needed, uintptr_t start_page);
 static size_t size_to_num_of_pages(size_t size);
 
 void initialize_heap(void * baseAddres, uint64_t mem_ammount){
-    heap_struct.start = (uintptr_t)baseAddres;
-    heap_struct.size = mem_ammount;
-    heap_struct.end = heap_struct.start + heap_struct.size;
+
+    size_t total_mem_needed=mem_ammount;
+    size_t bitmap_size = mem_ammount / PAGE_SIZE;
+    if (mem_ammount % PAGE_SIZE != 0){
+        bitmap_size++;
+        total_mem_needed = bitmap_size * PAGE_SIZE;
+    }
+
+    size_t bitmap_pages = bitmap_size/PAGE_SIZE;
+    if(bitmap_size % PAGE_SIZE != 0){
+        bitmap_pages++;
+    }
+    total_mem_needed+=bitmap_pages*PAGE_SIZE;
+
+    if(total_mem_needed>MAX_MEM){
+        drawWord("\nKERNEL PANIC: Not enough memory to initialize heap!\n");
+        return;
+    }
+
+    if(bitmap_pages > bitmap_size){
+        drawWord("\nKERNEL PANIC: Not enough memory to initialize heap!\n");
+        return;
+    }
+
     heap_struct.page_size = PAGE_SIZE;
-    heap_struct.page_qty = heap_struct.size / heap_struct.page_size;
+    heap_struct.page_qty = bitmap_size;
+    heap_struct.start = (uintptr_t) baseAddres + (uintptr_t) bitmap_pages * PAGE_SIZE;
+    heap_struct.size = total_mem_needed;
+    heap_struct.end = (uintptr_t) baseAddres + total_mem_needed;
     heap_struct.last_freed_page = 0;
-    heap_struct.pages = (uint8_t *)heap_struct.start;
+    heap_struct.pages = (uint8_t*) baseAddres;
+
     initialize_pages();
 }
 
@@ -65,88 +91,31 @@ void* malloc(size_t size){
     }
 
     for (uintptr_t i = page_index; i < page_index + pages_needed; i++){
-        heap_struct.pages[i] = (char) ALLOCATED; // maybe we should reservate the memory with the pid of the process that is using it
+        heap_struct.pages[i] = ALLOCATED; // maybe we should reservate the memory with the pid of the process that is using it
     }
 
-    return (void*)(page_index * heap_struct.page_size);
-}
-
-/*
-void* malloc(uintptr_t bytes){
-    uintptr_t c = 0;
-    uintptr_t d = 0;
-    uintptr_t k = 0;
-    uintptr_t i = bytes;
-    uintptr_t enough_contig_mem_flag = 0;
-    if (bytes <= 0 || bytes >= MAX*heap_struct.page_size){
-        return (void*)-1;
-    }
-    while (heap_struct.pages[c] != -1){
-        if (heap_struct.pages[c] == 0){
-            k=c;
-            enough_contig_mem_flag = 1;
-            while (k <= c +((bytes-1)/heap_struct.page_size) && enough_contig_mem_flag){
-                if (heap_struct.pages[k] != 0){
-                    enough_contig_mem_flag = 0;
-                    c=k+1;
-                }
-                k++;
-            }
-            if (enough_contig_mem_flag){
-            d = c;
-            while (d <= c +(bytes/heap_struct.page_size) ) {
-                heap_struct.pages[d] = i;
-                i-=heap_struct.page_size;
-                d++;
-            }
-            return (void*)(c*heap_struct.page_size);
-            }
-        }
-        c++;
-    }
-    return (void*)-1;
+    return (void*)( heap_struct.start + page_index * heap_struct.page_size);
 }
 
 
-uintptr_t free(void * mem){
-    uintptr_t c = 0;
-    uintptr_t flag_found = 0;
-    while (heap_struct.pages[c] != ALLOCATED && c<heap_struct.page_qty){
-        if (heap_struct.pages[c] != 0){
-            if ((void*)(c*heap_struct.page_size) <= mem && 
-                (void*)(c*heap_struct.page_size + heap_struct.page_size) > mem )
-                    flag_found = 1;
-            if (flag_found){
-                // for (int i = 0; i < heap_struct.page_size; i++){
-                //     ((uint8_t*)(c*heap_struct.page_size))[i]=0;
-                // }
-                if (heap_struct.pages[c] <= 10){
-                   heap_struct.pages[c] = 0;
-                   return 0; 
-                }
-                heap_struct.pages[c] = 0;
-            }
-            }
-        c++;
-    }
-    return -1;
-}
-*/
-
-uintptr_t free(void * mem){
-    uintptr_t c = 0;
+// this free only frees one page: the one corresponding to the memory address passed as parameter
+void * free(void * mem){
     uintptr_t flag_found = 0;
     uintptr_t page_index = get_page_index(mem);
-    uintptr_t pages_to_free = size_to_num_of_pages(heap_struct.pages[page_index]);
-    for (uintptr_t i = page_index; i < page_index + pages_to_free; i++){
-        heap_struct.pages[i] = FREE;
+    if(page_index==INVALID_ADDRESS){
+        return NULL;
     }
-    return 0;
+    heap_struct.pages[page_index] = FREE;
+    heap_struct.last_freed_page = page_index;
+    return mem+heap_struct.page_size;
 }
 
 uintptr_t get_page_index(void * mem){
-    uintptr_t page_index = (uintptr_t)mem / heap_struct.page_size;
-    return page_index;
+    if((uintptr_t)mem > heap_struct.end || (uintptr_t) mem < heap_struct.start){
+        drawWord("\nKERNEL PANIC: Invalid address!\n");
+        return INVALID_ADDRESS;
+    }
+    return ((uintptr_t)mem - heap_struct.start) / heap_struct.page_size;
 }
 
 #define RED 0xFF0000
@@ -162,12 +131,12 @@ void printMem(){
     int c = 0;
     for (uintptr_t i = 0; i < heap_struct.page_qty; i++){
         if (heap_struct.pages[i] == 0)
-            drawNumber(heap_struct.pages[i]);
+            drawNumberColor(heap_struct.pages[i], RED);
         else{
-            drawNumberColor(heap_struct.pages[i], color_list[c]);
-            if (heap_struct.pages[i] <= 10)
-                c++;
-            }
-        drawWord("|");
+            drawNumber(heap_struct.pages[i]);
+            //if (heap_struct.pages[i] <= 10)
+            //    c++;
+        }
+        drawChar('|', WHITE);
     }
 }

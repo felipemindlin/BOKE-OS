@@ -13,7 +13,7 @@ int own_scanf(char * format, ...);
 int readInt(int* d);
 int readString(char *s);
 int readHexInt(int* d);
-void print(const char * format, ...);
+void print(char * format, ...);
 int strcmp(char * str1, char * str2);
 int strcmpspace(char * str1, char * str2);
 int null_or_space(char c);

@@ -4,6 +4,7 @@
 #include <UserSyscalls.h>
 #include <buffer.h>
 
+void vprint(char * format, va_list ap);
 
 int null_or_space(char c){
     return (c == '\0' || c == ' ');
@@ -120,10 +121,15 @@ int readHexInt(int* d){
     return 1;
 }
 
+void print(char * format, ...){
+	va_list ap;
+    va_start(ap, format);
+    vprint(format, ap);
+    va_end(ap);
+}
 
-void print(const char * format, ...){
-    va_list args;
-    va_start(args, format);
+
+void vprint(char * format, va_list ap){
 
 
     while(*format != '\0'){
@@ -132,18 +138,23 @@ void print(const char * format, ...){
 
             switch(*format){
                 case 'c': {
-                    char *c = va_arg(args, char*);
-                    putC(*c);
+                    char c = va_arg(ap, char);
+                    putC(c);
                     break;
                 }
                 case 'd': {
-                    int *d = va_arg(args, int*);
-                    putInt(*d);
+                    int d = va_arg(ap, int);
+                    putInt(d);
                     break;
                 }
                 case 's': {
-                    char* s = va_arg(args, char*);
+                    char* s = va_arg(ap, char*);
                     putString(s);
+                    break;
+                }
+                case 'x': {
+                    uint64_t x = va_arg(ap, uint64_t);
+                    putHexDir(x);
                     break;
                 }
             }
@@ -153,7 +164,6 @@ void print(const char * format, ...){
         format++;
     }
 
-    va_end(args);
     return;
 }
 
@@ -181,6 +191,25 @@ void putInt(int num) {
         num %= divisor;
         divisor /= 10;
     }
+}
+
+void putHexDir(uint64_t num){
+    char * hex = "0123456789ABCDEF";
+    char toPrint[19]={0};
+    toPrint[0] = '0';
+    toPrint[1] = 'x';
+    toPrint[18] = '\0';
+    int i = 17;
+    while (num > 0 && i > 1){
+        toPrint[i] = hex[num%16];
+        num /= 16;
+        i--;
+    }
+    while (i > 1){
+        toPrint[i] = '0';
+        i--;
+    }
+    putString(toPrint);
 }
 
 int strcmp(char * str1, char * str2){

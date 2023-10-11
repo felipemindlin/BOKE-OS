@@ -31,7 +31,7 @@ typedef struct heap {
 
 void initialize_heap(void * baseAddres, uint64_t mem_ammount);
 void * malloc(uintptr_t bytes);
-uintptr_t free(void * mem);
+void * free(void * mem);
 
 void printMem();
 
