@@ -6,13 +6,18 @@
 #include "syscalls.h"
 
 #define ZERO_EXCEPTION_ID 0
+#define INVALID_OP_EXCEPTION_ID 1
+#define GENERAL_PROTECTION_EXCEPTION_ID 2
+
 //maneja las excepciones y recibe el numero de la excepcion y los registros en el momento de la excepcion
 void exceptionDispatcher(int exception, registerStructT * registers) {
 	if (exception == ZERO_EXCEPTION_ID){
 		zero_division();
 	}
-	else{
+	else if(exception == INVALID_OP_EXCEPTION_ID){
 		invalid_opcode();
+	} else if(exception == GENERAL_PROTECTION_EXCEPTION_ID){
+		guruMeditation();
 	}
 	printRegisters(registers);
 	drawWordColor(RED, "Press any key to continue");
@@ -30,4 +35,11 @@ void exceptionDispatcher(int exception, registerStructT * registers) {
 	flag_snapshot_taken = 1;
 	drawWordColor(RED, "FATAL ERROR: Invalid opcode");
 	newline();
+}
+
+void guruMeditation(){
+	clearColor(BLUE);
+	drawWordColorAt(RED, "GURU MEDITATION\n", 10, 10);
+	drawWordColorAt(RED, "FATAL ERROR IN KERNEL\n", 10, 10);
+	while(1);
 }

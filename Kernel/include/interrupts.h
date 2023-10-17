@@ -21,6 +21,7 @@ void _irq60Handler(void);
 
 void _exception0Handler(void);
 void _exception6Handler(void);
+void _exception13Handler(void);
 void printRegAsm(void);
 void saveState(void);
 

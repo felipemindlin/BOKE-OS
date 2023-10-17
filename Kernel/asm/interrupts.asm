@@ -17,8 +17,10 @@ GLOBAL _irq60Handler
 GLOBAL printRegAsm
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
+GLOBAL _exception13Handler
 GLOBAL saveState
 
+EXTERN guruMeditation
 EXTERN retUserland
 EXTERN printRegisters
 EXTERN irqDispatcher
@@ -137,6 +139,15 @@ saveState:
 	dState
 	mov qword rdi, 0x0000FF
 	call clearColor
+
+	call retUserland
+	mov rsi, rax
+	mov rax, [rsp+120]
+	cmp rax, rsi ; Check if error happened within Kernel bounds
+	jge .nopanic
+	call guruMeditation
+
+.nopanic:
 	mov rsi, registers
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
@@ -247,6 +258,11 @@ _exception0Handler:
 _exception6Handler:
 	exceptionHandler 6
 	jmp haltcpu
+_exception13Handler:
+	add rsp, 8 			
+	; ^ Necessary, as exception 13 (and a few others) push an error code into the stack
+	; Not doing so will most likely pop the wrong values when iretq executes
+	exceptionHandler 13
 haltcpu:
 	cli
 	hlt
