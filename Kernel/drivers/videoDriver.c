@@ -8,6 +8,10 @@ unsigned int SCREEN_WIDTH = 1024;
 unsigned int SCREEN_HEIGHT = 768;
 unsigned int BPP = 3;
 
+void drawChar(uint64_t hexColor, char character);
+void putPixel(uint64_t hexColor, uint32_t x, uint32_t y);
+void checkLineUp();
+
 struct vbe_mode_info_structure { 
 	uint16_t attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
 	uint8_t window_a;			// deprecated
@@ -196,6 +200,7 @@ void backspace(){
 void newline(){
     cursorX = 0;
     cursorY += (size*16);
+    checkLineUp();
     return;
 }
 
@@ -245,33 +250,37 @@ void moveOneLineUp() {
     cursorY -= (size * 16); // Actualiza la posición del cursor en el eje Y
 }
 
+int isWhiteSpace(char c){
+ return c == '\t' || c==' ' || c=='\v' || c=='\r' || c=='\a' || c=='\f';
+}
 
 void character(uint64_t hexColor, char c){
         if (c == '\b') { // backspace
             backspace();
             return;
-        }else if (c == '\t') { // Tab
+        }else if (isWhiteSpace(c)) { // Tab=space
             cursorX += size*8; //tab = 1 espacio
             return;
         } else if (c == '\n') { // Salto de línea
             newline();
             return;
-        } else if (c == ' '){
-            cursorX += size*8;
-            return;
         }
         //Carácter
-        if (cursorX >= getMaxWidth()) {
-            cursorX = 0;
-            cursorY += size*16;
-        }
-        if (cursorY >= getMaxHeight()){ 
-            cursorX = 0;
-            moveOneLineUp();
-        }
+        checkLineUp();
         drawChar(hexColor, c);
         cursorX += size*8;
         return;
+}
+
+void checkLineUp(){
+    if (cursorX >= getMaxWidth()) {
+        cursorX = 0;
+        cursorY += size*16;
+    }
+    if (cursorY >= getMaxHeight()){ 
+        cursorX = 0;
+        moveOneLineUp();
+    }
 }
 
 void characterAt(uint64_t hexColor, char c, uint32_t x, uint32_t y){
@@ -318,7 +327,9 @@ void drawChar(uint64_t hexColor, char character) {
     int x = a;  // Posición horizontal actual
     int y = cursorY;  // Posición vertical actual
     int start = character - 33;  // Índice de inicio en el vector de fuentes
-    
+    if(start>92*32 || start<0 ){
+        start = 3;
+    }
     // Si el carácter es minúscula, ajusta el índice de inicio
     if (isMinusc(character))
         start = character - 'a';

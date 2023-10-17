@@ -21,7 +21,7 @@
 #define isMinusc(x) ((x)<='a'?(((x)>='z')?1:0):0)
 #define DEFAULT_FONT_SIZE 2
 
-void putPixel(uint64_t hexColor, uint32_t x, uint32_t y);
+
 void paintScreen(uint64_t hexColor);
 void fillSection(uint64_t hexColor, int startY, int endY);
 void boke();
@@ -31,7 +31,7 @@ void drawRectangle(uint64_t hexColor, uint32_t b, uint32_t h, uint32_t x, uint32
 void drawCircle(uint64_t hexColor, uint32_t b, uint32_t radius, uint32_t x, uint32_t y);
 
 void put_square(uint32_t x, uint32_t y, uint32_t size, uint64_t hexColor);
-void drawChar(uint64_t hexColor, char character);
+
 void changeSize(uint32_t new_size);
 uint32_t *getCursorX();
   

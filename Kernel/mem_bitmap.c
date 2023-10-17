@@ -4,7 +4,7 @@
 #define PAGE_SIZE 16
 #define MAX_MEM 200000
 
-heap heap_struct;
+heap heap_struct; //TODO: Implement ADT so we just reserve the memory needed for one memory manager
 
 uintptr_t get_page_index(void * mem);
 void initialize_pages();
@@ -129,14 +129,16 @@ uintptr_t get_page_index(void * mem){
 static const int color_list[7] = { RED,GREEN,BLUE,WHITE,BLACK,YELLOW,ORANGE};
 void printMem(){
     int c = 0;
-    for (uintptr_t i = 0; i < heap_struct.page_qty; i++){
+    uintptr_t i=0;
+    for (i = 0; i < heap_struct.page_qty; i++){
         if (heap_struct.pages[i] == 0)
             drawNumberColor(heap_struct.pages[i], RED);
         else{
             drawNumber(heap_struct.pages[i]);
-            //if (heap_struct.pages[i] <= 10)
-            //    c++;
+            if (heap_struct.pages[i] <= 10)
+                c++;
         }
-        drawChar('|', WHITE);
+        drawWord("|");
     }
+    drawWord("\n");
 }
