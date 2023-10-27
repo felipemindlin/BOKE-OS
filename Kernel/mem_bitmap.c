@@ -11,7 +11,7 @@ static void initialize_pages();
 static uintptr_t find_pages(size_t pages_needed, uintptr_t start_page);
 static size_t size_to_num_of_pages(size_t size);
 
-void initialize_heap(void * baseAddres, uint64_t mem_ammount){
+void init_mm(void * baseAddres, uint64_t mem_ammount){
 
     size_t total_mem_needed=mem_ammount;
     size_t bitmap_size = mem_ammount / PAGE_SIZE;

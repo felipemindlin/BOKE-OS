@@ -24,7 +24,7 @@ pcb_t * get_pcb_entry(int pid){
     return NULL;
 }
 
-void init_scheduler(int quantum){ // for now, every queue has the same quantum
+void init_scheduler(int quantum){ // for now, every queue has the same quantum. Is that correct?
     for(int i=0 ; i<QUEUE_QTY ; i++){
         scheduler[i]=create_queue(quantum);
         if(scheduler[i] == NULL){
@@ -89,7 +89,7 @@ int scheduler_enabled(){
     return isEnabled;
 }
 
-void terminalIsReady(int pid){
+void enable_multitasking(int pid){
     // first, we gotta set the pcb for the first process
     current_pcb = get_pcb_entry(pid);
 
@@ -102,5 +102,5 @@ pcb_t * get_current_pcb(){
 }
 
 uintptr_t * switch_context(uintptr_t * current_rsp, uintptr_t * stack_segment){
-    return NULL; // TO-DO: implement this
+    
 }

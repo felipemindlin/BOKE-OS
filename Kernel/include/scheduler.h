@@ -20,7 +20,7 @@ typedef struct scheduler_queue {
 } scheduler_queue;
 
 void init_scheduler(int quantum);
-void terminalIsReady(int pid);
+void enable_multitasking(int pid);
 int scheduler_enabled();
 int ticks_remaining();
 void add_process_to_queue(process_t * process);
