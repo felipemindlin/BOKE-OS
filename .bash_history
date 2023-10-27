@@ -107,3 +107,6 @@ ls
 make all
 ./r.sh 
 exit
+cd root 
+make clean all
+exit

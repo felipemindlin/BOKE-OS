@@ -10,6 +10,7 @@ node_ptr create_node(void * data){
     }
     new_node->data = data;
     new_node->next = NULL;
+    new_node->prev = NULL;
     return new_node;
 }
 
@@ -20,11 +21,15 @@ void insert_node(queue_t * queue, node_t * new_node){
     if(queue->first == NULL){
         queue->first = new_node;
         queue->current_node = new_node;
+        queue->first->next = queue->first;
+        queue->first->prev = queue->first;
         return;
     }
+    new_node->prev = queue->current_node;
+    new_node->next = queue->current_node->next;
     queue->current_node->next = new_node;
     queue->current_node = new_node;
-    new_node->next = queue->first;
+    new_node->next->prev = new_node;
     return;
 }
 
@@ -40,10 +45,10 @@ void remove_node(node_ptr first, node_ptr node){
     if(first == NULL || node == NULL){
         return;
     }
-    node_ptr current_node = first;
-    while(current_node->next != node){
-        current_node = current_node->next;
+    if(first == node){
+        first = node->next;  // si es el primero cambio el puntero al primero al proximo si es null el proximo se pondria null asi que no hace falta ese check
     }
-    current_node->next = node->next;
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
     free(node);
 }

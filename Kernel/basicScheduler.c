@@ -1,5 +1,5 @@
 #include <scheduler.h>
-
+#include <time.h>
 process_t foreground_process;
 size_t processes_qty = 0;
 
@@ -78,8 +78,11 @@ scheduler_queue * create_queue(int quantum){
     return sch_queue;
 }
 
-int ticks_remaining(){
-    return 1;
+int ticks_remaining() {   //intento de implementacion chequear si esta bien 
+    unsigned long elapsed_ticks = ticks_elapsed();
+    unsigned long quantum = scheduler[0]->quantum; 
+    unsigned long remaining_ticks = quantum - (elapsed_ticks % quantum);
+    return remaining_ticks;
 }
 
 int scheduler_enabled(){
