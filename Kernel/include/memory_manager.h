@@ -29,7 +29,7 @@ typedef struct heap {
     uint8_t * pages;
 } heap;
 
-void initialize_heap(void * baseAddres, uint64_t mem_ammount);
+void init_mm(void * baseAddres, uint64_t mem_ammount);
 void * malloc(uintptr_t bytes);
 void * free(void * mem);
 
