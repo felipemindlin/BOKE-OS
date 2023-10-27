@@ -19,7 +19,12 @@ GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 GLOBAL _exception13Handler
 GLOBAL saveState
+GLOBAL force_context_switch
+GLOBAL create_stackframe
 
+EXTERN scheduler_enabled
+EXTERN ticks_remaining
+EXTERN switch_context
 EXTERN guruMeditation
 EXTERN retUserland
 EXTERN printRegisters
@@ -75,7 +80,7 @@ SECTION .text
 	mov rbp, [registers.drbp]
 %endmacro
 
-%macro pushState 0
+%macro push_state 0
 	push rax
 	push rbx
 	push rcx
@@ -93,7 +98,7 @@ SECTION .text
 	push r15
 %endmacro
 
-%macro popState 0
+%macro pop_state 0
 	pop r15
 	pop r14
 	pop r13
@@ -112,13 +117,13 @@ SECTION .text
 %endmacro
 
 saveState:
-	pushState
+	push_state
 	dState
-	popState
+	pop_state
 	ret
 
 %macro irqHandlerMaster 1
-	pushState
+	push_state
 
 	mov rdi, %1 ; pasaje de parametro
 	call irqDispatcher
@@ -127,7 +132,7 @@ saveState:
 	mov al, 20h
 	out 20h, al
 
-	popState
+	pop_state
 	iretq
 %endmacro
 
@@ -135,7 +140,7 @@ saveState:
 
 %macro exceptionHandler 1
 	
-	pushState
+	push_state
 	dState
 	mov qword rdi, 0x0000FF
 	call clearColor
@@ -152,7 +157,7 @@ saveState:
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 	call clear
-	popState
+	pop_state
 	
 	call getStackBase
 	sub rax, 20h
@@ -197,10 +202,60 @@ picSlaveMask:
     pop     rbp
     retn
 
+force_context_switch:
+	mov rsp, rdi
+	pop_state
+	iretq
+
+create_stackframe: ; rdi: entry point, rsi: args, rdx: stack base, rcx: wrapper
+	mov r8, rsp ; save current stack pointer
+	mov rsp, rdx ; parameter: stack base
+	push 0x00000000 ; SS
+	push rdx ; RSP
+	push 0x00000202 ; RFLAGS
+	push 0x00000008 ; CS
+	
+	push rcx ; RIP now is in wrapper code
+
+	; rdi: entry point
+	; rsi: args
+	; basta con llamar a push state
+	push_state
+
+	mov rax, rsp ; we return the stackframe direction
+	mov rsp, r8 ; restore current stack pointer
+	ret
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	cli ; for now, we use cli as a mutex
+	push_state
+
+	call scheduler_enabled ; TO-DO
+	cmp rax, 0
+	je .noSchedule
+
+	call ticks_remaining ; TO-DO
+	cmp rax, 0
+	jne .noSchedule
+
+	; there are no ticks left, so we gotta switch the context
+	mov rdi, rsp ; current stack pointer passed as argument to switch context
+	call switch_context ; TO-DO
+	mov rsp, rax ; switch_context returns the new stack pointer to the process that gotta start running
+
+
+.noSchedule:
+	mov rdi, 0 ; load parameter
+	call irqDispatcher
+
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+
+	pop_state
+	sti
+	iretq
 
 ;Keyboard
 _irq01Handler:

@@ -4,11 +4,11 @@
 #define PAGE_SIZE 16
 #define MAX_MEM 200000
 
-heap heap_struct; //TODO: Implement ADT so we just reserve the memory needed for one memory manager
+heap heap_struct; //TO-DO: Implement ADT so we just reserve the memory needed for one memory manager
 
-uintptr_t get_page_index(void * mem);
-void initialize_pages();
-uintptr_t find_pages(size_t pages_needed, uintptr_t start_page);
+static uintptr_t get_page_index(void * mem);
+static void initialize_pages();
+static uintptr_t find_pages(size_t pages_needed, uintptr_t start_page);
 static size_t size_to_num_of_pages(size_t size);
 
 void initialize_heap(void * baseAddres, uint64_t mem_ammount){
@@ -47,7 +47,7 @@ void initialize_heap(void * baseAddres, uint64_t mem_ammount){
     initialize_pages();
 }
 
-void initialize_pages(){
+static void initialize_pages(){
     for (uintptr_t i = 0; i < heap_struct.page_qty; i++){
         heap_struct.pages[i] = FREE;
     }
@@ -61,7 +61,7 @@ static size_t size_to_num_of_pages(size_t size){
     return pages_needed;
 }
 
-uintptr_t find_pages(size_t pages_needed, uintptr_t start_page){
+static uintptr_t find_pages(size_t pages_needed, uintptr_t start_page){
     uintptr_t page_index = 0;
     uintptr_t pages_found = 0;
     for (uintptr_t i = start_page; i < heap_struct.page_qty; i++){
@@ -100,7 +100,6 @@ void* malloc(size_t size){
 
 // this free only frees one page: the one corresponding to the memory address passed as parameter
 void * free(void * mem){
-    uintptr_t flag_found = 0;
     uintptr_t page_index = get_page_index(mem);
     if(page_index==INVALID_ADDRESS){
         return NULL;
@@ -110,7 +109,7 @@ void * free(void * mem){
     return mem+heap_struct.page_size;
 }
 
-uintptr_t get_page_index(void * mem){
+static uintptr_t get_page_index(void * mem){
     if((uintptr_t)mem > heap_struct.end || (uintptr_t) mem < heap_struct.start){
         drawWord("\nKERNEL PANIC: Invalid address!\n");
         return INVALID_ADDRESS;

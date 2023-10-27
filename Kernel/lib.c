@@ -53,6 +53,33 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	return destination;
 }
 
+int str_len(const char * str)
+{
+	int len = 0;
+	while (str[len])
+		len++;
+	return len;
+}
+
+int strcmp(const char * str1, const char * str2)
+{
+	int i = 0;
+	while (str1[i] && str2[i] && str1[i] == str2[i])
+		i++;
+	return str1[i] - str2[i];
+}
+
+int str_cpy(char * dst, const char * src)
+{
+	int i = 0;
+	while (src[i])
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = 0;
+	return i;
+}
 
 void sleep(uint32_t seconds) {
 	uint32_t startTime = seconds_elapsed();

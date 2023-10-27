@@ -5,7 +5,7 @@ void timer_handler() {
 	ticks++;
 }
 
-int ticks_elapsed() {
+unsigned long ticks_elapsed() {
 	return ticks;
 }
 

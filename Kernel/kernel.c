@@ -6,6 +6,7 @@
 #include <naiveConsole.h>
 #include <idtLoader.h>
 #include <memory_manager.h>
+#include <scheduler.h>
 #include "drivers/include/videoDriver.h"
 #include "include/interrupts.h"
 #include "include/libasm.h"
@@ -92,14 +93,17 @@ int main()
 	load_idt();
 	setFontSize(1);
 	initialize_heap((void *)0x0000000000600000, 0x0000000000020000);
+	init_scheduler(1);
 	/*
 	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
     uint64_t mem_amount_bytes = (*mem_amount) * (1 << 20);  // bytes
     uint32_t *userlandSize = (uint32_t *)0;
 	initialize_heap(*userlandSize, mem_amount_bytes);*/
-	
-	((EntryPoint)sampleCodeModuleAddress)();
-	
+	int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
+
+	terminalIsReady(shell_pid);
+	//((EntryPoint)sampleCodeModuleAddress)();
+	drawWord("SOMETHING WENT WRONG\n");
 	while(1);
 	return 0;
 }
