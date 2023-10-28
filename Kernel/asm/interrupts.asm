@@ -21,6 +21,7 @@ GLOBAL _exception13Handler
 GLOBAL saveState
 GLOBAL force_context_switch
 GLOBAL create_stackframe
+GLOBAL save_reg_stateAsm
 
 EXTERN scheduler_enabled
 EXTERN ticks_remaining
@@ -35,6 +36,7 @@ EXTERN clear
 EXTERN clearColor
 EXTERN getStackBase
 EXTERN getKey
+
 SECTION .text
 
 %macro dState 0
@@ -78,6 +80,50 @@ SECTION .text
 	mov rbp, [rsp+152]
 	mov [registers.dss], rbp
 	mov rbp, [registers.drbp]
+%endmacro
+
+%macro dStatePCB 1  ; Takes one argument, which is a pointer to the registers struct
+    mov [rdi+48], rbp
+	mov rbp, [rsp]
+	mov [rdi+120], rbp
+	mov rbp, [rsp+8]
+	mov [rdi+112], rbp
+	mov rbp, [rsp+16]
+	mov [rdi+104], rbp
+	mov rbp, [rsp+24]
+	mov [rdi+96], rbp
+	mov rbp, [rsp+32]
+	mov [rdi+88], rbp
+	mov rbp, [rsp+40]
+	mov [rdi+80], rbp
+	mov rbp, [rsp+48]
+	mov [rdi+72], rbp
+	mov rbp, [rsp+56]
+	mov [rdi+64], rbp
+	mov rbp, [rsp+64]
+	mov [rdi+32], rbp
+	mov rbp, [rsp+72]
+	mov [rdi+40], rbp
+	mov rbp, [rsp+88]
+	mov [rdi+24], rbp
+	mov rbp, [rsp+96]
+	mov [rdi+16], rbp
+	mov rbp, [rsp+104]
+	mov [rdi+8], rbp
+	mov rbp, [rsp+112]
+	mov [rdi], rbp
+	mov rbp, [rsp+120]
+	mov [rdi+152], rbp
+	mov rbp, [rsp+128]
+	mov [rdi+136], rbp
+	mov rbp, [rsp+136]
+	mov [rdi+144], rbp
+	mov rbp, [rsp+144]
+	mov [rdi+156], rbp
+	mov rbp, [rsp+152]
+	mov [rdi+128], rbp
+	mov rbp, [registers.drbp]
+	ret
 %endmacro
 
 %macro push_state 0
@@ -224,6 +270,12 @@ create_stackframe: ; rdi: entry point, rsi: args, rdx: stack base, rcx: wrapper
 
 	mov rax, rsp ; we return the stackframe direction
 	mov rsp, r8 ; restore current stack pointer
+	ret
+
+save_reg_stateAsm:
+	push_state
+	dStatePCB
+	pop_state
 	ret
 
 ;8254 Timer (Timer Tick)

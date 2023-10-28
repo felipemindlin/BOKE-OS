@@ -24,6 +24,7 @@ void _exception6Handler(void);
 void _exception13Handler(void);
 void printRegAsm(void);
 void saveState(void);
+void save_reg_stateAsm(registerStructT * proc_rec);
 
 void _cli(void);
 

@@ -37,7 +37,15 @@ void init_scheduler(int quantum){ // for now, every queue has the same quantum. 
     }
 }
 
-void add_process_to_queue(process_t * process){
+void add_pcb_to_q(node_t * pcb_node, priority_t priority){
+    // we insert the node to the queue
+    insert_node(scheduler[priority]->queue, pcb_node);
+    scheduler[priority]->process_qty++;
+    processes_qty++;
+}
+
+
+void add_new_process(process_t * process){
     // just insert nodes to the queue with priority 0 for now
     pcb_t * pcb_new = (pcb_t *) malloc(sizeof(pcb_t));
     if(pcb_new == NULL){
@@ -104,23 +112,63 @@ pcb_t * get_current_pcb(){
 uintptr_t * switch_context(uintptr_t * current_rsp){
     stop_current_process(current_rsp);
     // we get the next process to run
-    
+    return start_next_process();
 }
 
 void stop_current_process(uintptr_t * current_rsp){ // TO-DO NOW
-    /*
+    
     current_pcb->process->stack->current = current_rsp;
-    if(current_pcb->ticks == scheduler[current_pcb->priority]->quantum){ // if the process has used all its quantum
+
+
+    if(current_pcb->ticks >= scheduler[current_pcb->priority]->quantum){ // if the process has used all its quantum
         current_pcb->ticks = 0;
-        if(current_pcb->priority < QUEUE_QTY - 1){
-            current_pcb->priority++;
+        //if node is dropping in the priority range, i need to join the nodes that were joined by it (if they exist)
+
+        node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
+
+        if (aux != NULL)
+        {
+            scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
+            scheduler[current_pcb->priority]->queue->current_node->prev = aux->prev;
+            aux->prev->next = aux->next; 
+            //now dec priority
+            if(current_pcb->priority < QUEUE_QTY - 1){
+                current_pcb->priority++;
+            }
+            //now that its no longer linked to its old priority, add it to the q of its new priority
+            add_pcb_to_q(aux, current_pcb->priority);
         }
-        // we move the current node to the next one
-        scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
+
+
         // we move the current pcb to the next one
-        //current_pcb = (pcb_t *) scheduler[current_pcb->priority]->queue->current_node->data; NOT YET
+        // current_pcb = (pcb_t *) scheduler[current_pcb->priority]->queue->current_node->data; //NOT YET
     } else {
         // the process has not used all its quantum, which means it has been preempted. We don't change the priority
-        
-    }*/
+        // we need to send it to the "back of the queue" within its priority
+        scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
+    }
+
+}
+
+uintptr_t * start_next_process(){
+    // Snake-ISH walk through data structure. Start at highest priority and 'consume' current_node
+    // if current_node is null, drop priority and check there.
+
+    /* No need to walk through the same queue. If the current_node is NULL, then pq is empty. If not null, then always pick the one in front, so current_node.
+    The "walking through the same pq" part is done by the stop context function since it sets current_node to next.
+    */
+
+    int flag_proc_exist = 0;
+    for (priority_t priority = 0; priority < MAX_PRIORITY; priority++){
+        if (scheduler[priority]->queue->current_node == NULL){
+            continue;
+        } else {
+            current_pcb->process = (pcb_t *) scheduler[priority]->queue->current_node;
+            current_pcb->priority = priority;
+            flag_proc_exist = 1;
+        }
+    }
+    if (!flag_proc_exist)
+        return NULL;
+    return current_pcb->process->stack->current;
 }

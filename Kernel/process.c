@@ -1,4 +1,5 @@
 #include <process.h>
+#include "interrupts.h"
 
 void process_wrapper(void entry_point(char ** argv), char ** argv);
 
@@ -12,7 +13,7 @@ int create_process(const char * name, size_t heap_size, size_t stack_size, void 
         return -1; // no memory available
     }
 
-    process->pid = 1; // TO-DO: get the next available pid
+    process->pid = getAvailablePid(); // TO-DO ??: get the next available pid
     
     process->name = (char *) malloc(str_len(name) + 1);
     if(process->name == NULL){
@@ -74,5 +75,13 @@ int create_process(const char * name, size_t heap_size, size_t stack_size, void 
 void process_wrapper(void entry_point(char ** argv), char ** argv){
     entry_point(argv);
     // then we should kill it to allow multi-tasking. For now it is just the shell, which does not die
+}
+
+size_t getAvailablePid(){
+    return pid++;
+}
+
+void save_reg_state(pcb_t * pcb){
+	save_reg_stateAsm(pcb->reg_state);
 }
 
