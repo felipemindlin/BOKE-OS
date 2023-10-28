@@ -83,46 +83,46 @@ SECTION .text
 %endmacro
 
 %macro dStatePCB 1  ; Takes one argument, which is a pointer to the registers struct
-    mov [rdi+48], rbp
-	mov rbp, [rsp]
-	mov [rdi+120], rbp
-	mov rbp, [rsp+8]
-	mov [rdi+112], rbp
-	mov rbp, [rsp+16]
-	mov [rdi+104], rbp
-	mov rbp, [rsp+24]
-	mov [rdi+96], rbp
-	mov rbp, [rsp+32]
-	mov [rdi+88], rbp
-	mov rbp, [rsp+40]
-	mov [rdi+80], rbp
-	mov rbp, [rsp+48]
-	mov [rdi+72], rbp
-	mov rbp, [rsp+56]
-	mov [rdi+64], rbp
-	mov rbp, [rsp+64]
-	mov [rdi+32], rbp
-	mov rbp, [rsp+72]
-	mov [rdi+40], rbp
-	mov rbp, [rsp+88]
-	mov [rdi+24], rbp
-	mov rbp, [rsp+96]
-	mov [rdi+16], rbp
-	mov rbp, [rsp+104]
-	mov [rdi+8], rbp
-	mov rbp, [rsp+112]
-	mov [rdi], rbp
-	mov rbp, [rsp+120]
-	mov [rdi+152], rbp
-	mov rbp, [rsp+128]
-	mov [rdi+136], rbp
-	mov rbp, [rsp+136]
-	mov [rdi+144], rbp
-	mov rbp, [rsp+144]
-	mov [rdi+156], rbp
-	mov rbp, [rsp+152]
-	mov [rdi+128], rbp
-	mov rbp, [registers.drbp]
+    mov [rdi+48], rbp	;
+	mov rbp, [rsp]		;
+	mov [rdi+120], rbp	;
+	mov rbp, [rsp+8]	;
+	mov [rdi+112], rbp	;
+	mov rbp, [rsp+16]	;
+	mov [rdi+104], rbp	;
+	mov rbp, [rsp+24]	;
+	mov [rdi+96], rbp	;	FIJATE QUE NO ESTÁS USANDO EL PARÁMETRO QUE RECIBÍS
+	mov rbp, [rsp+32]	;	PARA USAR EL PARAMETRO QUE RECIBIS POR LA MACRO TENES QUE PONER %1
+	mov [rdi+88], rbp	;	
+	mov rbp, [rsp+40]	;	IGUAL NO ME QUEDA CLARO QUE SEA NECESARIO
+	mov [rdi+80], rbp	;	
+	mov rbp, [rsp+48]	;	ME PARECE (NO ESTOY SEGURO) QUE LO UNICO QUE NECESITÁS ES EL RSP PARA
+	mov [rdi+72], rbp	;	COMENZAR A EJECUTAR DEVUELTA EL CÓDIGO DE UN PROCESO. Y ESO YA LO GUARDAS.
+	mov rbp, [rsp+56]	;	IGUAL SI VOS ESTÁS SEGURO DALE PARA ADELANTE.
+	mov [rdi+64], rbp	;
+	mov rbp, [rsp+64]	;
+	mov [rdi+32], rbp	;
+	mov rbp, [rsp+72]	;
+	mov [rdi+40], rbp	;
+	mov rbp, [rsp+88]	;
+	mov [rdi+24], rbp	;
+	mov rbp, [rsp+96]	;
+	mov [rdi+16], rbp	;
+	mov rbp, [rsp+104]	;
+	mov [rdi+8], rbp	;
+	mov rbp, [rsp+112]	;
+	mov [rdi], rbp		;
+	mov rbp, [rsp+120]	;
+	mov [rdi+152], rbp	;
+	mov rbp, [rsp+128]	;
+	mov [rdi+136], rbp	;
+	mov rbp, [rsp+136]	;
+	mov [rdi+144], rbp	;
+	mov rbp, [rsp+144]	;
+	mov [rdi+156], rbp	;
+	mov rbp, [rsp+152]	;
+	mov [rdi+128], rbp	;
+	mov rbp, [registers.drbp]	
 	ret
 %endmacro
 

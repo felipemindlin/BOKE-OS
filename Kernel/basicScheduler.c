@@ -112,6 +112,19 @@ pcb_t * get_current_pcb(){
 uintptr_t * switch_context(uintptr_t * current_rsp){
     stop_current_process(current_rsp);
     // we get the next process to run
+
+/*  *******************************************************************************************
+    La idea está bien, acordate de poner el status del nuevo proceso (y no se si del viejo tmb)
+    Algo así ponele:
+
+    if(current_pcb->process->status == BLOCKED || current_pcb->process->status == DEAD){
+        // we need to get the next process to run
+        current_pcb = find_next_process();
+        current_pcb->process->status = RUNNING;
+    }
+
+    return start_next_process(current_pcb); // es un ejemplo nomas
+    ******************************************************************************************* */
     return start_next_process();
 }
 

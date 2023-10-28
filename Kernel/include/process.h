@@ -51,6 +51,6 @@ static size_t pid = 0;
 
 int create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 size_t getAvailablePid();
-void save_reg_state(pcb_t * pcb, registerStructT * registers);
+void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
 
 #endif
