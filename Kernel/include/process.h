@@ -12,6 +12,12 @@
 #define RUNNING 2
 #define DEAD 3
 
+typedef enum priority_t{
+    HIGH_PRIORITY,
+    MEDIUM_PRIORITY,
+    LOW_PRIORITY
+} priority_t;
+
 typedef struct mem_block_t{
     void * base;
     size_t size;
@@ -28,7 +34,7 @@ typedef struct process_t{
 
 typedef struct pcb_t{
     size_t ticks; // ticks or quantums?
-    uint8_t priority;
+    priority_t priority;
     process_t * process;
 } pcb_t;
 

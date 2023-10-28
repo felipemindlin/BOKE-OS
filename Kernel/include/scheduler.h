@@ -4,7 +4,7 @@
 #include <process.h>
 #include <stdint.h>
 
-#define QUEUE_QTY 3
+#define QUEUE_QTY 3 // Depends on the number of priorities we want to have
 
 /*
     Sugerencia para el scheduler:
@@ -14,7 +14,7 @@
 */
 
 typedef struct scheduler_queue {
-    unsigned long quantum;
+    unsigned int quantum;
     queue_t * queue;
     unsigned int process_qty;
 } scheduler_queue;
@@ -25,6 +25,6 @@ int scheduler_enabled();
 int ticks_remaining();
 void add_process_to_queue(process_t * process);
 pcb_t * get_current_pcb();
-uintptr_t * switch_context(uintptr_t * current_rsp, uintptr_t * stack_segment);
+uintptr_t * switch_context(uintptr_t * current_rsp);
 
 #endif

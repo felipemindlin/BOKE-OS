@@ -231,16 +231,17 @@ _irq00Handler:
 	cli ; for now, we use cli as a mutex
 	push_state
 
-	call scheduler_enabled ; TO-DO
+	call scheduler_enabled ;
 	cmp rax, 0
 	je .noSchedule
 
-	call ticks_remaining ; TO-DO
+	call ticks_remaining
 	cmp rax, 0
 	jne .noSchedule
 
 	; there are no ticks left, so we gotta switch the context
-	mov rdi, rsp ; current stack pointer passed as argument to switch context
+	mov rdi, rsp 	; current stack pointer (the one of the process which is not currently running 
+					; bc it's running the timer tick handler) passed as argument to switch context
 	call switch_context ; TO-DO
 	mov rsp, rax ; switch_context returns the new stack pointer to the process that gotta start running
 

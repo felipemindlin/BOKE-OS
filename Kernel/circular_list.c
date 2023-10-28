@@ -3,6 +3,16 @@
 
 typedef node_t * node_ptr;
 
+queue_t * create_queue(){
+    queue_t * queue = (queue_t *) malloc(sizeof(queue_t));
+    if(queue == NULL){
+        return NULL;
+    }
+    queue->current_node = NULL;
+    queue->qty = 0;
+    return queue;
+}
+
 node_ptr create_node(void * data){
     node_ptr new_node = (node_ptr) malloc(sizeof(node_t));
     if(new_node == NULL){
@@ -14,32 +24,29 @@ node_ptr create_node(void * data){
     return new_node;
 }
 
-void insert_node(queue_t * queue, node_t * new_node){
-    if(queue == NULL || new_node == NULL){
-        return;
+int insert_node(queue_t * queue, node_t * new_node){
+    if(new_node == NULL){
+        return -1;
     }
-    if(queue->first == NULL){
-        queue->first = new_node;
+    if(queue->current_node == NULL){
         queue->current_node = new_node;
-        queue->first->next = queue->first;
-        queue->first->prev = queue->first;
-        return;
+        new_node->next = new_node;
+        new_node->prev = new_node;
+        return queue->qty++;
     }
-    new_node->prev = queue->current_node;
-    new_node->next = queue->current_node->next;
-    queue->current_node->next = new_node;
-    queue->current_node = new_node;
-    new_node->next->prev = new_node;
-    return;
+    // we insert the node at the end of the queue
+    new_node->next = queue->current_node;
+    node_ptr last_node = queue->current_node->prev;
+    new_node->prev = last_node;
+    last_node->next = new_node;
+    queue->current_node->prev = new_node;
+    return queue->qty++;
 }
 
 
-node_ptr next(queue_t * queue, node_ptr node){
+node_ptr next(node_ptr node){
     if(node == NULL){
         return NULL;
-    }
-    if(node->next == NULL){
-        return queue->first;
     }
     return node->next;
 }
@@ -48,11 +55,13 @@ void remove_node(queue_t * queue, node_ptr node){
     if(node == NULL){
         return;
     }
-    if(node == queue->first){
-        queue->first = node->next;
+    if(queue->current_node == node){
+        queue->current_node = node->next;
     }
-    node->prev->next = node->next;
-    node->next->prev = node->prev;
+    node_ptr prev_node = node->prev;
+    node_ptr next_node = node->next;
+    prev_node->next = next_node;
+    next_node->prev = prev_node;
     free(node);
-    return;
+    queue->qty--;
 }
