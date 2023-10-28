@@ -34,21 +34,25 @@ void insert_node(queue_t * queue, node_t * new_node){
 }
 
 
-node_ptr next(node_ptr node){
+node_ptr next(queue_t * queue, node_ptr node){
     if(node == NULL){
         return NULL;
+    }
+    if(node->next == NULL){
+        return queue->first;
     }
     return node->next;
 }
 
-void remove_node(node_ptr first, node_ptr node){
-    if(first == NULL || node == NULL){
+void remove_node(queue_t * queue, node_ptr node){
+    if(node == NULL){
         return;
     }
-    if(first == node){
-        first = node->next;  // si es el primero cambio el puntero al primero al proximo si es null el proximo se pondria null asi que no hace falta ese check
+    if(node == queue->first){
+        queue->first = node->next;
     }
     node->prev->next = node->next;
     node->next->prev = node->prev;
     free(node);
+    return;
 }
