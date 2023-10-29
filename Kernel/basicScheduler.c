@@ -1,5 +1,6 @@
 #include <scheduler.h>
 #include <time.h>
+#include <process.h>
 process_t foreground_process;
 size_t processes_qty = 0;
 
@@ -9,6 +10,21 @@ static uint8_t isEnabled = 0;
 pcb_t * current_pcb;
 
 scheduler_queue * create_queue_array(int quantum);
+
+
+
+pcb_t * find_next_process() {
+    for (int i = 0; i < QUEUE_QTY; i++) {
+        if (scheduler[i]->queue->current_node) {
+            pcb_t *potential_pcb = (pcb_t *)scheduler[i]->queue->current_node->data;
+            if (potential_pcb->process->status != DEAD && potential_pcb->process->status != BLOCKED) {
+                return potential_pcb;
+            }
+        }
+    }
+    return NULL;
+}
+
 
 pcb_t * get_pcb_entry(int pid){
     for(int i=0 ; i<QUEUE_QTY ; i++){
@@ -109,79 +125,143 @@ pcb_t * get_current_pcb(){
     return current_pcb;
 }
 
-uintptr_t * switch_context(uintptr_t * current_rsp){
+uintptr_t * switch_context(uintptr_t * current_rsp) {
     stop_current_process(current_rsp);
-    // we get the next process to run
-
-/*  *******************************************************************************************
-    La idea está bien, acordate de poner el status del nuevo proceso (y no se si del viejo tmb)
-    Algo así ponele:
-
-    if(current_pcb->process->status == BLOCKED || current_pcb->process->status == DEAD){
-        // we need to get the next process to run
+    
+    if (current_pcb->process->status == BLOCKED || current_pcb->process->status == DEAD) {
         current_pcb = find_next_process();
-        current_pcb->process->status = RUNNING;
+        if (current_pcb) {
+            current_pcb->process->status = RUNNING;
+        }
     }
 
-    return start_next_process(current_pcb); // es un ejemplo nomas
-    ******************************************************************************************* */
     return start_next_process();
 }
 
-void stop_current_process(uintptr_t * current_rsp){ // TO-DO NOW
+// uintptr_t * switch_context(uintptr_t * current_rsp){
+//     stop_current_process(current_rsp);
+//     // we get the next process to run
+
+// /*  *******************************************************************************************
+//     La idea está bien, acordate de poner el status del nuevo proceso (y no se si del viejo tmb)
+//     Algo así ponele:
+
+//     if(current_pcb->process->status == BLOCKED || current_pcb->process->status == DEAD){
+//         // we need to get the next process to run
+//         current_pcb = find_next_process();
+//         current_pcb->process->status = RUNNING;
+//     }
+
+//     return start_next_process(current_pcb); // es un ejemplo nomas
+//     ******************************************************************************************* */
+//     return start_next_process();
+// }
+
+// void stop_current_process(uintptr_t * current_rsp){ // TO-DO NOW
     
+//     current_pcb->process->stack->current = current_rsp;
+
+
+//     if(current_pcb->ticks >= scheduler[current_pcb->priority]->quantum){ // if the process has used all its quantum
+//         current_pcb->ticks = 0;
+//         //if node is dropping in the priority range, i need to join the nodes that were joined by it (if they exist)
+
+//         node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
+
+//         if (aux != NULL)
+//         {
+//             scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
+//             scheduler[current_pcb->priority]->queue->current_node->prev = aux->prev;
+//             aux->prev->next = aux->next; 
+//             //now dec priority
+//             if(current_pcb->priority < QUEUE_QTY - 1){
+//                 current_pcb->priority++;
+//             }
+//             //now that its no longer linked to its old priority, add it to the q of its new priority
+//             add_pcb_to_q(aux, current_pcb->priority);
+//         }
+
+
+//         // we move the current pcb to the next one
+//         // current_pcb = (pcb_t *) scheduler[current_pcb->priority]->queue->current_node->data; //NOT YET
+//     } else {
+//         // the process has not used all its quantum, which means it has been preempted. We don't change the priority
+//         // we need to send it to the "back of the queue" within its priority
+//         scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
+//     }
+
+// }
+void stop_current_process(uintptr_t * current_rsp) {
     current_pcb->process->stack->current = current_rsp;
 
-
-    if(current_pcb->ticks >= scheduler[current_pcb->priority]->quantum){ // if the process has used all its quantum
+    if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {
+        current_pcb->process->status = WAITING;
         current_pcb->ticks = 0;
-        //if node is dropping in the priority range, i need to join the nodes that were joined by it (if they exist)
 
         node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
-
-        if (aux != NULL)
-        {
-            scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
-            scheduler[current_pcb->priority]->queue->current_node->prev = aux->prev;
-            aux->prev->next = aux->next; 
-            //now dec priority
-            if(current_pcb->priority < QUEUE_QTY - 1){
-                current_pcb->priority++;
-            }
-            //now that its no longer linked to its old priority, add it to the q of its new priority
-            add_pcb_to_q(aux, current_pcb->priority);
+        remove_node(scheduler[current_pcb->priority]->queue, aux);
+        
+        if (current_pcb->priority < QUEUE_QTY - 1) {
+            current_pcb->priority++;
         }
 
-
-        // we move the current pcb to the next one
-        // current_pcb = (pcb_t *) scheduler[current_pcb->priority]->queue->current_node->data; //NOT YET
+        add_pcb_to_q(aux, current_pcb->priority);
     } else {
-        // the process has not used all its quantum, which means it has been preempted. We don't change the priority
-        // we need to send it to the "back of the queue" within its priority
-        scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
-    }
+        current_pcb->process->status = PREEMPTED;
 
+        node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
+        remove_node(scheduler[current_pcb->priority]->queue, aux);
+        add_pcb_to_q(aux, current_pcb->priority);
+    }
 }
 
-uintptr_t * start_next_process(){
-    // Snake-ISH walk through data structure. Start at highest priority and 'consume' current_node
-    // if current_node is null, drop priority and check there.
 
-    /* No need to walk through the same queue. If the current_node is NULL, then pq is empty. If not null, then always pick the one in front, so current_node.
-    The "walking through the same pq" part is done by the stop context function since it sets current_node to next.
-    */
+// uintptr_t * start_next_process(){
+//     // Snake-ISH walk through data structure. Start at highest priority and 'consume' current_node
+//     // if current_node is null, drop priority and check there.
 
+//     /* No need to walk through the same queue. If the current_node is NULL, then pq is empty. If not null, then always pick the one in front, so current_node.
+//     The "walking through the same pq" part is done by the stop context function since it sets current_node to next.
+//     */
+
+//     int flag_proc_exist = 0;
+//     for (priority_t priority = 0; priority < MAX_PRIORITY; priority++){
+//         if (scheduler[priority]->queue->current_node == NULL){
+//             continue;
+//         } else {
+//             current_pcb->process = (pcb_t *) scheduler[priority]->queue->current_node;
+//             current_pcb->priority = priority;
+//             flag_proc_exist = 1;
+//         }
+//     }
+//     if (!flag_proc_exist)
+//         return NULL;
+//     return current_pcb->process->stack->current;
+// }
+
+
+uintptr_t * start_next_process() {
     int flag_proc_exist = 0;
-    for (priority_t priority = 0; priority < MAX_PRIORITY; priority++){
-        if (scheduler[priority]->queue->current_node == NULL){
-            continue;
-        } else {
-            current_pcb->process = (pcb_t *) scheduler[priority]->queue->current_node;
+    for (priority_t priority = 0; priority < MAX_PRIORITY; priority++) {
+        if (scheduler[priority]->queue->current_node) {
+            current_pcb->process = (pcb_t *)scheduler[priority]->queue->current_node->data;
             current_pcb->priority = priority;
             flag_proc_exist = 1;
+            break;
         }
     }
-    if (!flag_proc_exist)
-        return NULL;
+    if (flag_proc_exist) {
+        current_pcb->process->status = RUNNING;
+    }
     return current_pcb->process->stack->current;
+}
+
+void enable_multitasking(int pid) {
+    current_pcb = get_current_pcb(); // Assuming `get_current_pcb` fetches the PCB entry for the PID
+    isEnabled = 1;
+    force_context_switch((uintptr_t *)current_pcb->process->stack->current);
+}
+
+int scheduler_enabled() {
+    return isEnabled;
 }

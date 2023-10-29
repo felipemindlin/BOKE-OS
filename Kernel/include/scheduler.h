@@ -26,6 +26,8 @@ int ticks_remaining();
 void add_new_process(process_t * process);
 void add_pcb_to_q(node_t * pcb_node, priority_t priority);
 pcb_t * get_current_pcb();
+pcb_t * find_next_process();
 uintptr_t * switch_context(uintptr_t * current_rsp);
 uintptr_t * start_next_process();
+void stop_current_process(uintptr_t * current_rsp);
 #endif

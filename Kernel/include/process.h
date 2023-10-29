@@ -20,6 +20,15 @@ typedef enum priority_t{
     LOW_PRIORITY
 } priority_t;
 
+typedef enum process_status {
+    READY,       // Process is ready to run
+    RUNNING,     // Process is currently running
+    WAITING,     // Process has finished its quantum and is waiting for its next turn
+    BLOCKED,     // Process is blocked (e.g., waiting for I/O)
+    PREEMPTED,   // Process was interrupted before it finished its quantum
+    DEAD         // Process has finished execution
+} process_status;
+
 typedef struct mem_block_t{
     void * base;
     size_t size;
