@@ -36,6 +36,8 @@ EXTERN clear
 EXTERN clearColor
 EXTERN getStackBase
 EXTERN getKey
+EXTERN drawWord
+
 
 SECTION .text
 
@@ -278,37 +280,39 @@ save_reg_stateAsm:
 	pop_state
 	ret
 
-;8254 Timer (Timer Tick)
+; 8254 Timer (Timer Tick)
 _irq00Handler:
-	cli ; for now, we use cli as a mutex
-	push_state
+    cli          ; Disable interrupts
 
-	call scheduler_enabled ;
-	cmp rax, 0
-	je .noSchedule
+    push_state   ; Save the processor state
 
-	call ticks_remaining
-	cmp rax, 0
-	jne .noSchedule
+    call scheduler_enabled
+    cmp rax, 0
+    je .noSchedule
 
-	; there are no ticks left, so we gotta switch the context
-	mov rdi, rsp 	; current stack pointer (the one of the process which is not currently running 
-					; bc it's running the timer tick handler) passed as argument to switch context
-	call switch_context ; TO-DO
-	mov rsp, rax ; switch_context returns the new stack pointer to the process that gotta start running
+    call ticks_remaining
+    cmp rax, 0
+    jne .noSchedule
 
+    ; No ticks left, switch context
+    mov rdi, rsp  ; Current stack pointer (for the process not currently running)
+    call switch_context
+
+    mov rsp, rax  ; Set the stack pointer for the new process to run
 
 .noSchedule:
-	mov rdi, 0 ; load parameter
-	call irqDispatcher
+    mov rdi, 0
+    call irqDispatcher
 
-	; signal pic EOI (End of Interrupt)
-	mov al, 20h
-	out 20h, al
+    ; Signal PIC EOI (End of Interrupt)
+    mov al, 20h
+    out 20h, al
 
-	pop_state
-	sti
-	iretq
+    pop_state    ; Restore processor state
+
+    sti          ; Enable interrupts
+    iretq        ; Return from interrupt
+
 
 ;Keyboard
 _irq01Handler:
@@ -403,3 +407,6 @@ SECTION .bss
 	.dcs  resq 1
 	.drfl resq 1
 	.drip resq 1
+
+section .data:
+msg db "Exception 0", 0

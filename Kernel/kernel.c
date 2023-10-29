@@ -87,13 +87,18 @@ void * initializeKernelBinary()
 	return getStackBase();
 	
 }
+int funcion(){
+	while(1){
+		drawWord("Peru\n");
+	}
+}
 
 int main()
 {
 	load_idt();
 	setFontSize(1);
 	init_mm((void *)0x0000000000600000, 0x0000000000020000);
-	init_scheduler(1);
+	init_scheduler(10);
 	
 	/*
 	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
@@ -102,10 +107,19 @@ int main()
 	init_mm(*userlandSize, mem_amount_bytes);*/
 
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
-
-	int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
-
+	// int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
+	int shell_pid = create_process("test",0x0000000000010000,  0x0000000000001000, &funcion, NULL);
+	shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
+	//start_next_process();
 	enable_multitasking(shell_pid);
+	// create_process("test",0x0000000000010000,  0x0000000000001000, &funcion, NULL);
+	
+	
+	
+	// process_t *shell_process = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
+	// enable_multitasking(shell_process);
+
+	
 	//((EntryPoint)sampleCodeModuleAddress)();
 	drawWord("SOMETHING WENT WRONG\n");
 	while(1);

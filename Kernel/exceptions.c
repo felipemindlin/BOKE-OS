@@ -39,7 +39,7 @@ void exceptionDispatcher(int exception, registerStructT * registers) {
 
 void guruMeditation(){
 	clearColor(BLUE);
-	drawWordColorAt(RED, "GURU MEDITATION\n", 10, 10);
-	drawWordColorAt(RED, "FATAL ERROR IN KERNEL\n", 10, 10);
+	drawWordColorLen(RED, "GURU MEDITATION\n", 17);
+	drawWordColorLen(RED, "FATAL ERROR IN KERNEL\n", 24);
 	while(1);
 }

@@ -65,3 +65,20 @@ void remove_node(queue_t * queue, node_ptr node){
     free(node);
     queue->qty--;
 }
+
+void free_queue(queue_t * queue){
+    if(queue == NULL){
+        return;
+    }
+    node_ptr current_node = queue->current_node;
+    if (current_node != NULL) {
+        node_ptr next_node = current_node->next;
+        while(current_node != next_node){
+            node_ptr aux = next_node->next;
+            free(next_node);
+            next_node = aux;
+        }
+        free(current_node); 
+    free(queue);
+    }
+}

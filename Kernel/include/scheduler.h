@@ -21,6 +21,7 @@ typedef struct scheduler_queue {
 
 void init_scheduler(int quantum);
 void enable_multitasking(int pid);
+//void enable_multitasking(process_t *process);
 int scheduler_enabled();
 int ticks_remaining();
 void add_new_process(process_t * process);
@@ -30,4 +31,5 @@ pcb_t * find_next_process();
 uintptr_t * switch_context(uintptr_t * current_rsp);
 uintptr_t * start_next_process();
 void stop_current_process(uintptr_t * current_rsp);
+int getQuantum();
 #endif
