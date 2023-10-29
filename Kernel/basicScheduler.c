@@ -256,12 +256,3 @@ uintptr_t * start_next_process() {
     return current_pcb->process->stack->current;
 }
 
-void enable_multitasking(int pid) {
-    current_pcb = get_current_pcb(); // Assuming `get_current_pcb` fetches the PCB entry for the PID
-    isEnabled = 1;
-    force_context_switch((uintptr_t *)current_pcb->process->stack->current);
-}
-
-int scheduler_enabled() {
-    return isEnabled;
-}

@@ -1,6 +1,6 @@
 #include <process.h>
 #include "interrupts.h"
-
+#include <scheduler.h>
 void process_wrapper(void entry_point(char ** argv), char ** argv);
 
 int create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
@@ -66,7 +66,7 @@ int create_process(const char * name, size_t heap_size, size_t stack_size, void 
 
     process->status = READY;
 
-    add_process_to_queue(process);
+    add_new_process(process);
     
     return process->pid;
 
@@ -82,6 +82,6 @@ size_t getAvailablePid(){
 }
 
 void save_reg_state(pcb_t * pcb){
-	save_reg_stateAsm(pcb->reg_state);
+	save_reg_stateAsm(&pcb->reg_state);
 }
 
