@@ -10,7 +10,7 @@ uint8_t isEnabled = 0;
 pcb_t * current_pcb;
 
 scheduler_queue * create_queue_array(int quantum);
-
+void change_process_priority(int pid, priority_t priority);
 
 
 pcb_t * find_next_process() {
@@ -26,25 +26,6 @@ pcb_t * find_next_process() {
 }
 
 
-// pcb_t * get_pcb_entry(int pid){
-//     for(int i=0 ; i<QUEUE_QTY ; i++){
-//         if(scheduler[i]->queue->current_node == NULL){
-//             continue;
-//         }
-//         node_t * current_node = scheduler[i]->queue->current_node->next;
-//         node_t * starting_node = scheduler[i]->queue->current_node;
-//         while(current_node != NULL && current_node != starting_node){
-//             pcb_t * pcb = (pcb_t *) current_node->data;
-//             if(pcb->process->pid == pid){
-//                 drawNumber(pcb->process->pid);
-//                 while(1);
-//                 return pcb;
-//             }
-//             current_node = current_node->next;
-//         }
-//     }
-//     return NULL;
-// }
 pcb_t * get_pcb_entry(int pid) {
     for (int i = 0; i < QUEUE_QTY; i++) {
         node_t * current_node = scheduler[i]->queue->current_node;
@@ -80,7 +61,7 @@ void init_scheduler(int quantum){ // for now, every queue has the same quantum. 
 void add_pcb_to_q(node_t * pcb_node, priority_t priority){
     // we insert the node to the queue
     insert_node(scheduler[priority]->queue, pcb_node);
-    scheduler[priority]->process_qty++;
+//    scheduler[priority]->process_qty++; THERE WERE 2 PROCESS_QTY VARIABLES: the one in the queue type and the one in the scheduler_queue type, I REMOVED THIS ONE
     processes_qty++;
 }
 
@@ -118,7 +99,6 @@ scheduler_queue * create_queue_array(int quantum){
         free(queue);
         return NULL;
     }
-    queue->process_qty = 0;
     return queue;
 }
 
@@ -139,6 +119,7 @@ void enable_multitasking(int pid){
     // first, we gotta set the pcb for the first process
  
     current_pcb = get_pcb_entry(pid);
+    current_pcb->process->status = RUNNING;
     isEnabled = 1;
     drawNumber((uintptr_t *)current_pcb->process->stack->current);
     force_context_switch((uintptr_t *)current_pcb->process->stack->current);
@@ -157,17 +138,19 @@ pcb_t * get_current_pcb(){
 }
 
 uintptr_t * switch_context(uintptr_t * current_rsp) {
-    stop_current_process(current_rsp);
+    current_pcb->process->stack->current = current_rsp;
+    stop_current_process();
     drawWord("\n switch_context:");
     drawNumber(current_rsp);
-    // if (current_pcb->process->status == BLOCKED || current_pcb->process->status == DEAD) {
-    //     current_pcb = find_next_process();
-    //     if (current_pcb) {
-    //         current_pcb->process->status = RUNNING;
-    //     }
-    // }
+    
+    current_pcb = find_next_process();
+    /* THIS IF COULD BE FOR THE IDLE PROCESS. If there are no available processes, then the idle starts exec
+    if (current_pcb) {
+        current_pcb->process->status = RUNNING;
+    }
+    */
  
-    return start_next_process();
+    return current_pcb->process->stack->current;
 }
 
 // uintptr_t * switch_context(uintptr_t * current_rsp){
@@ -223,28 +206,60 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
 //     }
 
 // }
-void stop_current_process(uintptr_t * current_rsp) {
-    current_pcb->process->stack->current = current_rsp;
 
-    if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {
-        current_pcb->process->status = READY;
-        current_pcb->ticks = 0;
+void change_process_priority(int pid, priority_t priority){
+    pcb_t * pcb = get_pcb_entry(pid);
+    if(pcb == NULL){
+        return;
+    }
+    // we remove the pcb from the queue
+    remove_node(scheduler[pcb->priority]->queue, (node_t *) pcb);
+    // we change the priority
+    pcb->priority = priority;
+    // we add the pcb to the queue
+    add_pcb_to_q((node_t *) pcb, priority);
+
+}
+
+void stop_current_process() {
+
+
+    if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {        
 
         node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
-       // remove_node(scheduler[current_pcb->priority]->queue, aux);
         
         if (current_pcb->priority < QUEUE_QTY - 1) {
-           // current_pcb->priority++;
+           change_process_priority(current_pcb->process->pid, current_pcb->priority + 1);
+           //remove_node(scheduler[current_pcb->priority]->queue, aux); WE SHOULDN'T DO THIS IN THIS FUNCTION ******************************
+        } else {
+            // it is already in the min priority queue, so we just move it to the back
+            scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
         }
 
-       // add_pcb_to_q(aux, current_pcb->priority);
+       // add_pcb_to_q(aux, current_pcb->priority); ACA TENGO QUE CAMBIAR LA PRIORIDAD
     } else {
-        current_pcb->process->status = PREEMPTED;
+/* HERE WE NEED TO CONSIDER THE CASE WHERE THE PROCESS IS BLOCKED OR DEAD. IF IT IS, WE DON'T CHANGE THE PRIORITY
+
+        if(current_pcb->priority<QUEUE_QTY-1){
+            // the new priority depends on the current priority, the time it has been running and the quantum
+            int new_priority = current_pcb->priority +(int) (((double)current_pcb->ticks) / scheduler[current_pcb->priority]->quantum);
+            if(new_priority > QUEUE_QTY-1){
+                new_priority = QUEUE_QTY-1;
+            }
+            change_process_priority(current_pcb->process->pid, new_priority);
+        }
 
         node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
         remove_node(scheduler[current_pcb->priority]->queue, aux);
         add_pcb_to_q(aux, current_pcb->priority);
+*/
+    // FOR NOW, WE JUST HAVE NOT-ENDING PROCESSES, SO WE ENTER A WHILE(1) ERROR;
+    while(1){
+        drawWord("ERROR");
     }
+    }
+    current_pcb->process->status = READY;
+    current_pcb->ticks = 0;
 }
 
 
@@ -257,7 +272,7 @@ void stop_current_process(uintptr_t * current_rsp) {
 //     */
 
 //     int flag_proc_exist = 0;
-//     for (priority_t priority = 0; priority < MAX_PRIORITY; priority++){
+//     for (priority_t priority = 0; priority < QUEUE_QTY-Q; priority++){
 //         if (scheduler[priority]->queue->current_node == NULL){
 //             continue;
 //         } else {
@@ -275,13 +290,13 @@ void stop_current_process(uintptr_t * current_rsp) {
 uintptr_t * start_next_process() {
     int flag_proc_exist = 0;
 
-    while (1){
+    /*while (1){
         pcb_t * p = scheduler[0]->queue->current_node->next->data;
-        drawWord(p->process->name);
+        //drawWord(p->process->name);
         scheduler[0]->queue->current_node = scheduler[0]->queue->current_node->next;
-    }
+    }*/
 
-    for (priority_t priority = 0; priority < MAX_PRIORITY; priority++) {
+    for (priority_t priority = 0; priority < QUEUE_QTY-1; priority++) {
         if (scheduler[priority]->queue->current_node) {
             current_pcb->process = (pcb_t *)scheduler[priority]->queue->current_node->data;
             current_pcb->priority = priority;

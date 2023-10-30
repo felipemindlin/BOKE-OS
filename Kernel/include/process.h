@@ -11,10 +11,8 @@
 #define READY 1
 #define RUNNING 2
 #define DEAD 3
-#define WAITING 4
-#define PREEMPTED 5
 
-#define MAX_PRIORITY 2
+//#define MAX_PRIORITY 2 NO USEN ESTO. La maxima prioridad depende de QUEUE_QTY pq es el tamaño del scheduler array
 
 typedef enum priority_t{
     HIGH_PRIORITY,
@@ -38,7 +36,7 @@ typedef struct mem_block_t{
 } mem_block_t;
 
 typedef struct process_t{
-    size_t pid;
+    int pid;
     char status;
     char * name;
     mem_block_t * stack;
@@ -61,7 +59,7 @@ static size_t pid = 0;
 
 
 int create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
-size_t getAvailablePid();
+int getAvailablePid();
 void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
 // process_t* create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 #endif

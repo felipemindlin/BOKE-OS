@@ -193,8 +193,9 @@ saveState:
 	mov qword rdi, 0x0000FF
 	call clearColor
 
-	call retUserland
-	mov rsi, rax
+	;call retUserland
+	;mov rsi, rax
+	mov rax, userland_start_address
 	mov rax, [rsp+120]
 	cmp rax, rsi ; Check if error happened within Kernel bounds
 	jge .nopanic
@@ -410,3 +411,4 @@ SECTION .bss
 
 section .data:
 msg db "Exception 0", 0
+userland_start_address equ 0x400000

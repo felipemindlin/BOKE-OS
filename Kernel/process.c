@@ -75,7 +75,7 @@ void process_wrapper(void entry_point(char ** argv), char ** argv){
     // then we should kill it to allow multi-tasking. For now it is just the shell, which does not die
 }
 
-size_t getAvailablePid(){
+int getAvailablePid(){
     return pid++;
 }
 
