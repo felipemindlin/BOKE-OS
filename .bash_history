@@ -107,3 +107,60 @@ ls
 make all
 ./r.sh 
 exit
+cd root
+make all
+clear
+make all
+clear
+make all
+clear
+make all
+make clean
+make all
+clear
+make clean
+clear
+make all
+make clean
+make all
+clear
+make all
+clear
+make all
+clear
+make all
+make all
+make clean
+make all
+make clean
+make all
+git status
+git restore Userland/*
+git status
+clear
+ls
+git status
+git restore Userland/SampleCodeModule/*
+git status
+git restore Userland/SampleCodeModule/include/
+git restore Userland/SampleCodeModule/
+git restore Userland/
+clear
+git status
+git restore Toolchain/
+git restore Kernel/
+git status
+git restore Bootloader/
+clear
+git status
+git restore .bash_history 
+git restore .
+git statsu
+clear
+git status
+git status
+git add Kernel/mem_buddy.c
+git add Kernel/include/memory_manager.h 
+clear
+git status
+exit

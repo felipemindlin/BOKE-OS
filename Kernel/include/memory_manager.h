@@ -14,6 +14,7 @@
 #define INVALID_ADDRESS -1
 #define FREE 0
 #define ALLOCATED 1
+#define PARCIAL 2
 
 #define	__need_size_t
 #define	__need_NULL
@@ -41,7 +42,6 @@ typedef struct Node {
 void initialize_heap(void * baseAddres, uint64_t mem_ammount);
 void * malloc(uintptr_t bytes);
 void * free(void * mem);
-
 void printMem();
 
 #endif
