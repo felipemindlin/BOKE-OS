@@ -62,7 +62,7 @@ int create_process(const char * name, size_t heap_size, size_t stack_size, void 
     
     process->stack->size = stack_size;
     
-    process->stack->current = create_stackframe((uintptr_t *)entry_point, argv, process->stack->base + stack_size, &process_wrapper); // is this correct?
+    process->stack->current = create_stackframe((uintptr_t *)entry_point, argv, process->stack->base, &process_wrapper); // is this correct?
    
     process->status = READY;
     add_new_process(process);
