@@ -10,6 +10,7 @@
 #include "drivers/include/videoDriver.h"
 #include "include/interrupts.h"
 #include "include/libasm.h"
+#include <idle.h>
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
@@ -17,6 +18,7 @@ static void *const systemVar = (void *)0x0000000000005A00;
 
 typedef int (*EntryPoint)();
 
+int a=1;
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -89,8 +91,36 @@ void * initializeKernelBinary()
 }
 int funcion(){
 	while(1){
-		if(ticks_elapsed() % 100 == 0){
+		if(a!=0){
 			drawWord("Peru\n");
+			a=0;
+		}
+	}
+}
+
+int funcion2(){
+	while(1){
+		if(a!=1){
+			drawWord("Argentina\n");
+			a=1;
+		}
+	}
+}
+
+int funcion3(){
+	while(1){
+		if(a!=2){
+			drawWord("Chile\n");
+			a=2;
+		}
+	}
+}
+
+int funcion4(){
+	while(1){
+		if(a!=3){
+			drawWord("Brasil\n");
+			a=3;
 		}
 	}
 }
@@ -100,7 +130,7 @@ int main()
 	load_idt();
 	setFontSize(1);
 	init_mm((void *)0x0000000000600000, 0x0000000000020000);
-	init_scheduler(2);
+	init_scheduler(4);
 	
 	/*
 	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
@@ -110,8 +140,13 @@ int main()
 
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	// int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
-	int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
-	create_process("test",0x0000000000010000,  0x0000000000001000, &funcion, NULL);
+	int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, &funcion3, NULL);
+	//create_process("test",0x0000000000010000,  0x0000000000001000, &funcion, NULL);
+	create_process("peru", 0x0000000000001000, 0x0000000000001000, &funcion, NULL);
+	change_process_priority(create_process("idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY);
+	create_process("arg", 0x0000000000001000, 0x0000000000001000, &funcion2, NULL);
+	create_process("brasil", 0x0000000000001000, 0x0000000000001000, &funcion4, NULL);
+	// CON TEST1 EL SCHEDULER NO FUNCIONA BIEN. SI AGREGO TEST2, NECESITAR
 	//start_next_process();
 	enable_multitasking(shell_pid);
 	// create_process("test",0x0000000000010000,  0x0000000000001000, &funcion, NULL);

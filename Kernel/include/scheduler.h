@@ -4,7 +4,7 @@
 #include <process.h>
 #include <stdint.h>
 
-#define QUEUE_QTY 3 // Depends on the number of priorities we want to have
+#define QUEUE_QTY 4 // Depends on the number of priorities we want to have
 
 /*
     Sugerencia para el scheduler:
@@ -31,4 +31,6 @@ uintptr_t * switch_context(uintptr_t * current_rsp);
 uintptr_t * start_next_process();
 void stop_current_process();
 int getQuantum();
+
+void change_process_priority(int pid, priority_t priority);
 #endif

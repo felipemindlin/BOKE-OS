@@ -106,12 +106,12 @@ void * free(void * mem){
     }
     heap_struct.pages[page_index] = FREE;
     heap_struct.last_freed_page = page_index;
-    /* maybe we can use this later:
+    
     uint8_t * p = (uint8_t*) mem;
     for (uintptr_t i = 0; i < heap_struct.page_size; i++){
         p[i] = 0;
     }
-    */
+    
     return mem+heap_struct.page_size;
 }
 

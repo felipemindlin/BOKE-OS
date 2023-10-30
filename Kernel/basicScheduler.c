@@ -10,21 +10,30 @@ uint8_t isEnabled = 0;
 pcb_t * current_pcb;
 
 scheduler_queue * create_queue_array(int quantum);
-void change_process_priority(int pid, priority_t priority);
 int remove_from_queue_by_pid(queue_t * queue, int pid);
+pcb_t * get_idle_pcb();
 
 pcb_t * find_next_process( pcb_t * pcb ) {
-    for (int i = 0; i < QUEUE_QTY; i++) {
+    pcb_t * keep_running = NULL;
+    for (int i = HIGH_PRIORITY; i >=LOW_PRIORITY; i--) {
         if (scheduler[i]->queue->current_node) {
             pcb_t *potential_pcb = (pcb_t *)scheduler[i]->queue->current_node->data;
             if (potential_pcb->process->status == READY) {
                 return potential_pcb;
+            } else if(potential_pcb->process->status == RUNNING && potential_pcb->priority <= HIGH_PRIORITY && potential_pcb->priority>= LOW_PRIORITY){
+                keep_running = potential_pcb;
             }
         }
     }
-    return NULL;
+    if(keep_running != NULL){
+        return keep_running;
+    }
+    return get_idle_pcb();
 }
 
+pcb_t * get_idle_pcb(){
+    return (pcb_t *) scheduler[0]->queue->current_node->data;
+}
 
 pcb_t * get_pcb_entry(int pid) {
     for (int i = 0; i < QUEUE_QTY; i++) {
@@ -72,7 +81,7 @@ void add_new_process(process_t * process){
     if(pcb_new == NULL){
         return;
     }
-    pcb_new->priority = 0;
+    pcb_new->priority = HIGH_PRIORITY;
     pcb_new->ticks = 0;
     pcb_new->process = process;
     // now we insert the pcb to the queue
@@ -84,7 +93,6 @@ void add_new_process(process_t * process){
     }
     // we insert the node to the queue
     add_pcb_to_q(new_node, pcb_new->priority);
-    
 }
 
 
@@ -122,8 +130,6 @@ void enable_multitasking(int pid){
     current_pcb->process->status = RUNNING;
     isEnabled = 1;
     force_context_switch((uintptr_t *)current_pcb->process->stack->current);
-     
-    
     
 }
 // void enable_multitasking(process_t *process) {
@@ -139,7 +145,6 @@ pcb_t * get_current_pcb(){
 uintptr_t * switch_context(uintptr_t * current_rsp) {
     current_pcb->process->stack->current = current_rsp; // save current rsp for next time
     stop_current_process();
-    
     pcb_t * new_pcb = find_next_process(current_pcb);
 
     if(current_pcb->process->status == RUNNING ){
@@ -148,6 +153,8 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
     }
     current_pcb = new_pcb;
     current_pcb->process->status = RUNNING;
+    drawWord(current_pcb->process->name);
+    drawWord("\n");
     /* THIS IF COULD BE FOR THE IDLE PROCESS. If there are no available processes, then the idle starts exec
     if (current_pcb) {
         current_pcb->process->status = RUNNING;
@@ -156,60 +163,6 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
     return current_pcb->process->stack->current;
 }
 
-// uintptr_t * switch_context(uintptr_t * current_rsp){
-//     stop_current_process(current_rsp);
-//     // we get the next process to run
-
-// /*  *******************************************************************************************
-//     La idea está bien, acordate de poner el status del nuevo proceso (y no se si del viejo tmb)
-//     Algo así ponele:
-
-//     if(current_pcb->process->status == BLOCKED || current_pcb->process->status == DEAD){
-//         // we need to get the next process to run
-//         current_pcb = find_next_process();
-//         current_pcb->process->status = RUNNING;
-//     }
-
-//     return start_next_process(current_pcb); // es un ejemplo nomas
-//     ******************************************************************************************* */
-//     return start_next_process();
-// }
-
-// void stop_current_process(uintptr_t * current_rsp){ // TO-DO NOW
-    
-//     current_pcb->process->stack->current = current_rsp;
-
-
-//     if(current_pcb->ticks >= scheduler[current_pcb->priority]->quantum){ // if the process has used all its quantum
-//         current_pcb->ticks = 0;
-//         //if node is dropping in the priority range, i need to join the nodes that were joined by it (if they exist)
-
-//         node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
-
-//         if (aux != NULL)
-//         {
-//             scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
-//             scheduler[current_pcb->priority]->queue->current_node->prev = aux->prev;
-//             aux->prev->next = aux->next; 
-//             //now dec priority
-//             if(current_pcb->priority < QUEUE_QTY - 1){
-//                 current_pcb->priority++;
-//             }
-//             //now that its no longer linked to its old priority, add it to the q of its new priority
-//             add_pcb_to_q(aux, current_pcb->priority);
-//         }
-
-
-//         // we move the current pcb to the next one
-//         // current_pcb = (pcb_t *) scheduler[current_pcb->priority]->queue->current_node->data; //NOT YET
-//     } else {
-//         // the process has not used all its quantum, which means it has been preempted. We don't change the priority
-//         // we need to send it to the "back of the queue" within its priority
-//         scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
-//     }
-
-// }
-
 int remove_from_queue_by_pid(queue_t * queue, int pid) {
     node_t * current_node = queue->current_node;
 
@@ -217,6 +170,7 @@ int remove_from_queue_by_pid(queue_t * queue, int pid) {
         pcb_t *pcb = (pcb_t *)current_node->data;
 
         if (pcb->process->pid == pid) {
+            pcb->priority=DEPRECATED;
             remove_node(queue, current_node);
             return 1;
         }
@@ -250,22 +204,30 @@ void change_process_priority(int pid, priority_t priority){
             drawWord("-ERROR-");
         }
     }
-
 }
 
 void stop_current_process() {
-
-
     if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {        
 
         node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
         
-        if (current_pcb->priority < QUEUE_QTY - 1) {
-           change_process_priority(current_pcb->process->pid, current_pcb->priority + 1);
+        if (current_pcb->priority > LOW_PRIORITY && current_pcb->priority <= HIGH_PRIORITY) {
+           change_process_priority(current_pcb->process->pid, current_pcb->priority - 1);
            //remove_node(scheduler[current_pcb->priority]->queue, aux); WE SHOULDN'T DO THIS IN THIS FUNCTION ******************************
-        } else {
+        } else if(current_pcb->priority == LOW_PRIORITY || current_pcb->priority==IDLE_PRIORITY) {
             // it is already in the min priority queue, so we just move it to the back
-            scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
+            //scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next->next;
+            drawWord("*");
+            for(int i=0 ; i<scheduler[LOW_PRIORITY]->queue->qty ; i++){
+                drawWord(((pcb_t*)(scheduler[LOW_PRIORITY]->queue->current_node->data))->process->name);
+                scheduler[LOW_PRIORITY]->queue->current_node = scheduler[LOW_PRIORITY]->queue->current_node->next;
+            }
+            scheduler[LOW_PRIORITY]->queue->current_node = scheduler[LOW_PRIORITY]->queue->current_node->next;
+            drawWord("\n");
+        } else {
+            while(1){
+                drawWord("PROBLEMAS");
+            }
         }
 
        // add_pcb_to_q(aux, current_pcb->priority); ACA TENGO QUE CAMBIAR LA PRIORIDAD
@@ -326,7 +288,7 @@ uintptr_t * start_next_process() {
         scheduler[0]->queue->current_node = scheduler[0]->queue->current_node->next;
     }*/
 
-    for (priority_t priority = 0; priority < QUEUE_QTY-1; priority++) {
+    for (priority_t priority = 1; priority<=HIGH_PRIORITY && priority>=HIGH_PRIORITY; priority++) {
         if (scheduler[priority]->queue->current_node) {
             current_pcb->process = (pcb_t *)scheduler[priority]->queue->current_node->data;
             current_pcb->priority = priority;

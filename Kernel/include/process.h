@@ -15,9 +15,11 @@
 //#define MAX_PRIORITY 2 NO USEN ESTO. La maxima prioridad depende de QUEUE_QTY pq es el tamaño del scheduler array
 
 typedef enum priority_t{
-    HIGH_PRIORITY,
+    IDLE_PRIORITY,
+    LOW_PRIORITY,
     MEDIUM_PRIORITY,
-    LOW_PRIORITY
+    HIGH_PRIORITY,
+    DEPRECATED
 } priority_t;
 
 // typedef enum process_status {
