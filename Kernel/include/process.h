@@ -50,7 +50,7 @@ typedef struct pcb_t{
     registerStructT reg_state;
 } pcb_t;
 
-static size_t pid = 0;
+static size_t pid = 1;
 
 /*
     LEAVE THIS INCLUDE HERE. IT MUST BE HERE BC OF THE ORDER THE INCLUDES ARE PERFORMED.

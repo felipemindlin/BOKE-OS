@@ -11,13 +11,13 @@ pcb_t * current_pcb;
 
 scheduler_queue * create_queue_array(int quantum);
 void change_process_priority(int pid, priority_t priority);
+int remove_from_queue_by_pid(queue_t * queue, int pid);
 
-
-pcb_t * find_next_process() {
+pcb_t * find_next_process( pcb_t * pcb ) {
     for (int i = 0; i < QUEUE_QTY; i++) {
         if (scheduler[i]->queue->current_node) {
             pcb_t *potential_pcb = (pcb_t *)scheduler[i]->queue->current_node->data;
-            if (potential_pcb->process->status != DEAD && potential_pcb->process->status != BLOCKED) {
+            if (potential_pcb->process->status == READY) {
                 return potential_pcb;
             }
         }
@@ -121,7 +121,6 @@ void enable_multitasking(int pid){
     current_pcb = get_pcb_entry(pid);
     current_pcb->process->status = RUNNING;
     isEnabled = 1;
-    drawNumber((uintptr_t *)current_pcb->process->stack->current);
     force_context_switch((uintptr_t *)current_pcb->process->stack->current);
      
     
@@ -138,18 +137,22 @@ pcb_t * get_current_pcb(){
 }
 
 uintptr_t * switch_context(uintptr_t * current_rsp) {
-    current_pcb->process->stack->current = current_rsp;
+    current_pcb->process->stack->current = current_rsp; // save current rsp for next time
     stop_current_process();
-    drawWord("\n switch_context:");
-    drawNumber(current_rsp);
     
-    current_pcb = find_next_process();
+    pcb_t * new_pcb = find_next_process(current_pcb);
+
+    if(current_pcb->process->status == RUNNING ){
+        current_pcb->process->status = READY;
+        current_pcb->ticks = 0;
+    }
+    current_pcb = new_pcb;
+    current_pcb->process->status = RUNNING;
     /* THIS IF COULD BE FOR THE IDLE PROCESS. If there are no available processes, then the idle starts exec
     if (current_pcb) {
         current_pcb->process->status = RUNNING;
     }
     */
- 
     return current_pcb->process->stack->current;
 }
 
@@ -207,17 +210,46 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
 
 // }
 
+int remove_from_queue_by_pid(queue_t * queue, int pid) {
+    node_t * current_node = queue->current_node;
+
+    while (current_node) {
+        pcb_t *pcb = (pcb_t *)current_node->data;
+
+        if (pcb->process->pid == pid) {
+            remove_node(queue, current_node);
+            return 1;
+        }
+
+        current_node = current_node->next;
+
+        if (current_node == queue->current_node) {
+            break; 
+        }
+    }
+
+    return 0;
+}
+
 void change_process_priority(int pid, priority_t priority){
     pcb_t * pcb = get_pcb_entry(pid);
     if(pcb == NULL){
         return;
     }
     // we remove the pcb from the queue
-    remove_node(scheduler[pcb->priority]->queue, (node_t *) pcb);
+    remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pid);
     // we change the priority
     pcb->priority = priority;
     // we add the pcb to the queue
-    add_pcb_to_q((node_t *) pcb, priority);
+    node_t * new_node = create_node(pcb);
+    if(new_node == NULL){
+        return;
+    }
+    if(insert_node(scheduler[priority]->queue, new_node)<0){
+        while(1){
+            drawWord("-ERROR-");
+        }
+    }
 
 }
 
@@ -258,8 +290,6 @@ void stop_current_process() {
         drawWord("ERROR");
     }
     }
-    current_pcb->process->status = READY;
-    current_pcb->ticks = 0;
 }
 
 

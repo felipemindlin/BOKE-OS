@@ -17,5 +17,6 @@ int insert_node(queue_t * queue, node_t * new_node);
 node_t * next(node_t * node);
 void remove_node(queue_t * queue, node_t * node);
 queue_t * create_queue();
+//int remove_node_with_pid(queue_t * queue, int pid);
 
 #endif

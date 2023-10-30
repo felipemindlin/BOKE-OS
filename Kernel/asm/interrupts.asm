@@ -261,7 +261,7 @@ create_stackframe: ; rdi: entry point, rsi: args, rdx: stack base, rcx: wrapper
 	mov rsp, rdx ; parameter: stack base
 	push 0x00000000 ; SS
 	push rdx ; RSP
-	push 0x00000202 ; RFLAGS
+	push 0x00000202 ; RFLAGS: interrupt flag and reserved bit enabled
 	push 0x00000008 ; CS
 	
 	push rcx ; RIP now is in wrapper code
@@ -297,6 +297,7 @@ _irq00Handler:
 
     ; No ticks left, switch context
     mov rdi, rsp  ; Current stack pointer (for the process not currently running)
+	mov rsi, ss
     call switch_context
 
     mov rsp, rax  ; Set the stack pointer for the new process to run
