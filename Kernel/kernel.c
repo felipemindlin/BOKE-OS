@@ -90,6 +90,24 @@ void * initializeKernelBinary()
 	
 }
 
+int function1(){
+	int c=0;
+	int b=0;
+	while(1){
+		c += ticks_elapsed();
+		if(c % 10000000 == 1){
+			drawWord("asd");
+			drawNumber(c);
+			b++;
+			if(b==3){
+				break;
+			}
+			c+=2;
+		}
+	}
+	return 0;
+}
+
 int main()
 {
 	load_idt();
@@ -105,9 +123,9 @@ int main()
 
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	
-	int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
-	
-	change_process_priority(create_process("idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY);
+	int shell_pid = create_process(0, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=0 indicates OS created it
+	create_process(1, "test", 1, 0x0000000000001000, &function1, NULL); // id=0 indicates OS created it
+	change_process_priority(create_process(0, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=0 indicates OS created it
 	enable_multitasking(shell_pid);
 
 	drawWord("SOMETHING WENT WRONG\n");

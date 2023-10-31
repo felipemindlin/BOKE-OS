@@ -22,6 +22,7 @@ GLOBAL saveState
 GLOBAL force_context_switch
 GLOBAL create_stackframe
 GLOBAL save_reg_stateAsm
+GLOBAL int20h
 
 EXTERN scheduler_enabled
 EXTERN ticks_remaining
@@ -235,6 +236,9 @@ _sti:
 	sti
 	ret
 
+int20h:
+	int 20h
+	ret
 picMasterMask:
 	push rbp
     mov rbp, rsp

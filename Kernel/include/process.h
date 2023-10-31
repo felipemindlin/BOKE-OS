@@ -7,10 +7,13 @@
 #define	__need_size_t
 #define	__need_NULL
 #include <stddef.h>
-#define BLOCKED 0
-#define READY 1
-#define RUNNING 2
-#define DEAD 3
+enum status_t{
+    BLOCKED,
+    READY,
+    RUNNING,
+    DEAD,
+    ZOMBIE
+};
 
 //#define MAX_PRIORITY 2 NO USEN ESTO. La maxima prioridad depende de QUEUE_QTY pq es el tamaño del scheduler array
 
@@ -37,9 +40,10 @@ typedef struct process_t{
 } process_t;
 
 typedef struct pcb_t{
-    size_t ticks; // ticks or quantums?
+    size_t ticks;
     priority_t priority;
     process_t * process;
+    int parent_pid;
     registerStructT reg_state;
 } pcb_t;
 
@@ -51,8 +55,9 @@ static size_t pid = 1;
 #include <scheduler.h>
 
 
-int create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+int create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int getAvailablePid();
 void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
 // process_t* create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+int kill_process(int pid);
 #endif

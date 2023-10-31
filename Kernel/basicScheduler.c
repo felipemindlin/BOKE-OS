@@ -8,6 +8,7 @@ scheduler_queue * scheduler[QUEUE_QTY];
 
 uint8_t isEnabled = 0;
 pcb_t * current_pcb;
+pcb_t * OS_pcb;
 
 scheduler_queue * create_queue_array(int quantum);
 int remove_from_queue_by_pid(queue_t * queue, int pid);
@@ -48,6 +49,9 @@ pcb_t * get_idle_pcb(){
 }
 
 pcb_t * get_pcb_entry(int pid) {
+    if(pid == 0){
+        return OS_pcb;
+    }
     for (int i = 0; i < QUEUE_QTY; i++) {
         node_t * current_node = scheduler[i]->queue->current_node;
 
@@ -69,8 +73,52 @@ pcb_t * get_pcb_entry(int pid) {
     return NULL;
 }
 
+void init_OS_pcb(){
+    OS_pcb = (pcb_t *) malloc(sizeof(pcb_t));
+    if(OS_pcb == NULL){
+        return;
+    }
+    OS_pcb->priority = ZOMBIE; // sus
+    OS_pcb->ticks = 0;
+    process_t * process = (process_t *) malloc(sizeof(process_t));
+    if(process == NULL){
+        free(OS_pcb);
+        return;
+    }
+    OS_pcb->parent_pid = 0;
+    process->pid = 0;
+    process->status = RUNNING; // imagine it is always running, though it is clearly not always the current process
+    process->name = malloc(str_len("OS") + 1);
+    if(process->name == NULL){
+        free(process);
+        free(OS_pcb);
+        return;
+    }
+    str_cpy(process->name, "OS");
+    process->stack = (mem_block_t *) malloc(sizeof(mem_block_t));
+    if(process->stack == NULL){
+        free(OS_pcb);
+        return;
+    }
+    process->stack->base = NULL;
+    process->stack->size = 0;
+    process->stack->current = NULL;
+    process->heap = (mem_block_t *) malloc(sizeof(mem_block_t));
+    if(process->heap == NULL){
+        free(process->stack);
+        free(OS_pcb);
+        return;
+    }
+    process->heap->base = NULL;
+    process->heap->size = 0;
+    process->heap->current = NULL;
+    OS_pcb->process = process;
+    processes_qty++;
+    // do not add OS to scheduler, it runs when it wants
+}
 
 void init_scheduler(int quantum){ // for now, every queue has the same quantum. Is that correct?
+    void init_OS_pcb();
     for(int i=0 ; i<QUEUE_QTY ; i++){
         scheduler[i]=create_queue_array(quantum);
         if(scheduler[i] == NULL){
@@ -85,7 +133,7 @@ void add_pcb_to_q(node_t * pcb_node, priority_t priority){
 }
 
 
-void add_new_process(process_t * process){
+void add_new_process(process_t * process, int parent_pid){
     pcb_t * pcb_new = (pcb_t *) malloc(sizeof(pcb_t));
     if(pcb_new == NULL){
         return;
@@ -99,6 +147,13 @@ void add_new_process(process_t * process){
         free(pcb_new);
         return;
     }
+
+    if(parent_pid < 0){
+        pcb_new->parent_pid = current_pcb->process->pid;
+    } else {
+        pcb_new->parent_pid = parent_pid;
+    }
+
     add_pcb_to_q(new_node, pcb_new->priority);
 }
 
@@ -160,7 +215,8 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
 
 int remove_from_queue_by_pid(queue_t * queue, int pid) {
     node_t * current_node = queue->current_node;
-
+    drawWord("PID: ");
+    drawNumber(pid);
     while (current_node) {
         pcb_t *pcb = (pcb_t *)current_node->data;
 
@@ -241,4 +297,12 @@ void stop_current_process() {
 
 int getQuantum(){
     return scheduler[current_pcb->priority]->quantum;
+}
+
+int remove_process_from_scheduler(pcb_t * pcb){
+    if(remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pcb->process->pid) == 0){
+        return -1;
+    }
+    processes_qty--;
+    return 0;
 }

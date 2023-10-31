@@ -22,13 +22,15 @@ void init_scheduler(int quantum);
 void enable_multitasking(int pid);
 int scheduler_enabled();
 int ticks_remaining();
-void add_new_process(process_t * process);
+void add_new_process(process_t * process, int parent_pid);
 void add_pcb_to_q(node_t * pcb_node, priority_t priority);
 pcb_t * get_current_pcb();
 pcb_t * find_next_process();
 uintptr_t * switch_context(uintptr_t * current_rsp);
 void stop_current_process();
 int getQuantum();
+pcb_t * get_pcb_entry(int pid);
+int remove_process_from_scheduler(pcb_t * pcb);
 
 void change_process_priority(int pid, priority_t priority);
 #endif

@@ -16,6 +16,8 @@ void sleepms(int mseconds);
 void nanoms(int nseconds);
 char * cpuVendor(char* vendor);
 
+void int20h();
+
 void force_context_switch(uintptr_t * rsp);
 void * create_stackframe(void * entry_point, char ** args, void * stack_base, void * wrapper);
 
