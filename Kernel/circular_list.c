@@ -53,8 +53,9 @@ int remove_node_given_pid(queue_t * queue, int pid){
     node_t * current_node = queue->current_node;
     node_t * next_node = current_node->next;
     while(current_node != next_node){
-        pcb_t * process = (pcb_t *) current_node->data;
-        if(process->process->pid == pid){
+        pcb_t * pcb = (pcb_t *) current_node->data;
+        if(pcb->process->pid == pid){
+            pcb->priority = DEPRECATED;
             remove_node(queue, current_node);
             return queue->qty;
         }

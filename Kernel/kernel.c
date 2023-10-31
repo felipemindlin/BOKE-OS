@@ -130,7 +130,7 @@ int main()
 	load_idt();
 	setFontSize(1);
 	init_mm((void *)0x0000000000600000, 0x0000000000020000);
-	init_scheduler(4);
+	init_scheduler(2);
 	
 	/*
 	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
@@ -140,12 +140,12 @@ int main()
 
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	// int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
-	int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, &funcion3, NULL);
+	int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
 	//create_process("test",0x0000000000010000,  0x0000000000001000, &funcion, NULL);
-	create_process("peru", 0x0000000000001000, 0x0000000000001000, &funcion, NULL);
+	//create_process("peru", 0x0000000000001000, 0x0000000000001000, &funcion, NULL);
 	change_process_priority(create_process("idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY);
-	create_process("arg", 0x0000000000001000, 0x0000000000001000, &funcion2, NULL);
-	create_process("brasil", 0x0000000000001000, 0x0000000000001000, &funcion4, NULL);
+	//create_process("arg", 0x0000000000001000, 0x0000000000001000, &funcion2, NULL);
+	//create_process("brasil", 0x0000000000001000, 0x0000000000001000, &funcion4, NULL);
 	// CON TEST1 EL SCHEDULER NO FUNCIONA BIEN. SI AGREGO TEST2, NECESITAR
 	//start_next_process();
 	enable_multitasking(shell_pid);

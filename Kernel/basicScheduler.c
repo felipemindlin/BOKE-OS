@@ -16,16 +16,28 @@ pcb_t * get_idle_pcb();
 pcb_t * find_next_process( pcb_t * pcb ) {
     pcb_t * keep_running = NULL;
     for (int i = HIGH_PRIORITY; i >=LOW_PRIORITY; i--) {
-        if (scheduler[i]->queue->current_node) {
-            pcb_t *potential_pcb = (pcb_t *)scheduler[i]->queue->current_node->data;
-            if (potential_pcb->process->status == READY) {
-                return potential_pcb;
-            } else if(potential_pcb->process->status == RUNNING && potential_pcb->priority <= HIGH_PRIORITY && potential_pcb->priority>= LOW_PRIORITY){
-                keep_running = potential_pcb;
+        node_t * node = scheduler[i]->queue->current_node;
+        while (node) {
+            pcb_t *pcb = (pcb_t *)node->data;
+            if (pcb->priority == DEPRECATED) {
+                node = node->next;
+                continue;
+            }
+            if (pcb->process->status == RUNNING) {
+                keep_running = pcb;
+            }
+            if (pcb->process->status == READY) {
+                pcb->process->status = RUNNING;
+                scheduler[i]->queue->current_node = node->next;
+                return pcb;
+            }
+            node = node->next;
+            if (node == scheduler[i]->queue->current_node) {
+                break; 
             }
         }
     }
-    if(keep_running != NULL){
+    if (keep_running) {
         return keep_running;
     }
     return get_idle_pcb();
@@ -153,8 +165,6 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
     }
     current_pcb = new_pcb;
     current_pcb->process->status = RUNNING;
-    drawWord(current_pcb->process->name);
-    drawWord("\n");
     /* THIS IF COULD BE FOR THE IDLE PROCESS. If there are no available processes, then the idle starts exec
     if (current_pcb) {
         current_pcb->process->status = RUNNING;
@@ -217,13 +227,7 @@ void stop_current_process() {
         } else if(current_pcb->priority == LOW_PRIORITY || current_pcb->priority==IDLE_PRIORITY) {
             // it is already in the min priority queue, so we just move it to the back
             //scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next->next;
-            drawWord("*");
-            for(int i=0 ; i<scheduler[LOW_PRIORITY]->queue->qty ; i++){
-                drawWord(((pcb_t*)(scheduler[LOW_PRIORITY]->queue->current_node->data))->process->name);
-                scheduler[LOW_PRIORITY]->queue->current_node = scheduler[LOW_PRIORITY]->queue->current_node->next;
-            }
             scheduler[LOW_PRIORITY]->queue->current_node = scheduler[LOW_PRIORITY]->queue->current_node->next;
-            drawWord("\n");
         } else {
             while(1){
                 drawWord("PROBLEMAS");
