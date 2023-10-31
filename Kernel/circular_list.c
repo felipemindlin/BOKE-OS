@@ -91,33 +91,6 @@ void remove_node(queue_t * queue, node_ptr node){
     queue->qty--;
 }
 
-/*
-int remove_node_with_pid(queue_t * queue, int pid){
-    if(queue == NULL){
-        return -1;
-    }
-    if(queue->current_node == NULL){
-        return -1;
-    }
-    node_ptr current_node = queue->current_node;
-    node_ptr next_node = current_node->next;
-    while(current_node != next_node){
-        process_t * process = (process_t *) current_node->data;
-        if(process->pid == pid){
-            remove_node(queue, current_node);
-            return 0;
-        }
-        next_node = next_node->next;
-    }
-    process_t * process = (process_t *) current_node->data;
-    if(process->pid == pid){
-        remove_node(queue, current_node);
-        return 0;
-    }
-    return -1;
-
-}*/
-
 void free_queue(queue_t * queue){
     if(queue == NULL){
         return;

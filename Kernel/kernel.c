@@ -89,41 +89,6 @@ void * initializeKernelBinary()
 	return getStackBase();
 	
 }
-int funcion(){
-	while(1){
-		if(a!=0){
-			drawWord("Peru\n");
-			a=0;
-		}
-	}
-}
-
-int funcion2(){
-	while(1){
-		if(a!=1){
-			drawWord("Argentina\n");
-			a=1;
-		}
-	}
-}
-
-int funcion3(){
-	while(1){
-		if(a!=2){
-			drawWord("Chile\n");
-			a=2;
-		}
-	}
-}
-
-int funcion4(){
-	while(1){
-		if(a!=3){
-			drawWord("Brasil\n");
-			a=3;
-		}
-	}
-}
 
 int main()
 {
@@ -139,25 +104,12 @@ int main()
 	init_mm(*userlandSize, mem_amount_bytes);*/
 
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
-	// int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
+	
 	int shell_pid = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
-	//create_process("test",0x0000000000010000,  0x0000000000001000, &funcion, NULL);
-	//create_process("peru", 0x0000000000001000, 0x0000000000001000, &funcion, NULL);
+	
 	change_process_priority(create_process("idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY);
-	//create_process("arg", 0x0000000000001000, 0x0000000000001000, &funcion2, NULL);
-	//create_process("brasil", 0x0000000000001000, 0x0000000000001000, &funcion4, NULL);
-	// CON TEST1 EL SCHEDULER NO FUNCIONA BIEN. SI AGREGO TEST2, NECESITAR
-	//start_next_process();
 	enable_multitasking(shell_pid);
-	// create_process("test",0x0000000000010000,  0x0000000000001000, &funcion, NULL);
-	
-	
-	
-	// process_t *shell_process = create_process("shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL);
-	// enable_multitasking(shell_process);
 
-	
-	//((EntryPoint)sampleCodeModuleAddress)();
 	drawWord("SOMETHING WENT WRONG\n");
 	while(1);
 	return 0;
