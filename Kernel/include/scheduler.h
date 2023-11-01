@@ -30,7 +30,7 @@ uintptr_t * switch_context(uintptr_t * current_rsp);
 void stop_current_process();
 int getQuantum();
 pcb_t * get_pcb_entry(int pid);
-int remove_process_from_scheduler(pcb_t * pcb);
-void printProcesses();
+int add_process_to_removal_queue(int pid);
+void print_process();
 void change_process_priority(int pid, priority_t priority);
 #endif

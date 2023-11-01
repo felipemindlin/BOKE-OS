@@ -69,4 +69,5 @@ int getAvailablePid();
 void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
 // process_t* create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int kill_process(int pid);
+int free_process(pcb_t * pcb);
 #endif

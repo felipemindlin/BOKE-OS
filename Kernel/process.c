@@ -2,7 +2,6 @@
 #include "interrupts.h"
 #include <scheduler.h>
 void process_wrapper(void entry_point(char ** argv), char ** argv);
-int free_process(pcb_t * pcb);
 
 int create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     if(name == NULL || entry_point == NULL){
@@ -74,8 +73,10 @@ int create_process(int parent_pid, const char * name, size_t heap_size, size_t s
 void process_wrapper(void entry_point(char ** argv), char ** argv){
     entry_point(argv);
 
-    // kill_process(get_current_pcb()->process->pid);
-    // printProcesses();
+    kill_process(get_current_pcb()->process->pid);
+
+    while(1); // waiting for OP to remove it from scheduler
+
 }
 
 int getAvailablePid(){
@@ -93,23 +94,14 @@ int kill_process(int pid){
     }
 
     pcb_t * parent_pcb = get_pcb_entry(pcb->parent_pid);
-    //drawWord(parent_pcb->process->name);
-    //drawNumber(parent_pcb->parent_pid);
+    
     // if parent is dead or child is zombie, kill the child
     if( parent_pcb==NULL || parent_pcb->process->status==DEAD || pcb->process->status == ZOMBIE || pcb->parent_pid == OS_PID){
         pcb->process->status = DEAD;
-        remove_process_from_scheduler(pcb);
-        free_process(pcb);
+        add_process_to_removal_queue(pcb->process->pid);
     } else {
         pcb->process->status = ZOMBIE;
     }
-
-    if(pid == get_current_pcb()->process->pid){
-        // if the process is the current process, switch to the next process in the queue
-        int20h();
-    }
-
-    //drawNumber(parent_pcb->process->pid);
 
     return 0;
 }

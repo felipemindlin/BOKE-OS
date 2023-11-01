@@ -55,11 +55,7 @@ void remove_node(queue_t * queue, node_ptr node){
     if(node == NULL){
         return;
     }
-    if (queue->qty == 1)
-        queue->current_node = NULL; 
-
-    else {
-        if(queue->current_node == node){
+    if(queue->current_node == node){
         queue->current_node = node->next;
     }
     if(queue->qty == 1){
@@ -72,7 +68,6 @@ void remove_node(queue_t * queue, node_ptr node){
     node_ptr next_node = node->next;
     prev_node->next = next_node;
     next_node->prev = prev_node;
-    }
     free(node);
     queue->qty--;
 }
