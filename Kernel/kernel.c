@@ -124,7 +124,7 @@ int main()
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	
 	int shell_pid = create_process(0, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=0 indicates OS created it
-	create_process(1, "test", 1, 0x0000000000001000, &function1, NULL); // id=0 indicates OS created it
+	create_process(0, "test", 1, 0x0000000000001000, &function1, NULL); // id=0 indicates OS created it
 	change_process_priority(create_process(0, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=0 indicates OS created it
 	enable_multitasking(shell_pid);
 

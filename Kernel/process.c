@@ -96,7 +96,7 @@ int kill_process(int pid){
     pcb_t * parent_pcb = get_pcb_entry(pcb->parent_pid);
     
     // if parent is dead or child is zombie, kill the child
-    if( parent_pcb==NULL || parent_pcb->process->status==DEAD || pcb->process->status == ZOMBIE || pcb->parent_pid == OS_PID){
+    if( pcb->parent_pid == OS_PID || parent_pcb==NULL || parent_pcb->process->status==DEAD || pcb->process->status == ZOMBIE){
         pcb->process->status = DEAD;
         add_process_to_removal_queue(pcb->process->pid);
     } else {

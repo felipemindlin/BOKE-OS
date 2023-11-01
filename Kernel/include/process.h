@@ -7,7 +7,7 @@
 #define	__need_size_t
 #define	__need_NULL
 #include <stddef.h>
-#define OS_PID 1
+#define OS_PID 0
 
 enum status_t{
     BLOCKED,
