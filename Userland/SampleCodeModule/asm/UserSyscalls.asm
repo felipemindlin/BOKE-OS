@@ -18,6 +18,12 @@ GLOBAL call_drawWordColorAt
 GLOBAL call_characterAt
 GLOBAL call_beep
 GLOBAL call_ps
+GLOBAL call_mem
+GLOBAL call_kill
+GLOBAL call_nice
+GLOBAL call_block
+GLOBAL call_loop
+
 section .text
 
 %macro call_to_handler 1
@@ -73,3 +79,13 @@ call_beep:
     call_to_handler 18
 call_ps:
     call_to_handler 19
+call_mem:
+    call_to_handler 20
+call_kill:
+    call_to_handler 21
+call_nice:
+    call_to_handler 22
+call_block:
+    call_to_handler 23
+call_loop:
+    call_to_handler 24

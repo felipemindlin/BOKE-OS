@@ -121,3 +121,16 @@ int free_process(pcb_t * pcb){
     
     return 0;
 }
+
+int pidd=0;
+void loop(){
+    if(!pid){
+        pidd = create_process(0, "loop", 4096, 4096, &loop, NULL);
+    }
+    while(1){
+        if(ticks_elapsed() % 100 == 0){
+            drawNumber(pidd);
+        }
+    }
+
+}

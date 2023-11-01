@@ -248,3 +248,50 @@ int strcmpspace(char * str1, char * str2){
     } else return 1;
 
 }
+
+
+char * strtok(char * str, char delim){
+    static char * static_str;
+    if (str != NULL){
+        static_str = str;
+    }
+    if (*static_str == '\0'){
+        return NULL;
+    }
+    char * toRet = static_str;
+    while (*static_str != delim && *static_str != '\0'){
+        static_str++;
+    }
+    if (*static_str == delim){
+        *static_str = '\0';
+        static_str++;
+    }
+    return toRet;
+}
+
+char * strncpy(char * dest, char * src, int n){
+    int i = 0;
+    for (; i < n && src[i] != '\0'; i++){
+        dest[i] = src[i];
+    }
+    for (; i < n; i++){
+        dest[i] = '\0';
+    }
+    return dest;
+}
+
+
+int atoi(char * str){
+    int value = 0;
+    int sign = 1; //en principio positivo
+    int i = 0;
+    if(str[0] == '-'){
+        sign = -1;
+        i++;
+    }
+    for (; str[i] != '\0'; i++){
+        value = (str[i] - '0') + value*10;
+    }
+    return value * sign;
+}
+

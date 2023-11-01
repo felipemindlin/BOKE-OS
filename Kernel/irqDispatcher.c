@@ -13,6 +13,7 @@
 #include "drivers/include/keyboard_driver.h"
 #include "syscalls.h"
 #include <scheduler.h>
+#include <process.h>
 
 
 static void int_20();
@@ -104,7 +105,24 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		beep(rsi, rdx);
 		break;
 	case 19:
+		//create_process(0, "print_process", 0x0000000000001000, 0x0000000000001000, &print_process, NULL);
 		print_process();
+		break;
+	case 20:
+		//create_process(0, "Print_Mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL);
+		printMem();
+		break;
+	case 21:
+		kill_process(rsi);
+		break;
+	case 22:
+		change_process_priority(rsi, rdx);
+		break;
+	case 23:
+		block_process(rsi);
+		break;
+	case 24:
+		loop();
 		break;
 	default:
 		return 0;

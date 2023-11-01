@@ -337,7 +337,6 @@ _irq05Handler:
 	irqHandlerMaster 5
 
 _irq60Handler:
-	
 	push rbx
 	push r12
 	push r13
