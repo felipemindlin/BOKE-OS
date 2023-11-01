@@ -1,12 +1,10 @@
 #include <mysemaphore.h>
 #include <string.h>
 #include <scheduler.h>
+#include <memory_manager.h>
 // Assumed external functions based on given code
 extern void enter_region(uint64_t *lock, uint64_t sem_idx);
 extern void leave_region(uint64_t *lock);
-
-extern void *malloc(size_t size);
-extern void * free(void * mem);
 
 extern void os_revive_process(int pid);
 extern int os_block_current_process();
