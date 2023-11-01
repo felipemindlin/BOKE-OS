@@ -6,6 +6,7 @@ size_t processes_qty = 0;
 
 scheduler_queue * scheduler[QUEUE_QTY];
 queue_t * waiting_for_remove;
+queue_t * creation_queue;
 
 uint8_t scheduler_status = 0;
 pcb_t * current_pcb;
@@ -15,7 +16,7 @@ scheduler_queue * create_queue_array(int quantum);
 int remove_from_queue_by_pid(queue_t * queue, int pid);
 pcb_t * get_idle_pcb();
 void remove_processes_from_scheduler();
-int remove_process_from_removal_queue();
+//int remove_process_from_removal_queue();
 
 pcb_t * find_next_process( pcb_t * pcb ) {
     pcb_t * keep_running = NULL;
@@ -94,7 +95,7 @@ void add_pcb_to_scheduler(node_t * pcb_node, priority_t priority){
 }
 
 
-void add_new_process(process_t * process, int parent_pid){
+void add_new_process(process_t * process){
     pcb_t * pcb_new = (pcb_t *) malloc(sizeof(pcb_t));
     if(pcb_new == NULL){
         return;
@@ -107,12 +108,6 @@ void add_new_process(process_t * process, int parent_pid){
     if(new_node == NULL){
         free(pcb_new);
         return;
-    }
-
-    if(parent_pid < 0){
-        pcb_new->parent_pid = current_pcb->process->pid;
-    } else {
-        pcb_new->parent_pid = parent_pid;
     }
 
     add_pcb_to_scheduler(new_node, pcb_new->priority);
@@ -129,6 +124,7 @@ int add_process_to_removal_queue(int pid){
     return waiting_for_remove->qty;
 }
 
+/*
 int remove_process_from_removal_queue(){
     node_t * node = waiting_for_remove->current_node;
     if(node == NULL || waiting_for_remove->qty == 0){
@@ -138,6 +134,7 @@ int remove_process_from_removal_queue(){
     remove_node(waiting_for_remove, node);
     return pid;
 }
+*/
 
 scheduler_queue * create_queue_array(int quantum){
     scheduler_queue * queue = (scheduler_queue *) malloc(sizeof(scheduler_queue));
@@ -311,11 +308,11 @@ int getQuantum(){
 }
 
 void remove_processes_from_scheduler(){
-    int pid = remove_process_from_removal_queue();
-    while(pid != -1){
+    int pid = (int) remove_node(waiting_for_remove, waiting_for_remove->current_node);
+    while(pid){
         remove_from_queue_by_pid(scheduler[get_pcb_entry(pid)->priority]->queue, pid);
         free_process(get_pcb_entry(pid));
-        pid = remove_process_from_removal_queue();
+        pid = (int) remove_node(waiting_for_remove, waiting_for_remove->current_node);
     }
 }
 
@@ -333,7 +330,7 @@ void init_OS_pcb(){
         free(OS_pcb);
         return;
     }
-    OS_pcb->parent_pid = 0;
+    OS_pcb->process->parent_pid = 0;
     process->pid = 0;
     process->status = RUNNING; // imagine it is always running, though it is clearly not always the current process
     process->name = malloc(str_len("OS") + 1);
@@ -411,3 +408,18 @@ void block_process(int pid) {
         add_pcb_to_scheduler(scheduler[pcb->priority]->queue->current_node, pcb->process->pid);
     }
 }
+/*
+int add_process_to_creation_queue(int parent_pid, char * name, size_t stack_size, size_t heap_size, void * entry_point, void * args) {
+    process_t * new_process = create_process(parent_pid, name, heap_size, stack_size, entry_point, args);
+    if (new_process == NULL) {
+        return -1; // Error if the process could not be created
+    }
+    node_t * new_node = create_node(new_process);
+    if (new_node == NULL) {
+        return -1; // Error if the node could not be created
+    }
+    if (insert_node(creation_queue, new_node) < 0) {
+        return -1; // Error if the node could not be inserted
+    }
+    return 0;
+}*/

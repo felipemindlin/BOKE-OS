@@ -124,9 +124,9 @@ int main()
 
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	
-	int shell_pid = create_process(1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=0 indicates OS created it
-	create_process(1, "test", 1, 0x0000000000001000, &function1, NULL); // id=0 indicates OS created it
-	change_process_priority(create_process(1, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=0 indicates OS created it
+	int shell_pid = create_and_insert_process(1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=0 indicates OS created it
+	create_and_insert_process(1, "test", 1, 0x0000000000001000, &function1, NULL); // id=0 indicates OS created it
+	change_process_priority(create_and_insert_process(1, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=0 indicates OS created it
 /*		char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
     test_sync(2, test_args);
 

@@ -42,6 +42,7 @@ typedef struct mem_block_t{
 
 typedef struct process_t{
     int pid;
+    int parent_pid;
     char status;
     char * name;
     mem_block_t * stack;
@@ -52,7 +53,6 @@ typedef struct pcb_t{
     size_t ticks;
     priority_t priority;
     process_t * process;
-    int parent_pid;
     registerStructT reg_state;
 } pcb_t;
 
@@ -64,10 +64,11 @@ static size_t pid = 2;
 #include <scheduler.h>
 
 
-int create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int getAvailablePid();
 void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
-// process_t* create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+// process_t* create_and_insert_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int kill_process(int pid);
 int free_process(pcb_t * pcb);
 void loop();

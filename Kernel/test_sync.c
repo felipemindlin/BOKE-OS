@@ -93,10 +93,10 @@ uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
 
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    // Here we need to pass all the required parameters to create_process
+    // Here we need to pass all the required parameters to create_and_insert_process
     drawNumber(i);
-    pids[i] = create_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
-    pids[i + TOTAL_PAIR_PROCESSES] = create_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
+    pids[i] = create_and_insert_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
+    pids[i + TOTAL_PAIR_PROCESSES] = create_and_insert_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
   }
 
   // Assuming you have a my_sem_wait function to wait for the process to complete

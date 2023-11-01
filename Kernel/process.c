@@ -3,14 +3,28 @@
 #include <scheduler.h>
 void process_wrapper(void entry_point(char ** argv), char ** argv);
 
-int create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
+int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     if(name == NULL || entry_point == NULL){
         return -1;
     }
 
+    process_t * process = create_process(parent_pid, name, heap_size, stack_size, entry_point, argv);
+
+    add_new_process(process);
+    return process->pid;
+
+}
+
+process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     process_t * process = (process_t *) malloc(sizeof(process_t));
     if(process == NULL){
         return -1;
+    }
+
+    if(parent_pid < 0){
+        process->parent_pid = process->pid;
+    } else {
+        process->parent_pid = parent_pid;
     }
 
     process->pid = getAvailablePid();
@@ -65,9 +79,7 @@ int create_process(int parent_pid, const char * name, size_t heap_size, size_t s
     process->stack->current = create_stackframe((uintptr_t *)entry_point, argv, process->stack->base + stack_size, &process_wrapper); // is this correct?
    
     process->status = READY;
-    add_new_process(process, parent_pid);
-    return process->pid;
-
+    return process;
 }
 
 void process_wrapper(void entry_point(char ** argv), char ** argv){
@@ -93,10 +105,10 @@ int kill_process(int pid){
         return -1;
     }
 
-    pcb_t * parent_pcb = get_pcb_entry(pcb->parent_pid);
+    pcb_t * parent_pcb = get_pcb_entry(pcb->process->parent_pid);
     
     // if parent is dead or child is zombie, kill the child
-    if( pcb->parent_pid == OS_PID || parent_pcb==NULL || parent_pcb->process->status==DEAD || pcb->process->status == ZOMBIE){
+    if( pcb->process->parent_pid == OS_PID || parent_pcb==NULL || parent_pcb->process->status==DEAD || pcb->process->status == ZOMBIE){
         pcb->process->status = DEAD;
         add_process_to_removal_queue(pcb->process->pid);
     } else {
@@ -125,7 +137,7 @@ int free_process(pcb_t * pcb){
 int pidd=0;
 void loop(){
     if(!pid){
-        pidd = create_process(0, "loop", 4096, 4096, &loop, NULL);
+        pidd = create_and_insert_process(0, "loop", 4096, 4096, &loop, NULL);
     }
     while(1){
         if(ticks_elapsed() % 100 == 0){

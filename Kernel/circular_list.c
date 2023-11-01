@@ -51,25 +51,31 @@ node_ptr next(node_ptr node){
     return node->next;
 }
 
-void remove_node(queue_t * queue, node_ptr node){
-    if(node == NULL){
-        return;
+void * remove_node(queue_t * queue, node_ptr node){ // returns the data of the removed node
+    if(queue == NULL || node == NULL){
+        return NULL;
+    }
+    if(queue->current_node == NULL){
+        return NULL;
     }
     if(queue->current_node == node){
         queue->current_node = node->next;
     }
     if(queue->qty == 1){
+        void * data = node->data;
         queue->current_node = NULL;
         free(node);
         queue->qty--;
-        return;
+        return data;
     }
     node_ptr prev_node = node->prev;
     node_ptr next_node = node->next;
     prev_node->next = next_node;
     next_node->prev = prev_node;
+    void * data = node->data;
     free(node);
     queue->qty--;
+    return data;
 }
 
 void free_queue(queue_t * queue){
