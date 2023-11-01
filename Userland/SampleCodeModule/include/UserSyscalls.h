@@ -25,4 +25,10 @@ void call_characterAt(uint64_t hexColor, char c, uint32_t x, uint32_t y);
 void call_beep(int freq, int time);
 void call_clearColor(uint64_t hexColor);
 void call_ps();
+void call_mem();
+void call_kill(int pid);
+void call_nice(int pid, int priority);
+void call_block(int pid);
+void call_loop();
+
 #endif /* USERSYSCALLS_H */

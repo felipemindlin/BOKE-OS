@@ -4,9 +4,9 @@
 #include "utils.h"
 #include "UserSyscalls.h"
 
-#define COMMAND_LEN 9
+#define COMMAND_LEN 18
 #define COLOR_LEN 5
-
+#define MAX_COMMAND_LENGTH 256
 enum Commands {
     HELP,
     TIME,
@@ -16,7 +16,16 @@ enum Commands {
     DIV0,
     INVALOP,
     BOKE,
-    PS
+    PS,
+    MEM,
+    KILL,
+    NICE,
+    BLOCK,
+    CAT,
+    WC,
+    PHYLO,
+    FILTER,
+    LOOP,
 };
 enum Colors {
     GREEN_,
@@ -39,4 +48,10 @@ void call_boke();
 void Div0(); //Divide por 0 y genera una excepcion
 void invalidOp(); //Genera una excepcion de operacion invalida
 void call_ps();
+void parse_command(char *command, char *parsed_command, int *pid, int *priority);
+void invalid_pid();
+void cat();
+void wc();
+int is_vowel(char c);
+void filter();
 #endif /*__COMMANDS_H__*/

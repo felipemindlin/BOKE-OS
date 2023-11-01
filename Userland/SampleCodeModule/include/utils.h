@@ -18,4 +18,7 @@ int strcmp(char * str1, char * str2);
 int strcmpspace(char * str1, char * str2);
 int null_or_space(char c);
 int null_or_newline(char c);
+char * strtok(char * str, char delim);
+char * strncpy(char * dest, char * src, int n);
+int atoi(char * str);
 #endif /* UTILS_H */

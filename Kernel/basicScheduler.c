@@ -194,6 +194,10 @@ void print_process(){
             drawWord("Status: ");
             drawWord(status_arr[((pcb_t *)node->data)->process->status]);
             drawWord("\n");
+
+            drawWord("PID: ");
+            drawNumber(((pcb_t *)node->data)->process->pid);
+            drawWord("\n");
             if (node == scheduler[i]->queue->current_node) {
                 break; 
             }
@@ -419,4 +423,16 @@ int os_block_current_process() {
     // Trigger a context switch
     force_context_switch((uintptr_t *)current_pcb->process->stack->current);
     return current_pcb->process->pid; // Return the PID of the blocked process
+}
+
+void block_process(int pid) {
+    pcb_t *pcb = get_pcb_entry(pid); // Fetch the PCB for the given PID
+    if (pcb != NULL && pcb->process->status == READY) {
+        pcb->process->status = BLOCKED; // Change status to BLOCKED
+        remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pcb->process->pid);
+        force_context_switch((uintptr_t *)pcb->process->stack->current);
+    } else if (pcb != NULL && pcb->process->status == BLOCKED) {
+        pcb->process->status = READY; // Change status to READY
+        add_pcb_to_q(scheduler[pcb->priority]->queue, pcb->process->pid);
+    }
 }

@@ -7,6 +7,7 @@
 #define TOTAL_PAIR_PROCESSES 4
 #include <libasm.h>
 #include <process.h>
+#include <mysemaphore.h>
 
 void my_yield(){
   forceTimer();
@@ -55,7 +56,7 @@ drawWord("Im here2");
     n = 4;
 
   if (use_sem) {
-    if ((my_sem = my_sem_open(SEM_ID, 1)) == -1) {
+    if ((my_sem = my_sem_open(1, SEM_ID)) == -1) {
       drawWord("test_sync: ERROR opening semaphore\n");
       return;
     }
