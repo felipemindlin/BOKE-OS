@@ -32,5 +32,6 @@ int getQuantum();
 pcb_t * get_pcb_entry(int pid);
 int add_process_to_removal_queue(int pid);
 void print_process();
+int current_process_id();
 void change_process_priority(int pid, priority_t priority);
 #endif

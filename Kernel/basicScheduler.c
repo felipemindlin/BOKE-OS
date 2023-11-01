@@ -386,3 +386,37 @@ void init_OS_pcb(){
     // do not add OS to scheduler, it runs when it wants
 }
 */
+
+
+int current_process_id(){
+    if(current_pcb == NULL){
+        return -1;
+    }
+    return current_pcb->process->pid;
+}
+
+void os_revive_process(int pid) {
+    pcb_t *pcb = get_pcb_entry(pid); // Fetch the PCB for the given PID
+    if (pcb != NULL && pcb->process->status == BLOCKED) {
+        pcb->process->status = READY; // Change status to READY
+        // Add the process back to its respective priority queue
+        node_t * pcb_node = create_node(pcb);
+        if (pcb_node != NULL) {
+            add_pcb_to_q(pcb_node, pcb->priority);
+        }
+    }
+}
+
+
+int os_block_current_process() {
+    if (current_pcb == NULL) {
+        return -1; // Error if there is no current process
+    }
+
+    current_pcb->process->status = BLOCKED; // Change status to BLOCKED
+    // Remove the process from its queue
+    remove_from_queue_by_pid(scheduler[current_pcb->priority]->queue, current_pcb->process->pid);
+    // Trigger a context switch
+    force_context_switch((uintptr_t *)current_pcb->process->stack->current);
+    return current_pcb->process->pid; // Return the PID of the blocked process
+}
