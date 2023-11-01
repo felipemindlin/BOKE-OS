@@ -23,7 +23,7 @@ void enable_multitasking(int pid);
 int scheduler_enabled();
 int ticks_remaining();
 void add_new_process(process_t * process, int parent_pid);
-void add_pcb_to_q(node_t * pcb_node, priority_t priority);
+void add_pcb_to_scheduler(node_t * pcb_node, priority_t priority);
 pcb_t * get_current_pcb();
 pcb_t * find_next_process();
 uintptr_t * switch_context(uintptr_t * current_rsp);

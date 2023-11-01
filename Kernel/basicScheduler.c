@@ -27,7 +27,7 @@ pcb_t * find_next_process( pcb_t * pcb ) {
                 node = node->next;
                 continue;
             }
-            if (pcb->process->status == RUNNING) {
+            if (pcb->process->status == RUNNING) { // there is only one process that should be with status RUNNING: the current process
                 keep_running = pcb;
             }
             if (pcb->process->status == READY) {
@@ -88,7 +88,7 @@ void init_scheduler(int quantum){ // for now, every queue has the same quantum. 
     waiting_for_remove = create_queue();
 }
 
-void add_pcb_to_q(node_t * pcb_node, priority_t priority){
+void add_pcb_to_scheduler(node_t * pcb_node, priority_t priority){
     insert_node(scheduler[priority]->queue, pcb_node);
     processes_qty++;
 }
@@ -115,7 +115,7 @@ void add_new_process(process_t * process, int parent_pid){
         pcb_new->parent_pid = parent_pid;
     }
 
-    add_pcb_to_q(new_node, pcb_new->priority);
+    add_pcb_to_scheduler(new_node, pcb_new->priority);
 }
 
 int add_process_to_removal_queue(int pid){
@@ -298,34 +298,11 @@ void stop_current_process() {
            change_process_priority(current_pcb->process->pid, current_pcb->priority - 1);
         } else if(current_pcb->priority == LOW_PRIORITY || current_pcb->priority==IDLE_PRIORITY) {
             scheduler[LOW_PRIORITY]->queue->current_node = scheduler[LOW_PRIORITY]->queue->current_node->next;
-        } else if(current_pcb->priority == DEPRECATED) {
-            return;
-        } else { // REMOVE THIS ELSE LATER
-            while(1){
-                drawWord("PROBLEMAS");
-            }
         }
-
+        
     } else {
-/* HERE WE NEED TO CONSIDER THE CASE WHERE THE PROCESS IS BLOCKED OR DEAD. IF IT IS, WE DON'T CHANGE THE PRIORITY
-
-        if(current_pcb->priority<QUEUE_QTY-1){
-            // the new priority depends on the current priority, the time it has been running and the quantum
-            int new_priority = current_pcb->priority +(int) (((double)current_pcb->ticks) / scheduler[current_pcb->priority]->quantum);
-            if(new_priority > QUEUE_QTY-1){
-                new_priority = QUEUE_QTY-1;
-            }
-            change_process_priority(current_pcb->process->pid, new_priority);
-        }
-
-        node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
-        remove_node(scheduler[current_pcb->priority]->queue, aux);
-        add_pcb_to_q(aux, current_pcb->priority);
-*/
-    // FOR NOW, WE JUST HAVE NOT-ENDING PROCESSES, SO WE ENTER A WHILE(1) ERROR;
-    while(1){
-        drawWord("ERROR");
-    }
+        // in this csae the process is blocked or finished. We just advance the current node
+        scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
     }
 }
 
@@ -404,7 +381,7 @@ void os_revive_process(int pid) {
         // Add the process back to its respective priority queue
         node_t * pcb_node = create_node(pcb);
         if (pcb_node != NULL) {
-            add_pcb_to_q(pcb_node, pcb->priority);
+            add_pcb_to_scheduler(pcb_node, pcb->priority);
         }
     }
 }
@@ -431,6 +408,6 @@ void block_process(int pid) {
         force_context_switch((uintptr_t *)pcb->process->stack->current);
     } else if (pcb != NULL && pcb->process->status == BLOCKED) {
         pcb->process->status = READY; // Change status to READY
-        add_pcb_to_q(scheduler[pcb->priority]->queue, pcb->process->pid);
+        add_pcb_to_scheduler(scheduler[pcb->priority]->queue->current_node, pcb->process->pid);
     }
 }

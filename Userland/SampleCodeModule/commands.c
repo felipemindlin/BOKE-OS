@@ -62,7 +62,7 @@ void __call_command__(int i, char * command){
     int priority;
    // print("%s",command);
     parse_command(command, parsed_command, &pid, &priority);
-    print("pid :%d, priority: %d\n",pid, priority);
+    //print("pid :%d, priority: %d\n",pid, priority);
 
     switch (i)
     {
