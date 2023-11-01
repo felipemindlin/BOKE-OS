@@ -96,11 +96,9 @@ int function1(){
 	while(1){
 		c += ticks_elapsed();
 		if(c % 10000000 == 1){
-			drawWord("asd");
-			drawNumber(c);
+			
 			b++;
 			if(b==3){
-				break;
 			}
 			c+=2;
 		}

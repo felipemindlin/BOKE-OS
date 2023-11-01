@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "UserSyscalls.h"
 
-#define COMMAND_LEN 8
+#define COMMAND_LEN 9
 #define COLOR_LEN 5
 
 enum Commands {
@@ -15,7 +15,8 @@ enum Commands {
     SETCOLOR,
     DIV0,
     INVALOP,
-    BOKE
+    BOKE,
+    PS
 };
 enum Colors {
     GREEN_,
@@ -37,5 +38,5 @@ void findColor(char * color); //Busca el color ingresado por el usuario
 void call_boke(); 
 void Div0(); //Divide por 0 y genera una excepcion
 void invalidOp(); //Genera una excepcion de operacion invalida
-
+void call_ps();
 #endif /*__COMMANDS_H__*/

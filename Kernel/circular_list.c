@@ -43,31 +43,6 @@ int insert_node(queue_t * queue, node_t * new_node){
     return queue->qty++;
 }
 
-int remove_node_given_pid(queue_t * queue, int pid){
-    if(queue == NULL){
-        return -1;
-    }
-    if(queue->current_node == NULL){
-        return -1;
-    }
-    node_t * current_node = queue->current_node;
-    node_t * next_node = current_node->next;
-    while(current_node != next_node){
-        pcb_t * pcb = (pcb_t *) current_node->data;
-        if(pcb->process->pid == pid){
-            pcb->priority = DEPRECATED;
-            remove_node(queue, current_node);
-            return queue->qty;
-        }
-        next_node = next_node->next;
-    }
-    pcb_t * pcb = (pcb_t *) current_node->data;
-    if(pcb->process->pid == pid){
-        remove_node(queue, current_node);
-        return queue->qty;
-    }
-    return -1;
-}
 
 node_ptr next(node_ptr node){
     if(node == NULL){
@@ -80,13 +55,18 @@ void remove_node(queue_t * queue, node_ptr node){
     if(node == NULL){
         return;
     }
-    if(queue->current_node == node){
+    if (queue->qty == 1)
+        queue->current_node = NULL; 
+
+    else {
+        if(queue->current_node == node){
         queue->current_node = node->next;
     }
     node_ptr prev_node = node->prev;
     node_ptr next_node = node->next;
     prev_node->next = next_node;
     next_node->prev = prev_node;
+    }
     free(node);
     queue->qty--;
 }

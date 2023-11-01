@@ -73,7 +73,9 @@ int create_process(int parent_pid, const char * name, size_t heap_size, size_t s
 
 void process_wrapper(void entry_point(char ** argv), char ** argv){
     entry_point(argv);
-    kill_process(get_current_pcb()->process->pid);
+
+    // kill_process(get_current_pcb()->process->pid);
+    // printProcesses();
 }
 
 int getAvailablePid(){
@@ -94,7 +96,7 @@ int kill_process(int pid){
     //drawWord(parent_pcb->process->name);
     //drawNumber(parent_pcb->parent_pid);
     // if parent is dead or child is zombie, kill the child
-    if( parent_pcb==NULL || parent_pcb->process->status==DEAD || pcb->process->status == ZOMBIE){
+    if( parent_pcb==NULL || parent_pcb->process->status==DEAD || pcb->process->status == ZOMBIE || pcb->parent_pid == OS_PID){
         pcb->process->status = DEAD;
         remove_process_from_scheduler(pcb);
         free_process(pcb);
