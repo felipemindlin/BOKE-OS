@@ -74,6 +74,7 @@ int create_process(int parent_pid, const char * name, size_t heap_size, size_t s
 void process_wrapper(void entry_point(char ** argv), char ** argv){
     entry_point(argv);
     kill_process(get_current_pcb()->process->pid);
+    drawWord("Process exited");
 }
 
 int getAvailablePid(){
@@ -85,7 +86,7 @@ void save_reg_state(pcb_t * pcb){
 }
 
 int kill_process(int pid){
-    pcb_t * pcb = get_pcb_entry(pid);
+    pcb_t * pcb = get_current_pcb();
     if(pcb == NULL || pcb->process == NULL){
         return -1;
     }

@@ -200,6 +200,8 @@ pcb_t * get_current_pcb(){
 
 uintptr_t * switch_context(uintptr_t * current_rsp) {
     current_pcb->process->stack->current = current_rsp; // save current rsp for next time
+    drawWord("\n");
+    drawWordColor(RED, current_pcb->process->name);
     stop_current_process();
     pcb_t * new_pcb = find_next_process(current_pcb);
 
@@ -215,7 +217,7 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
 
 int remove_from_queue_by_pid(queue_t * queue, int pid) {
     node_t * current_node = queue->current_node;
-    drawWord("PID: ");
+    drawWord("PID removed from queue: ");
     drawNumber(pid);
     while (current_node) {
         pcb_t *pcb = (pcb_t *)current_node->data;
@@ -241,7 +243,12 @@ void change_process_priority(int pid, priority_t priority){
     if(pcb == NULL){
         return;
     }
-    
+    if(pid == 2){
+        drawWord("\n       PID: 2 with priority: ");
+        drawNumber(pcb->priority);
+        drawWord(" changes to priority: ");
+        drawNumber(priority);
+    }
     remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pid);
     
     pcb->priority = priority;
@@ -258,6 +265,25 @@ void change_process_priority(int pid, priority_t priority){
 }
 
 void stop_current_process() {
+    // Im debuggin. print all elements from the scheduler array
+    for(int i=0 ; i<QUEUE_QTY ; i++){
+        node_t * current_node = scheduler[i]->queue->current_node;
+        drawWord("\n");
+        drawWordColor(RED, "QUEUE: ");
+        drawNumber(i);
+        drawWordColor(RED, "  ");
+        while (current_node) {
+            pcb_t *pcb = (pcb_t *)current_node->data;
+            drawWordColor(RED, pcb->process->name);
+            drawWordColor(RED, "  ");
+            current_node = current_node->next;
+            if (current_node == scheduler[i]->queue->current_node) {
+                break; 
+            }
+        }
+    }
+
+
     if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {        
 
         node_t * aux = scheduler[current_pcb->priority]->queue->current_node;

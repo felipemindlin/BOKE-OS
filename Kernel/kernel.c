@@ -96,10 +96,10 @@ int function1(){
 	while(1){
 		c += ticks_elapsed();
 		if(c % 10000000 == 1){
-			drawWord("asd");
-			drawNumber(c);
+			drawWordColor(RED,"asd");
+			drawNumberColor(RED,c);
 			b++;
-			if(b==3){
+			if(b==2){
 				break;
 			}
 			c+=2;
@@ -113,7 +113,7 @@ int main()
 	load_idt();
 	setFontSize(1);
 	init_mm((void *)0x0000000000600000, 0x0000000000020000);
-	init_scheduler(2);
+	init_scheduler(8);
 	
 	/*
 	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
