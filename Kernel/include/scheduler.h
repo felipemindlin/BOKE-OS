@@ -31,6 +31,6 @@ void stop_current_process();
 int getQuantum();
 pcb_t * get_pcb_entry(int pid);
 int remove_process_from_scheduler(pcb_t * pcb);
-
+int current_process_id();
 void change_process_priority(int pid, priority_t priority);
 #endif
