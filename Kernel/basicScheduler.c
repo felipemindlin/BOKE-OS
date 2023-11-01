@@ -44,6 +44,7 @@ pcb_t * find_next_process( pcb_t * pcb ) {
     return get_idle_pcb();
 }
 
+
 pcb_t * get_idle_pcb(){
     return (pcb_t *) scheduler[0]->queue->current_node->data;
 }
@@ -198,6 +199,29 @@ pcb_t * get_current_pcb(){
     return current_pcb;
 }
 
+void printProcesses(){
+  for (int i = HIGH_PRIORITY; i >=0; i--) {
+        node_t * node = scheduler[i]->queue->current_node;
+        drawWord("PROCESSES IN PRIORITY: ");
+        drawNumber(i);
+        drawWord("\n");
+        while (node) {
+             node = node->next;
+            drawWord("Name: ");
+            drawWord(((pcb_t *)node->data)->process->name);
+            drawWord("\n");
+
+            drawWord("Status: ");
+            drawWord(status_arr[((pcb_t *)node->data)->process->status]);
+            drawWord("\n");
+            if (node == scheduler[i]->queue->current_node) {
+                break; 
+            }
+           
+        }
+    }
+}
+
 uintptr_t * switch_context(uintptr_t * current_rsp) {
     current_pcb->process->stack->current = current_rsp; // save current rsp for next time
     drawWord("\n");
@@ -214,6 +238,7 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
     
     return current_pcb->process->stack->current;
 }
+
 
 int remove_from_queue_by_pid(queue_t * queue, int pid) {
     node_t * current_node = queue->current_node;

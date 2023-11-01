@@ -17,6 +17,7 @@ GLOBAL call_setFontSize
 GLOBAL call_drawWordColorAt
 GLOBAL call_characterAt
 GLOBAL call_beep
+GLOBAL call_ps
 section .text
 
 %macro call_to_handler 1
@@ -70,3 +71,5 @@ call_characterAt:
     call_to_handler 17
 call_beep:
     call_to_handler 18
+call_ps:
+    call_to_handler 19

@@ -7,12 +7,21 @@
 #define	__need_size_t
 #define	__need_NULL
 #include <stddef.h>
+#define OS_PID 1
+
 enum status_t{
     BLOCKED,
     READY,
     RUNNING,
     DEAD,
     ZOMBIE
+};
+static char* status_arr[5] ={
+    "BLOCKED",
+    "READY",
+    "RUNNING",
+    "DEAD",
+    "ZOMBIE"
 };
 
 //#define MAX_PRIORITY 2 NO USEN ESTO. La maxima prioridad depende de QUEUE_QTY pq es el tamaño del scheduler array
