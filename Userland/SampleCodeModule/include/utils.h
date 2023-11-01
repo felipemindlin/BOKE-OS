@@ -3,11 +3,14 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <UserSyscalls.h>
+#include <buffer.h>
 
 
 char getC();
 void putC(char c);
 void putInt(int num);
+void putHexDir(uint64_t num);
 void putString(char * str);
 int own_scanf(char * format, ...);
 int readInt(int* d);

@@ -7,7 +7,7 @@ size_t processes_qty = 0;
 scheduler_queue * scheduler[QUEUE_QTY];
 queue_t * waiting_for_remove;
 
-uint8_t isEnabled = 0;
+uint8_t scheduler_status = 0;
 pcb_t * current_pcb;
 //pcb_t * OS_pcb;
 
@@ -119,7 +119,7 @@ void add_new_process(process_t * process, int parent_pid){
 }
 
 int add_process_to_removal_queue(int pid){
-    node_t * new_node = create_node((void *) pid);
+    node_t * new_node = create_node((void *)(uintptr_t)pid);
     if(new_node == NULL){
         return -1;
     }
@@ -134,7 +134,7 @@ int remove_process_from_removal_queue(){
     if(node == NULL || waiting_for_remove->qty == 0){
         return -1;
     }
-    int pid = (int) node->data;
+    int pid = (int)(uintptr_t)node->data;
     remove_node(waiting_for_remove, node);
     return pid;
 }
@@ -163,14 +163,14 @@ int ticks_remaining() {
 }
 
 int scheduler_enabled(){
-    return isEnabled;
+    return scheduler_status;
 }
 
 void enable_multitasking(int pid){
  
     current_pcb = get_pcb_entry(pid);
     current_pcb->process->status = RUNNING;
-    isEnabled = 1;
+    scheduler_status = 1;
     force_context_switch((uintptr_t *)current_pcb->process->stack->current);
     
 }
@@ -192,7 +192,7 @@ void print_process(){
             drawWord("\n");
 
             drawWord("Status: ");
-            drawWord(status_arr[((pcb_t *)node->data)->process->status]);
+            drawWord(status_arr[(int)((pcb_t *)node->data)->process->status]);
             drawWord("\n");
             if (node == scheduler[i]->queue->current_node) {
                 break; 
@@ -289,8 +289,6 @@ void stop_current_process() {
 */
 
     if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {        
-
-        node_t * aux = scheduler[current_pcb->priority]->queue->current_node;
         
         if (current_pcb->priority > LOW_PRIORITY && current_pcb->priority <= HIGH_PRIORITY) {
            change_process_priority(current_pcb->process->pid, current_pcb->priority - 1);

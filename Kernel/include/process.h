@@ -7,7 +7,7 @@
 #define	__need_size_t
 #define	__need_NULL
 #include <stddef.h>
-#define OS_PID 0
+#define OS_PID 1
 
 enum status_t{
     BLOCKED,
@@ -56,7 +56,7 @@ typedef struct pcb_t{
     registerStructT reg_state;
 } pcb_t;
 
-static size_t pid = 1;
+static size_t pid = 2;
 
 /*
     LEAVE THIS INCLUDE HERE. IT MUST BE HERE BC OF THE ORDER THE INCLUDES ARE PERFORMED.

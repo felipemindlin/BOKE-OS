@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdarg.h>
 #include <utils.h>
-#include <UserSyscalls.h>
-#include <buffer.h>
 
 void vprint(char * format, va_list ap);
 
@@ -138,7 +134,7 @@ void vprint(char * format, va_list ap){
 
             switch(*format){
                 case 'c': {
-                    char c = va_arg(ap, char);
+                    char c = (char) va_arg(ap, int);
                     putC(c);
                     break;
                 }
@@ -153,7 +149,7 @@ void vprint(char * format, va_list ap){
                     break;
                 }
                 case 'x': {
-                    uint64_t x = va_arg(ap, uint64_t);
+                    uint64_t x = (uint64_t) va_arg(ap, uint64_t);
                     putHexDir(x);
                     break;
                 }

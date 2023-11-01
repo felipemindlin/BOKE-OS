@@ -1,5 +1,5 @@
-#ifndef LIB_H
-#define LIB_H
+#ifndef _LIBASM_H
+#define _LIBASM_H
 
 #include <stdint.h>
 
@@ -17,5 +17,5 @@ int get_year();
 void sleep(uint32_t seconds);
 void sleepms(int mseconds);
 int kbflag();
-extern void forceTImer();
+void forceTimer();
 #endif /* LIB_H */

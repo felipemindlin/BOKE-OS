@@ -12,6 +12,7 @@
 #include "drivers/include/soundDriver.h"
 #include "drivers/include/keyboard_driver.h"
 #include "syscalls.h"
+#include <scheduler.h>
 
 
 static void int_20();

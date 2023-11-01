@@ -132,8 +132,25 @@ static uintptr_t get_page_index(void * mem){
 #define ORANGE 0xFFA500
 
 static const int color_list[7] = { RED,GREEN,BLUE,WHITE,BLACK,YELLOW,ORANGE};
+
+int calculate_free_pages(){
+    int free_pages = 0;
+    for (uintptr_t i = 0; i < heap_struct.page_qty; i++){
+        if (heap_struct.pages[i] == FREE)
+            free_pages++;
+    }
+    return free_pages;
+}
+
 void printMem(){
-    int c = 0;
+    int free_pages = calculate_free_pages();
+    drawWord("\nTotal memory in bytes: ");
+    drawNumber(heap_struct.size);
+    drawWord("\nUsed memory in bytes: ");
+    drawNumber(heap_struct.size - free_pages * heap_struct.page_size);
+    drawWord("\nFree memory in bytes: ");
+    drawNumber(free_pages * heap_struct.page_size);
+    /*int c = 0;
     uintptr_t i=0;
     for (i = 0; i < heap_struct.page_qty; i++){
         if (heap_struct.pages[i] == 0)
@@ -145,5 +162,5 @@ void printMem(){
         }
         drawWord("|");
     }
-    drawWord("\n");
+    drawWord("\n");*/
 }
