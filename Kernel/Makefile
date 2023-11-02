@@ -1,6 +1,7 @@
 include Makefile.inc
 
 KERNEL=kernel.bin
+ELF=kernel.elf
 SOURCES=$(wildcard *.c)
 OBJECTS=$(SOURCES:.c=.o)
 
@@ -22,7 +23,7 @@ all: $(KERNEL)
 
 $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS) $(OBJECTS_INTERRUPTIONS)
 	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_DRIVERS) $(OBJECTS_INTERRUPTIONS) $(OBJECTS_ASM) $(STATICLIBS)
-
+	$(LD) $(LDFLAGS) -T kernel.ld --oformat=elf64-x86-64 -o $(ELF)  $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_DRIVERS) $(OBJECTS_INTERRUPTIONS) $(OBJECTS_ASM) $(STATICLIBS)
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -I. -c $< -o $@
 
