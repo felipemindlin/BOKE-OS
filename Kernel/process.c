@@ -10,6 +10,10 @@ int create_and_insert_process(int parent_pid, const char * name, size_t heap_siz
 
     process_t * process = create_process(parent_pid, name, heap_size, stack_size, entry_point, argv);
 
+    if(process == NULL){
+        return -1;
+    }
+
     add_new_process(process);
     return process->pid;
 
@@ -18,7 +22,7 @@ int create_and_insert_process(int parent_pid, const char * name, size_t heap_siz
 process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     process_t * process = (process_t *) malloc(sizeof(process_t));
     if(process == NULL){
-        return -1;
+        return NULL;
     }
 
     if(parent_pid < 0){
@@ -32,7 +36,7 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
     process->name = (char *) malloc(str_len(name) + 1);
     if(process->name == NULL){
         free(process);
-        return -1;
+        return NULL;
     }
     str_cpy(process->name, name);
 
@@ -40,7 +44,7 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
     if(process->heap == NULL){
         free(process->name);
         free(process);
-        return -1;
+        return NULL;
     }
 
     process->heap->base = malloc(heap_size);
@@ -48,7 +52,7 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
         free(process->heap);
         free(process->name);
         free(process);
-        return -1;
+        return NULL;
     }
 
     process->heap->current = (uintptr_t *) process->heap->base;
@@ -61,7 +65,7 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
         free(process->heap);
         free(process->name);
         free(process);
-        return -1;
+        return NULL;
     }
 
     process->stack->base = malloc(stack_size);
@@ -71,7 +75,7 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
         free(process->heap);
         free(process->name);
         free(process);
-        return -1;
+        return NULL;
     }
     
     process->stack->size = stack_size;
