@@ -14,6 +14,7 @@
 #define INVALID_ADDRESS -1
 #define FREE 0
 #define ALLOCATED 1
+#define PARCIAL 2
 
 #define	__need_size_t
 #define	__need_NULL
@@ -29,10 +30,19 @@ typedef struct heap {
     uint8_t * pages;
 } heap;
 
+typedef struct Node {
+    void * start;
+    uint64_t size;
+    uint64_t state;
+    uint64_t index;
+    struct Node *left;  
+    struct Node *right; 
+} Node;
+
 void init_mm(void * baseAddres, uint64_t mem_ammount);
+void initialize_heap(void * baseAddres, uint64_t mem_ammount);
 void * malloc(uintptr_t bytes);
 void * free(void * mem);
-
 void printMem();
 
 #endif
