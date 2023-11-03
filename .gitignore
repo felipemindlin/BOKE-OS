@@ -18,3 +18,5 @@
 #gdb
 tgdb*
 tmux*
+*.gdb_history
+gdbinit

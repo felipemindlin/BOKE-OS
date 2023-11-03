@@ -10,14 +10,14 @@ static char buffer[BUFFER_SIZE] = {0};
 void lineRead(char * line){
     __seek_command__(line);
     //---
-    clearBuffer();
+    clearBuffer(buffer);
 }
 
 void putLineStart()
 {   
     char s[] = "O] ";
     print(s);
-    clearBuffer();
+    clearBuffer(buffer);
 }
 
 /*
@@ -45,7 +45,7 @@ void bufferize (){
         } else if (c == '\n'){
             putC(c);
             if ( i == 0 ){
-                clearBuffer();
+                clearBuffer(buffer);
                 return;
             }
             buffer[i]=0;

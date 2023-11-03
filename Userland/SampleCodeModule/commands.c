@@ -66,45 +66,45 @@ void __call_command__(int i, char * command){
 
     switch (i)
     {
-    case HELP:;
+    case HELP:
         help();
         return;
-    case TIME:;
+    case TIME:
         time();
         return;
-    case REG_STATE:;
+    case REG_STATE:
         call_regState();
         return;
-    case PONG:;
+    case PONG:
         Pong();
         __shell_init__();    
         return;
-    case SETCOLOR:;
+    case SETCOLOR:
         setbg(command);
         return;
-    case DIV0:;
+    case DIV0:
         Div0();
         return;
-    case INVALOP:;
+    case INVALOP:
         invalidOp();
         return;
-    case BOKE:;
+    case BOKE:
         call_boke();
         return;
-    case PS:;
+    case PS:
         call_ps();
         return;
-    case MEM:;
+    case MEM:
         call_mem();
         return;
-    case KILL:;
+    case KILL:
         if(pid==-1){
             invalid_pid();
             return;
         }
         call_kill(pid);
         return;
-    case NICE:;
+    case NICE:
       if(pid==-1 || priority==-1){
             invalid_pid();
             return;
@@ -114,29 +114,29 @@ void __call_command__(int i, char * command){
         }
         call_nice(pid, priority);
         return;
-    case BLOCK:;
+    case BLOCK:
       if(pid==-1){
             invalid_pid();
             return;
         }
         call_block(pid);
         return;
-    case CAT:;
+    case CAT:
         cat();
         return;
     case WC:;
         wc();
         return;
-    case PHYLO:;
+    case PHYLO:
         //phylo();
         return;
-    case FILTER:;
+    case FILTER:
         filter();
         return;
-    case LOOP:;
+    case LOOP:
         call_loop();
         return;
-    default:;
+    default:
         call_sys_write("ERROR - Comando no reconocido",30,2);
         putC('\n');
         return;

@@ -33,7 +33,7 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
 
     process->pid = getAvailablePid();
     
-    process->name = (char *) malloc(str_len(name) + 1);
+    process->name = (char *) malloc((size_t)str_len(name) + 1);
     if(process->name == NULL){
         free(process);
         return NULL;

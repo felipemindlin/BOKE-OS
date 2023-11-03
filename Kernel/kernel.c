@@ -113,7 +113,7 @@ int main()
 {
 	load_idt();
 	setFontSize(1);
-	init_mm((void *)0x0000000000600000, 0x0000000000020000);
+	init_mm((void *)0x0000000000600000, 0x0000000000027000);
 	init_scheduler(2);
 	
 	/*

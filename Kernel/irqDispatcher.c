@@ -22,13 +22,14 @@ static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64
 
 typedef void (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
+InterruptHandler interruption[256] = {
+    [0] = &int_20,
+    [1] = &int_21,
+    [96] = (InterruptHandler)int_80,
+};
+
 //maneja las interrupciones y recibe el numero de la interrupcion y los registros en el momento de la interrupcion
 void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
-	InterruptHandler interruption[256] = {NULL};
-	interruption[0]=&int_20;
-	interruption[1]=&int_21;
-	interruption[96] = (InterruptHandler)int_80;
-
     if (irq >= 0 && irq < 256 && interruption[irq] != NULL) {
         InterruptHandler handler = interruption[irq];
         handler(rdi, rsi, rdx, rcx, r8, r9);
@@ -50,11 +51,11 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
     switch (rdi)
 	{
 	case 1:
-		sys_write((char*)rsi, rdx, rcx);
+		sys_write((char*)rsi, (int) rdx, (int) rcx);
 		break;
 	
 	case 2:
-		sys_read((char*)rsi, rdx, rcx);
+		sys_read((char*)rsi, (int) rdx, (int) rcx);
 		break;
 	case 3:
 		TimeClock((char*)rsi);
@@ -105,13 +106,13 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		beep(rsi, rdx);
 		break;
 	case 19:
-		add_process_to_creation_queue(1, "ps", 0x0000000000000100, 0x0000000000001000, &print_process, NULL);
+		add_process_to_creation_queue(1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL);
 		//create_and_insert_process(0, "print_process", 0x0000000000001000, 0x0000000000001000, &print_process, NULL);
 		//print_process();
 		break;
 	case 20:
-		//create_and_insert_process(0, "Print_Mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL);
-		printMem();
+		add_process_to_creation_queue(1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL);
+		//printMem();
 		break;
 	case 21:
 		kill_process(rsi);
