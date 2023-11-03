@@ -1,4 +1,4 @@
-#include<memory_manager.h>
+#include "include/memory_manager.h"
 #include "./drivers/include/videoDriver.h"
 
 #define IS_POWER_OF_TWO(x) ((x) != 0 && (((x) & ((x) - 1)) == 0))
@@ -15,12 +15,12 @@ void printTree(Node* node);
 
 void * free_rec(Node * node, void * ptr);
 
-void buddy_initialize_heap(void * baseAddres, uint64_t mem_ammount);
-void * buddy_malloc(uintptr_t bytes);
-void * buddy_free(void * mem);
-void buddy_printMem();
+void init_mm(void * baseAddres, uint64_t mem_ammount);
+void * malloc(uintptr_t bytes);
+void * free(void * mem);
+void printMem();
 
-void buddy_initialize_heap(void * baseAddres, uint64_t mem_ammount){
+void init_mm(void * baseAddres, uint64_t mem_ammount){
     root = (Node*)baseAddres;
     root->start = baseAddres;
 
@@ -53,7 +53,7 @@ void checkState(Node* node){
         }
 }
 
-void * buddy_malloc(uint64_t bytes){
+void * malloc(uint64_t bytes){
 if (root->size < bytes)
     {
         return NULL;
@@ -234,7 +234,7 @@ void showMemory(Node* node){
 }
 
 
-void buddy_printMem(){
+void printMem(){
     uint64_t freeMemory = 0;
     uint64_t allocatedMemory = 0;
     
@@ -252,7 +252,7 @@ void buddy_printMem(){
 
 // Creo que debería se void, porque no tendría sentido devolver un puntero a un espacio de memoria que ya no existe.
 // Para lo único que se me ocurre es para que sepas si se liberó o no, pero eso lo podés saber por el estado del nodo.
-void * buddy_free(void * mem){
+void * free(void * mem){
     return free_rec(root,mem);
 }
 

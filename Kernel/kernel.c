@@ -5,7 +5,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtLoader.h>
-#include <memory_manager.h>
+#include "../memory_manager/include/memory_manager.h"
 #include <scheduler.h>
 #include "drivers/include/videoDriver.h"
 #include "include/interrupts.h"

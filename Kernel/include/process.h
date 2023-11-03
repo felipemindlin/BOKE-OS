@@ -2,7 +2,7 @@
 #define _PROCESS_H
 
 #include <lib.h>
-#include <memory_manager.h>
+#include "../memory_manager/include/memory_manager.h"
 #include "registers.h"
 #define	__need_size_t
 #define	__need_NULL

@@ -1,6 +1,7 @@
 #Binary Files
 *.bin
 *.sys
+*.elf
 
 #The images
 *.img
@@ -13,3 +14,7 @@
 #vscode
 .vscode*
 *.json
+
+#gdb
+tgdb*
+tmux*

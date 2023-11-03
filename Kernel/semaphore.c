@@ -1,7 +1,7 @@
 #include <mysemaphore.h>
 #include <string.h>
 #include <scheduler.h>
-#include <memory_manager.h>
+#include "../memory_manager/include/memory_manager.h"
 // Assumed external functions based on given code
 extern void enter_region(uint64_t *lock, uint64_t sem_idx);
 extern void leave_region(uint64_t *lock);
