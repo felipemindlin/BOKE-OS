@@ -39,22 +39,28 @@ void slowInc(int64_t *p, int64_t inc) {
   *p = aux;
 }
 int flag=0;
-// void my_process_inc(int argc, char *argv[]) {
-void my_process_inc() {
-  int argc=4;
-  int64_t n = 3; //satoi(argv[1]);
-  int8_t inc;// = satoi(argv[2]);
-  int8_t use_sem;// = satoi(argv[3]);
-  if(!flag){
-    inc =1;
-    use_sem =1;
-    flag  = 1;
-  }
-  else{
-    use_sem = 0;
-    inc = -1;
-    flag = 0;
-  }
+ void my_process_inc(int argc, char *argv[]) {
+  drawWord("Im in processINC\n");
+  drawWord("argc=");
+  drawNumber(argc);
+  drawWord("\n");
+  drawWord("argv[0]=");
+  drawWord(argv[0]);
+  drawWord("\n");
+  drawWord("argv[1]=");
+  drawWord(argv[1]);
+  drawWord("\n");
+  drawWord("argv[2]=");
+  drawWord(argv[2]);
+  drawWord("\n");
+  drawWord("argv[3]=");
+  drawWord(argv[3]);
+
+// void my_process_inc() {
+  int64_t n = satoi(argv[1]);
+  int8_t inc = satoi(argv[2]);
+  int8_t use_sem = satoi(argv[3]);
+
   int my_sem = -1;
 
   if (argc != 4)
@@ -72,6 +78,8 @@ void my_process_inc() {
 
   uint64_t i;
   for (i = 0; i < n; i++) {
+    drawNumber(i);
+    drawWord("\n");
     if (use_sem) {
       my_sem_wait(my_sem);
     }
@@ -79,19 +87,30 @@ void my_process_inc() {
     if (use_sem) {
       my_sem_post(my_sem);
     }
+    drawNumber(i);
+    drawWord("\n");
   }
 
   return;
 }
-//uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
-uint64_t test_sync() { //{n, use_sem}
+uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
+  drawWord("Im in test-sync\n");
+  drawWord("argc=");
+  drawNumber(argc);
+  drawWord("\n");
+  drawWord("argv[0]=");
+  drawWord(argv[0]);
+  drawWord("\n");
+  drawWord("argv[1]=");
+  drawWord(argv[1]);
+  drawWord("\n");
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
-  // if (argc != 2)
-  //   return -1;
+  if (argc != 2)
+    return -1;
 
-  // char *argvDec[] = {"Decreaser", argv[0], "-1", argv[1]};
-  // char *argvInc[] = {"Increaser", argv[0], "1", argv[1]};
+  char *argvDec[] = {"Decreaser", argv[0], "-1", argv[1], NULL};
+  char *argvInc[] = {"Increaser", argv[0], "1", argv[1], NULL};
 
   global = 0;
 
@@ -103,11 +122,12 @@ uint64_t test_sync() { //{n, use_sem}
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     // Here we need to pass all the required parameters to create_and_insert_process
-    drawNumber(i);
-    // pids[i] = create_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
-    // pids[i + TOTAL_PAIR_PROCESSES] = create_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
-    pids[i] = create_and_insert_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, NULL);
-    pids[i + TOTAL_PAIR_PROCESSES] = create_and_insert_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, NULL);
+    //drawNumber(i);
+    pids[i] = create_and_insert_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
+    pids[i + TOTAL_PAIR_PROCESSES] = create_and_insert_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
+    // pids[i] = create_and_insert_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, NULL);
+    // pids[i + TOTAL_PAIR_PROCESSES] = create_and_insert_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, NULL);
+ 
   }
 
   // Assuming you have a my_sem_wait function to wait for the process to complete
@@ -116,7 +136,7 @@ uint64_t test_sync() { //{n, use_sem}
     my_sem_wait(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
-  drawWord("Expected value: 0\n");
+  drawWord("\nExpected value: 0\n");
   drawWord("Final value:");
   drawNumber((int)global);
   drawWord("\n");

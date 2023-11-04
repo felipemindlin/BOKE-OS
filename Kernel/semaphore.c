@@ -2,7 +2,7 @@
 #include <string.h>
 #include <scheduler.h>
 #include "../memory_manager/include/memory_manager.h"
-// Assumed external functions based on given code
+
 extern void enter_region(uint64_t *lock, uint64_t sem_idx);
 extern void leave_region(uint64_t *lock);
 
@@ -180,4 +180,15 @@ int put_sem(char *id) {
     }
     my_sem_close(sem_idx);
     return 0;
+}
+
+void whiff(uint64_t sem_idx) {
+  
+    int pid = current_process_id();
+    if (pid < 0) {
+        return;
+    }
+
+    add_to_queue(sem_idx, pid);
+    os_block_current_process();
 }

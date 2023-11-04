@@ -32,6 +32,7 @@ int add_to_queue(int sem_idx, int pid);
 int remove_from_queue(int sem_idx);
 int get_sem(char *id, int start_value);
 int put_sem(char *id);
+void whiff(uint64_t sem_idx);
 
 #endif
 

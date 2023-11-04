@@ -108,13 +108,13 @@ int function1(){
 	}
 	return 0;
 }
-// uint64_t test_sync(int argc, char *argv[]);
-uint64_t test_sync();
+ uint64_t test_sync(int argc, char *argv[]);
+//uint64_t test_sync();
 int main()
 {
 	load_idt();
 	setFontSize(1);
-	init_mm((void *)0x0000000000600000, 0x0000000000027000);
+	init_mm((void *)0x0000000000600000, 0x0000000002700000);
 	init_scheduler(2);
 	
 	/*
@@ -126,14 +126,14 @@ int main()
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	
 	int shell_pid = create_and_insert_process(0, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=0 indicates OS created it
-	create_and_insert_process(0, "test", 1, 0x0000000000001000, &function1, NULL); // id=0 indicates OS created it
+	//create_and_insert_process(0, "test", 1, 0x0000000000001000, &function1, NULL); // id=0 indicates OS created it
 	change_process_priority(create_and_insert_process(0, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=0 indicates OS created it
 	char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
-    test_sync();
-
+    test_sync(2, test_args);
+	drawWord("FIRST TEST DONE\n\n");
     // Now run the test_sync function without semaphores
     char *test_args_no_sem[] = {"3", "0"}; // Test with 10 iterations and semaphores disabled
-    test_sync();
+    test_sync(2, test_args_no_sem);
 	drawWord("\n paso");
 	enable_multitasking(shell_pid);
 
@@ -141,3 +141,4 @@ int main()
 	while(1);
 	return 0;
 }
+
