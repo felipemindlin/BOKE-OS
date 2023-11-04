@@ -21,7 +21,6 @@ static void int_21();
 static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
 typedef void (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
-
 InterruptHandler interruption[256] = {
     [0] = &int_20,
     [1] = &int_21,

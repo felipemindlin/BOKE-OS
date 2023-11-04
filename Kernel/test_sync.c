@@ -38,15 +38,25 @@ void slowInc(int64_t *p, int64_t inc) {
   aux += inc;
   *p = aux;
 }
-
-void my_process_inc(int argc, char *argv[]) {
-drawWord("Im here");
-  int64_t n = satoi(argv[1]);
-  int8_t inc = satoi(argv[2]);
-  int8_t use_sem = satoi(argv[3]);
-drawWord("Im here2");
+int flag=0;
+// void my_process_inc(int argc, char *argv[]) {
+void my_process_inc() {
+  int argc=4;
+  int64_t n = 3; //satoi(argv[1]);
+  int8_t inc;// = satoi(argv[2]);
+  int8_t use_sem;// = satoi(argv[3]);
+  if(!flag){
+    inc =1;
+    use_sem =1;
+    flag  = 1;
+  }
+  else{
+    use_sem = 0;
+    inc = -1;
+    flag = 0;
+  }
   int my_sem = -1;
-  
+
   if (argc != 4)
     return;
 
@@ -54,7 +64,7 @@ drawWord("Im here2");
     n = 4;
 
   if (use_sem) {
-    if ((my_sem = my_sem_open(1, SEM_ID)) == -1) {
+    if ((my_sem = my_sem_open(SEM_ID, 1)) == -1) {
       drawWord("test_sync: ERROR opening semaphore\n");
       return;
     }
@@ -71,18 +81,17 @@ drawWord("Im here2");
     }
   }
 
-
   return;
 }
-
-uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
+//uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
+uint64_t test_sync() { //{n, use_sem}
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
-  if (argc != 2)
-    return -1;
+  // if (argc != 2)
+  //   return -1;
 
-  char *argvDec[] = {"Decreaser", argv[0], "-1", argv[1]};
-  char *argvInc[] = {"Increaser", argv[0], "1", argv[1]};
+  // char *argvDec[] = {"Decreaser", argv[0], "-1", argv[1]};
+  // char *argvInc[] = {"Increaser", argv[0], "1", argv[1]};
 
   global = 0;
 
@@ -95,8 +104,10 @@ uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     // Here we need to pass all the required parameters to create_and_insert_process
     drawNumber(i);
-    pids[i] = create_and_insert_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
-    pids[i + TOTAL_PAIR_PROCESSES] = create_and_insert_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
+    // pids[i] = create_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
+    // pids[i + TOTAL_PAIR_PROCESSES] = create_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
+    pids[i] = create_and_insert_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, NULL);
+    pids[i + TOTAL_PAIR_PROCESSES] = create_and_insert_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, NULL);
   }
 
   // Assuming you have a my_sem_wait function to wait for the process to complete
