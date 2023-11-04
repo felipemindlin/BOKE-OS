@@ -1,4 +1,4 @@
-#include <process.h>
+ #include <process.h>
 #include "interrupts.h"
 #include <scheduler.h>
 void process_wrapper(void entry_point(char ** argv), char ** argv);
@@ -6,6 +6,18 @@ void process_wrapper(void entry_point(char ** argv), char ** argv);
 int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     if(name == NULL || entry_point == NULL){
         return -1;
+    }
+    if(argv!=NULL){
+         drawWord("\n create_and_insert_process \n");
+            for(int i=0;argv[i]!=NULL;i++){
+                if(argv[i]!=NULL){
+                    drawWord("argv[");
+                    drawNumber(i);
+                    drawWord("]=");
+                    drawWord(argv[i]);
+                    drawWord("\n");
+                }
+            }
     }
 
     process_t * process = create_process(parent_pid, name, heap_size, stack_size, entry_point, argv);
@@ -20,6 +32,19 @@ int create_and_insert_process(int parent_pid, const char * name, size_t heap_siz
 }
 
 process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
+      if(argv!=NULL){
+         drawWord("\nCreate_process\n");
+            for(int i=0;argv[i]!=NULL;i++){
+                if(argv[i]!=NULL){
+                    drawWord("argv[");
+                    drawNumber(i);
+                    drawWord("]=");
+                    drawWord(argv[i]);
+                    drawWord("\n");
+                }
+            }
+    }
+
     process_t * process = (process_t *) malloc(sizeof(process_t));
     if(process == NULL){
         return NULL;
@@ -80,13 +105,14 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
     
     process->stack->size = stack_size;
     
-    process->stack->current = create_stackframe((uintptr_t *)entry_point, argv, process->stack->base + stack_size, &process_wrapper); // is this correct?
-   
+    process->stack->current = create_stackframe((uintptr_t *)entry_point, (void*)argv, process->stack->base + stack_size, &process_wrapper); // is this correct?
+    
     process->status = READY;
     return process;
 }
 
 void process_wrapper(void entry_point(char ** argv), char ** argv){
+
     entry_point(argv);
 
     kill_process(get_current_pcb()->process->pid);
