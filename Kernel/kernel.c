@@ -19,7 +19,7 @@ static void *const systemVar = (void *)0x0000000000005A00;
 
 typedef int (*EntryPoint)();
 
-int a=1;
+char * args[]={"prueba1", "examen2", NULL};
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -91,9 +91,12 @@ void * initializeKernelBinary()
 	
 }
 
-int function1(){
+int function1(char * args[]){
 	int c=0;
 	int b=0;
+	for(int i=0; args[i]!=NULL; i++){
+		drawWord(args[i]);
+	}
 	while(1){
 		c += ticks_elapsed();
 		if(c % 10000000 == 1){
@@ -125,7 +128,7 @@ int main()
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	
 	int shell_pid = create_and_insert_process(1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=0 indicates OS created it
-	create_and_insert_process(1, "test", 1, 0x0000000000001000, &function1, NULL); // id=0 indicates OS created it
+	create_and_insert_process(1, "test", 1, 0x0000000000001000, &function1, args); // id=0 indicates OS created it
 	change_process_priority(create_and_insert_process(1, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=0 indicates OS created it
 /*		char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
     test_sync(2, test_args);
