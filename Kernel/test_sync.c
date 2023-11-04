@@ -39,8 +39,8 @@ void slowInc(int64_t *p, int64_t inc) {
   *p = aux;
 }
 int flag=0;
- void my_process_inc(int argc, char *argv[]) {
-  drawWord("Im in processINC\n");
+ void my_process_inc(char *argv[]) {
+  /*drawWord("Im in processINC\n");
   drawWord("argc=");
   drawNumber(argc);
   drawWord("\n");
@@ -55,16 +55,13 @@ int flag=0;
   drawWord("\n");
   drawWord("argv[3]=");
   drawWord(argv[3]);
-
+*/
 // void my_process_inc() {
   int64_t n = satoi(argv[1]);
   int8_t inc = satoi(argv[2]);
   int8_t use_sem = satoi(argv[3]);
 
   int my_sem = -1;
-
-  if (argc != 4)
-    return;
 
   if (n <= 0 || n > 10)
     n = 4;
@@ -78,8 +75,8 @@ int flag=0;
 
   uint64_t i;
   for (i = 0; i < n; i++) {
-    drawNumber(i);
-    drawWord("\n");
+    //drawNumber(i);
+    //drawWord("\n");
     if (use_sem) {
       my_sem_wait(my_sem);
     }
@@ -87,27 +84,22 @@ int flag=0;
     if (use_sem) {
       my_sem_post(my_sem);
     }
-    drawNumber(i);
-    drawWord("\n");
+    //drawNumber(i);
+    //drawWord("\n");
   }
 
   return;
 }
-uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
-  drawWord("Im in test-sync\n");
-  drawWord("argc=");
-  drawNumber(argc);
+uint64_t test_sync(char *argv[]) { //{n, use_sem}
+/*  drawWord("Im in test-sync\n");
   drawWord("\n");
   drawWord("argv[0]=");
   drawWord(argv[0]);
   drawWord("\n");
   drawWord("argv[1]=");
   drawWord(argv[1]);
-  drawWord("\n");
+  drawWord("\n");*/
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
-
-  if (argc != 2)
-    return -1;
 
   char *argvDec[] = {"Decreaser", argv[0], "-1", argv[1], NULL};
   char *argvInc[] = {"Increaser", argv[0], "1", argv[1], NULL};
@@ -115,8 +107,8 @@ uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
   global = 0;
 
   // Assuming you have a defined process size and parent_pid for this context
-  size_t process_heap_size = 40960; // Example heap size
-  size_t process_stack_size = 40960; // Example stack size
+  size_t process_heap_size = 0x2000; // Example heap size
+  size_t process_stack_size = 0x2000; // Example stack size
   int parent_pid = 0; // Assuming '0' is the PID for the initial process or kernel
 
   uint64_t i;
@@ -136,10 +128,10 @@ uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
     my_sem_wait(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
-  drawWord("\nExpected value: 0\n");
+  /*drawWord("\nExpected value: 0\n");
   drawWord("Final value:");
   drawNumber((int)global);
-  drawWord("\n");
+  drawWord("\n");*/
 
   return 0;
 }

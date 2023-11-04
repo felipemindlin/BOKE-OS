@@ -4,7 +4,7 @@
 #include "../memory_manager/include/memory_manager.h"
 
 extern void enter_region(uint64_t *lock, uint64_t sem_idx);
-extern void leave_region(uint64_t *lock);
+extern void leave_region(uint64_t *lock, uint64_t sem_idx);
 
 extern void os_revive_process(int pid);
 extern int os_block_current_process();
@@ -64,16 +64,16 @@ uint64_t my_sem_post(uint64_t sem_idx) {
     mySem_t *sem = &(sem_spaces[sem_idx].sem);
     uint64_t *lock_addr = &(sem->is_locked);
 
-    enter_region(lock_addr, sem_idx);
+//    enter_region(lock_addr, sem_idx);
 
     sem->counter++;
 
-    if (sem->queue_size > 0) {
+/*    if (sem->queue_size > 0) {
         int pid = remove_from_queue(sem_idx);
         os_revive_process(pid);
     }
-
-    leave_region(lock_addr);
+*/
+    leave_region(lock_addr, sem_idx);
     return 0;
 }
 
@@ -89,14 +89,14 @@ uint64_t my_sem_wait(uint64_t sem_idx) {
 
     if (sem->counter > 0) {
         sem->counter--;
-        leave_region(lock_addr);
-        return 0;
+//        leave_region(lock_addr, sem_idx);
+//        return 0;
     }
 
-    int pid = current_process_id();
-    add_to_queue(sem_idx, pid);
-    os_block_current_process();
-    leave_region(lock_addr);
+//    int pid = current_process_id();
+//    add_to_queue(sem_idx, pid);
+//    os_block_current_process();
+//    leave_region(lock_addr, sem_idx);
 
     return 0;
 }
@@ -191,4 +191,11 @@ void whiff(uint64_t sem_idx) {
 
     add_to_queue(sem_idx, pid);
     os_block_current_process();
+}
+
+void wake_up_processes(int sem_idx) {
+    while (sem_spaces[sem_idx].sem.queue_size > 0) {
+        int pid = remove_from_queue(sem_idx);
+        os_revive_process(pid);
+    }
 }

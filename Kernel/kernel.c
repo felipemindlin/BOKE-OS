@@ -94,7 +94,7 @@ void * initializeKernelBinary()
 int function1(char * args[]){
 	int c=0;
 	int b=0;
-	for(int i=0; args[i]!=NULL; i++){
+	for(int i=0; i<2; i++){
 		drawWord(args[i]);
 	}
 	while(1){
@@ -111,7 +111,7 @@ int function1(char * args[]){
 	}
 	return 0;
 }
- uint64_t test_sync(int argc, char *argv[]);
+extern uint64_t test_sync(char *argv[]);
 //uint64_t test_sync();
 int main()
 {
@@ -131,12 +131,12 @@ int main()
 	int shell_pid = create_and_insert_process(1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=0 indicates OS created it
 	create_and_insert_process(1, "test", 1, 0x0000000000001000, &function1, args); // id=0 indicates OS created it
 	change_process_priority(create_and_insert_process(1, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=0 indicates OS created it
-/*		char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
-    test_sync(2, test_args);
+	char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
+    test_sync(test_args);
 	drawWord("FIRST TEST DONE\n\n");
     // Now run the test_sync function without semaphores
     char *test_args_no_sem[] = {"3", "0"}; // Test with 10 iterations and semaphores disabled
-    test_sync(2, test_args_no_sem);
+    test_sync(test_args_no_sem);
 	drawWord("\n paso");
 	enable_multitasking(shell_pid);
 

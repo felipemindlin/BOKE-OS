@@ -170,6 +170,10 @@ int ticks_remaining() {
 }
 
 int scheduler_enabled(){
+    drawWord("G");
+    drawNumber(processes_qty);
+    drawNumber(current_pcb->process);
+    drawWord("\n");
     return scheduler_status;
 }
 
@@ -391,10 +395,10 @@ void os_revive_process(int pid) {
     if (pcb != NULL && pcb->process->status == BLOCKED) {
         pcb->process->status = READY; // Change status to READY
         // Add the process back to its respective priority queue
-        node_t * pcb_node = create_node(pcb);
+/*        node_t * pcb_node = create_node(pcb);
         if (pcb_node != NULL) {
             add_pcb_to_scheduler(pcb_node, pcb->priority);
-        }
+        }*/
     }
 }
 
@@ -406,9 +410,9 @@ int os_block_current_process() {
 
     current_pcb->process->status = BLOCKED; // Change status to BLOCKED
     // Remove the process from its queue
-    remove_from_queue_by_pid(scheduler[current_pcb->priority]->queue, current_pcb->process->pid);
+    //remove_from_queue_by_pid(scheduler[current_pcb->priority]->queue, current_pcb->process->pid); // NOT NECESSARY. THE SCHEDULER WILL TAKE THE NEXT READY PROCESS ONLY
     // Trigger a context switch
-    force_context_switch((uintptr_t *)current_pcb->process->stack->current);
+    //force_context_switch((uintptr_t *)current_pcb->process->stack->current); // THIS IS WRONG TOO. THE SCHEDULER WILL TAKE THE NEXT READY PROCESS ONLY
     return current_pcb->process->pid; // Return the PID of the blocked process
 }
 
