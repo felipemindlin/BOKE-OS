@@ -1,6 +1,6 @@
 #include "include/memory_manager.h"
 #include "./drivers/include/videoDriver.h"
-#include<stdio.h>
+#include <stdio.h>
 
 #define IS_POWER_OF_TWO(x) ((x) != 0 && (((x) & ((x) - 1)) == 0))
 #define MIN_BLOCK 16
@@ -25,6 +25,7 @@ void init_mm(void * baseAddres, uint64_t mem_ammount){
 void checkState(Node* node){
     if (node->left == NULL || node->right == NULL)
     {   
+        node->state = FREE; 
         return;
     }
     
@@ -110,35 +111,6 @@ void createChilds(Node * node){
 
 }
 
-Node * findNodeByIndex(Node * node,int index){
-    
-    if (node->index == index)
-    {
-        return node;
-    }
-    else
-    {
-        if (node->left != NULL)
-        {
-            Node * foundNode = findNodeByIndex(node->left,index);
-            if (foundNode != NULL)
-            {
-                return foundNode;
-            }
-        }
-        if (node->right != NULL)
-        {
-            Node * foundNode = findNodeByIndex(node->right,index);
-            if (foundNode != NULL)
-            {
-                return foundNode;
-            }
-        }
-        return NULL;
-    }
-}
-
-
 void printMem(){
     drawWord("Total memory:");
     drawNumber(root->size );
@@ -159,28 +131,32 @@ void * free(void * mem){
 }
 
 void * free_rec(Node * node, void * ptr){
-    if (node->start == ptr)
-    {
-        node->state = FREE;
-        Node * parent = findNodeByIndex(root,(node->index-1)/2);
-        if(parent != NULL){
-            if (parent->left->state == FREE && parent->right->state == FREE)
-            {
-                parent->state = FREE;
-            }
-            else
-            {
-                parent->state = PARCIAL;
-            }
-            
+    if(node == NULL){
+        return NULL;
+    }
+
+    if (node->left != NULL || node->right != NULL){
+        if ((uint64_t)node->right->start > (uint64_t) ptr){
+            free_rec(node->left,ptr);
         }
-        return node->start;
+        else{
+            free_rec(node->right,ptr);
+        }
+        checkState(node);
+        if (node->state == FREE)
+        {
+            node->left = NULL;
+            node->right = NULL;
+        }
     }
-    if (node->left != NULL){
-        free_rec(node->left,ptr);
+    else if (node->state == ALLOCATED){
+        if (node->start == ptr)
+        {
+            node->state = FREE;
+            memAllocated -= node->size;
+        }
     }
-    if(node->right != NULL){
-        free_rec(node->right,ptr);
-    }
+    
     return NULL;
+
 }
