@@ -2,6 +2,7 @@ section .text
 global enter_region
 global leave_region
 extern whiff  ; Assume whiff is a C function made accessible to the assembly
+extern wake_up_processes
 
 ; rdi - address of the lock variable
 ; rsi - semaphore index
@@ -45,6 +46,9 @@ leave_region:
     ; Set up for atomic exchange
     xor rax, rax  ; We want to set the lock to 0
     xchg [rdi], rax  ; Atomically release the lock
+
+    mov rdi, rsi
+    call wake_up_processes
 
     ; Restore registers
     pop rsi

@@ -391,10 +391,10 @@ void os_revive_process(int pid) {
     if (pcb != NULL && pcb->process->status == BLOCKED) {
         pcb->process->status = READY; // Change status to READY
         // Add the process back to its respective priority queue
-        node_t * pcb_node = create_node(pcb);
+/*        node_t * pcb_node = create_node(pcb);
         if (pcb_node != NULL) {
             add_pcb_to_scheduler(pcb_node, pcb->priority);
-        }
+        }*/
     }
 }
 

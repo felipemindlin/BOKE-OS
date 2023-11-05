@@ -85,6 +85,9 @@ int flag=0;
       my_sem_wait(my_sem);
     }
     slowInc(&global, inc);
+    drawWord("\nNumber global: ");
+    drawNumber(global);
+    drawWord("\n");
     if (use_sem) {
       my_sem_post(my_sem);
     }
