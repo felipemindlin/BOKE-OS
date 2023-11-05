@@ -64,7 +64,7 @@ uint64_t my_sem_post(uint64_t sem_idx) {
     mySem_t *sem = &(sem_spaces[sem_idx].sem);
     uint64_t *lock_addr = &(sem->is_locked);
 
-    enter_region(lock_addr, sem_idx);
+/*    enter_region(lock_addr, sem_idx);
 
     sem->counter++;
 
@@ -72,7 +72,7 @@ uint64_t my_sem_post(uint64_t sem_idx) {
         int pid = remove_from_queue(sem_idx);
         os_revive_process(pid);
     }
-
+*/
     leave_region(lock_addr);
     return 0;
 }
@@ -87,7 +87,7 @@ uint64_t my_sem_wait(uint64_t sem_idx) {
 
     enter_region(lock_addr, sem_idx);
 
-    if (sem->counter > 0) {
+    /*if (sem->counter > 0) {
         sem->counter--;
         leave_region(lock_addr);
         return 0;
@@ -97,7 +97,7 @@ uint64_t my_sem_wait(uint64_t sem_idx) {
     add_to_queue(sem_idx, pid);
     os_block_current_process();
     leave_region(lock_addr);
-
+    */
     return 0;
 }
 
@@ -191,4 +191,5 @@ void whiff(uint64_t sem_idx) {
 
     add_to_queue(sem_idx, pid);
     os_block_current_process();
+    force_scheduler();
 }

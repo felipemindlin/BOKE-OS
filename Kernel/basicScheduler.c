@@ -406,9 +406,9 @@ int os_block_current_process() {
 
     current_pcb->process->status = BLOCKED; // Change status to BLOCKED
     // Remove the process from its queue
-    remove_from_queue_by_pid(scheduler[current_pcb->priority]->queue, current_pcb->process->pid);
+    //remove_from_queue_by_pid(scheduler[current_pcb->priority]->queue, current_pcb->process->pid);
     // Trigger a context switch
-    force_context_switch((uintptr_t *)current_pcb->process->stack->current);
+    //force_context_switch((uintptr_t *)current_pcb->process->stack->current);
     return current_pcb->process->pid; // Return the PID of the blocked process
 }
 

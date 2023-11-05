@@ -6,7 +6,7 @@ void process_wrapper(void entry_point(char ** argv), char ** argv);
 int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     if(name == NULL || entry_point == NULL){
         return -1;
-    }
+    }/*
     if(argv!=NULL){
          drawWord("\n create_and_insert_process \n");
             for(int i=0;argv[i]!=NULL;i++){
@@ -18,7 +18,7 @@ int create_and_insert_process(int parent_pid, const char * name, size_t heap_siz
                     drawWord("\n");
                 }
             }
-    }
+    }*/
 
     process_t * process = create_process(parent_pid, name, heap_size, stack_size, entry_point, argv);
 
@@ -32,7 +32,7 @@ int create_and_insert_process(int parent_pid, const char * name, size_t heap_siz
 }
 
 process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
-      if(argv!=NULL){
+/*      if(argv!=NULL){
          drawWord("\nCreate_process\n");
             for(int i=0;argv[i]!=NULL;i++){
                 if(argv[i]!=NULL){
@@ -44,7 +44,7 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
                 }
             }
     }
-
+*/
     process_t * process = (process_t *) malloc(sizeof(process_t));
     if(process == NULL){
         return NULL;
