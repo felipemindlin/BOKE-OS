@@ -2,7 +2,7 @@
 
 #define MAX 1001
 #define PAGE_SIZE 32
-#define MAX_MEM 200000
+#define MAX_MEM 408944640
 
 heap heap_struct; //TO-DO: Implement ADT so we just reserve the memory needed for one memory manager
 

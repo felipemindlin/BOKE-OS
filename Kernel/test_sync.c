@@ -1,11 +1,16 @@
 #include <stdint.h>
 #include <string.h>
 #include "drivers/include/videoDriver.h"
-#define SEM_ID "sem_sem"
-#define TOTAL_PAIR_PROCESSES 4
+//#define SEM_ID "sem_sem"
+#define TOTAL_PAIR_PROCESSES 2
 #include <libasm.h>
 #include <process.h>
 #include <mysemaphore.h>
+
+char * sem_id[]={"sem_1", "sem_2"};
+
+char *argvDec[] = {"Decreaser", NULL, "-1", NULL, NULL};
+char *argvInc[] = {"Increaser", NULL, "1", NULL, NULL};
 
 void my_yield(){
   forceTimer();
@@ -38,77 +43,109 @@ void slowInc(int64_t *p, int64_t inc) {
   aux += inc;
   *p = aux;
 }
+int flag=0;
+ void my_process_inc(char *argv[]) {
+//  drawWord("Im in processINC\n");
+//  drawWord("\n");
+//  drawWord("argv[0]=");
+//  drawWord(argv[0]);
+//  drawWord("\n");
+//  drawWord("argv[1]=");
+//  drawWord(argv[1]);
+//  drawWord("\n");
+//  drawWord("argv[2]=");
+//  drawWord(argv[2]);
+//  drawWord("\n");
+//  drawWord("argv[3]=");
+//  drawWord(argv[3]);
 
-void my_process_inc(int argc, char *argv[]) {
-drawWord("Im here");
+// void my_process_inc() {
   int64_t n = satoi(argv[1]);
   int8_t inc = satoi(argv[2]);
   int8_t use_sem = satoi(argv[3]);
-drawWord("Im here2");
-  int my_sem = -1;
-  
-  if (argc != 4)
-    return;
+
+  int my_sem = 1;
+
 
   if (n <= 0 || n > 10)
     n = 4;
 
-  if (use_sem) {
-    if ((my_sem = my_sem_open(1, SEM_ID)) == -1) {
+  /*if (use_sem) {
+    if ((my_sem = my_sem_open(SEM_ID, 1)) == -1) {
       drawWord("test_sync: ERROR opening semaphore\n");
       return;
     }
-  }
+  }*/
 
   uint64_t i;
   for (i = 0; i < n; i++) {
+//    drawNumber(i);
+//    drawWord("\n");
     if (use_sem) {
       my_sem_wait(my_sem);
     }
     slowInc(&global, inc);
+    drawWord("\nNumber global: ");
+    drawNumber(global);
+    drawWord("\n");
     if (use_sem) {
       my_sem_post(my_sem);
     }
+//    drawNumber(i);
+//    drawWord("\n");
   }
-
 
   return;
 }
-
-uint64_t test_sync(int argc, char *argv[]) { //{n, use_sem}
+uint64_t test_sync(char *argv[]) { //{n, use_sem}
+//  drawWord("Im in test-sync\n");
+//  drawWord("\n");
+//  drawWord("argv[0]=");
+//  drawWord(argv[0]);
+//  drawWord("\n");
+//  drawWord("argv[1]=");
+//  drawWord(argv[1]);
+//  drawWord("\n");
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
-  if (argc != 2)
-    return -1;
 
-  char *argvDec[] = {"Decreaser", argv[0], "-1", argv[1]};
-  char *argvInc[] = {"Increaser", argv[0], "1", argv[1]};
+  argvDec[1]=argv[0];
+  argvDec[3]=argv[1];
+
+  argvInc[1]=argv[0];
+  argvInc[3]=argv[1];
 
   global = 0;
 
   // Assuming you have a defined process size and parent_pid for this context
-  size_t process_heap_size = 40960; // Example heap size
-  size_t process_stack_size = 40960; // Example stack size
-  int parent_pid = 0; // Assuming '0' is the PID for the initial process or kernel
+  size_t process_heap_size = 4096; // Example heap size
+  size_t process_stack_size = 4096; // Example stack size
+  int parent_pid = 1; // Assuming '0' is the PID for the initial process or kernel
 
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     // Here we need to pass all the required parameters to create_and_insert_process
-    drawNumber(i);
+    //drawNumber(i);
     pids[i] = create_and_insert_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
     pids[i + TOTAL_PAIR_PROCESSES] = create_and_insert_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
+    // pids[i] = create_and_insert_process(parent_pid, "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, NULL);
+    // pids[i + TOTAL_PAIR_PROCESSES] = create_and_insert_process(parent_pid, "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, NULL);
+ 
   }
-
+  int64_t idx = satoi(argv[1]);
   // Assuming you have a my_sem_wait function to wait for the process to complete
-  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    my_sem_wait(pids[i]);
-    my_sem_wait(pids[i + TOTAL_PAIR_PROCESSES]);
-  }
+  my_sem_open(idx, sem_id[idx-1]);
+  // DOING THIS IS NONSENSE. THERE IS NO CURRENT PROCESS NOW.
 
-  drawWord("Expected value: 0\n");
-  drawWord("Final value:");
-  drawNumber((int)global);
-  drawWord("\n");
+//  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+//    my_sem_wait(pids[i]);
+//    my_sem_wait(pids[i + TOTAL_PAIR_PROCESSES]);
+//  }
+
+//  drawWord("\nExpected value: 0\n");
+//  drawWord("Final value:");
+//  drawNumber((int)global);
+//  drawWord("\n");
 
   return 0;
 }

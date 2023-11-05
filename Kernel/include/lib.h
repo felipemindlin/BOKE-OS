@@ -21,4 +21,6 @@ void * create_stackframe(void * entry_point, char ** args, void * stack_base, vo
 
 void guruMeditation();
 
+void force_scheduler();
+
 #endif /* LIB_H */

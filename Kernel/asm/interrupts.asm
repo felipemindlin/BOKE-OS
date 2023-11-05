@@ -5,7 +5,7 @@ GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL haltcpu
 GLOBAL _hlt
-
+GLOBAL force_scheduler
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
 GLOBAL _irq02Handler
@@ -381,7 +381,9 @@ haltcpu:
 	hlt
 	ret
 
-
+force_scheduler:
+	int 20h
+	ret
 
 SECTION .bss
 	aux resq 1
