@@ -129,16 +129,21 @@ void save_reg_state(pcb_t * pcb){
 	save_reg_stateAsm(&pcb->reg_state);
 }
 
-int kill_process(int pid){
-    pcb_t * pcb = get_current_pcb();
-    if(pcb == NULL || pcb->process == NULL){
+void kill_current_process() {
+    kill_process(get_current_pcb()->process->pid);
+}
+
+
+int kill_process(int pid) {
+    pcb_t * pcb = get_pcb_entry(pid);
+    if (pcb == NULL || pcb->process == NULL) {
         return -1;
     }
 
     pcb_t * parent_pcb = get_pcb_entry(pcb->process->parent_pid);
     
-    // if parent is dead or child is zombie, kill the child
-    if( pcb->process->parent_pid == OS_PID || parent_pcb==NULL || parent_pcb->process->status==DEAD || pcb->process->status == ZOMBIE){
+    // if parent is dead or child is a zombie, kill the child
+    if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE) {
         pcb->process->status = DEAD;
         add_process_to_removal_queue(pcb->process->pid);
     } else {
@@ -147,6 +152,7 @@ int kill_process(int pid){
 
     return 0;
 }
+
 
 int free_process(pcb_t * pcb){
     if(pcb == NULL || pcb->process == NULL){

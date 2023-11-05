@@ -152,3 +152,54 @@ gdb
 ./tgdb
 ps
 exit
+cd
+clear
+make clean all
+make clean all
+make clean all
+make clean all
+make clean all
+clear
+make clean all
+make clean all
+make clean all
+make clean all
+clear
+clear
+make clean all
+make clean all
+make clean all
+clear
+make clean all
+clear
+make clean all
+clear
+make clean all
+clear
+make clean all
+make clean all
+make clean all
+clear
+make clean all
+make clean all
+clear
+make clean all
+make clean all
+clear
+make clean all
+make clean all
+clear
+make clean all
+make clean all
+clear
+make clean all
+clear
+make clean all
+clear
+make clean all
+make clean all
+make clean all
+make clean all
+make clean all
+make clean all
+make clean all

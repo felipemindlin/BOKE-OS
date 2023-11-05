@@ -2,7 +2,7 @@
  #define SCANCODES_H
 
  
- static char ScanCodes[256] = {
+static char ScanCodes[256] = {
     0,   // 0x00 - Null
     0,   // 0x01 - Escape
     '1', // 0x02 - '1'
@@ -87,8 +87,8 @@
     '3', // 0x51 - Numpad 3
     '0', // 0x52 - Numpad 0
     '.', // 0x53 - Numpad '.'
-    0,   // 0x54 - (Unused)
-    0,   // 0x55 - (Unused)
+    '&', // 0x54 - Add '&' character
+    '|', // 0x55 - Add '|' character
     0,   // 0x56 - (Unused)
     0,   // 0x57 - (F11)
     0,   // 0x58 - (F12)
@@ -132,6 +132,7 @@
     0,   // 0x7E - (Unused)
     0    // 0x7F - (Unused)
 };
+
 
 
 #endif //SCANCODES_H

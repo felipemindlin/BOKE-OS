@@ -131,7 +131,7 @@ static uintptr_t get_page_index(void * mem){
 #define YELLOW 0xFFFF00
 #define ORANGE 0xFFA500
 
-static const int color_list[7] = { RED,GREEN,BLUE,WHITE,BLACK,YELLOW,ORANGE};
+//static const int color_list[7] = { RED,GREEN,BLUE,WHITE,BLACK,YELLOW,ORANGE};
 
 int calculate_free_pages(){
     int free_pages = 0;

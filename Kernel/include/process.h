@@ -8,14 +8,6 @@
 #define	__need_NULL
 #include <stddef.h>
 #define OS_PID 1
-
-enum status_t{
-    BLOCKED,
-    READY,
-    RUNNING,
-    DEAD,
-    ZOMBIE
-};
 static char* status_arr[5] ={
     "BLOCKED",
     "READY",
@@ -23,6 +15,14 @@ static char* status_arr[5] ={
     "DEAD",
     "ZOMBIE"
 };
+enum status_t{
+    BLOCKED,
+    READY,
+    RUNNING,
+    DEAD,
+    ZOMBIE
+};
+
 
 //#define MAX_PRIORITY 2 NO USEN ESTO. La maxima prioridad depende de QUEUE_QTY pq es el tamaño del scheduler array
 
@@ -70,6 +70,7 @@ int getAvailablePid();
 void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
 // process_t* create_and_insert_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int kill_process(int pid);
+void kill_current_process();
 int free_process(pcb_t * pcb);
 void loop();
 

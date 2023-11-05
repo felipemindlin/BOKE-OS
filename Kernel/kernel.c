@@ -11,7 +11,7 @@
 #include "include/interrupts.h"
 #include "include/libasm.h"
 #include <idle.h>
-
+#include <mysemaphore.h>
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
@@ -136,10 +136,10 @@ int main()
     test_sync(test_args);
 	drawWord("FIRST TEST DONE\n\n");
     // Now run the test_sync function without semaphores
-    //char *test_args_no_sem[] = {"3", "2"}; // Test with 10 iterations and semaphores disabled
-    //test_sync(test_args_no_sem);
-	//drawWord("\n paso");
-	enable_multitasking(3);
+    char *test_args_no_sem[] = {"3", "2"}; // Test with 10 iterations and semaphores disabled
+    test_sync(test_args_no_sem);
+	drawWord("\n paso");
+	enable_multitasking(shell_pid);
 
 	drawWord("SOMETHING WENT WRONG\n");
 	while(1);
