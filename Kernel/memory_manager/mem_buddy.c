@@ -25,7 +25,6 @@ void init_mm(void * baseAddres, uint64_t mem_ammount){
 void checkState(Node* node){
     if (node->left == NULL || node->right == NULL)
     {   
-        node->state = FREE; // Xq? si puede haber una hoja alocada
         return;
     }
     
