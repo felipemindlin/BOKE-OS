@@ -124,7 +124,8 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		loop();
 		break;
 	case 25:
-		return create_and_insert_process_from_current(rsi, rdx, rcx, r8, r9);
+		int to_ret = create_and_insert_process_from_current(rsi, rdx, rcx, r8, r9);
+		return to_ret;
 		break;
 	case 26:
 		return my_sem_wait(rsi);
@@ -139,7 +140,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		return my_sem_open(rsi, rdx);
 		break;
 	case 30:
-		forceTimer();
+		force_scheduler();
 		break;
 	case 31:
 		return waitpid(rsi);

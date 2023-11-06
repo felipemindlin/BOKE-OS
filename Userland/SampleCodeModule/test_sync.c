@@ -93,6 +93,7 @@ uint64_t test_sync(char *argv[]) {
     pids[i] = call_create_process( "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
     pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
   }
+  call_forceTimer();
   int64_t idx = satoi(argv[1]);
 
  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {

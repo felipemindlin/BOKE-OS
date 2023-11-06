@@ -10,6 +10,10 @@
 #define OS_PID 2
 #define MAX_SEM_NAME 5
 #define BASE 10
+#define MIN_HEAP_SIZE 0x1000
+#define MIN_STACK_SIZE 0x1000
+#define MAX_PROCESS_ARGUMENTS 20
+
 static char* status_arr[5] ={
     "BLOCKED",
     "READY",
@@ -49,7 +53,7 @@ typedef struct process_t{
     char * name;
     mem_block_t * stack;
     mem_block_t * heap;
-    char * sem_name[MAX_SEM_NAME];
+    char sem_name[MAX_SEM_NAME];
 } process_t;
 
 typedef struct pcb_t{

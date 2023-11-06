@@ -28,9 +28,9 @@ void initialize_sems() {
 
 uint64_t my_sem_open(uint64_t start_value, char *id) {
     int sem_idx = locate_sem(id);
+    int creating_pid = current_process_id();
+    sem_spaces[sem_idx].sem.allowed_processes[sem_spaces[sem_idx].sem.allowed_process_count++] = creating_pid;
     if (sem_idx != -1) {
-        int creating_pid = current_process_id();
-        sem_spaces[sem_idx].sem.allowed_processes[sem_spaces[sem_idx].sem.allowed_process_count++] = creating_pid;
         return sem_idx;
     }
     
@@ -39,7 +39,7 @@ uint64_t my_sem_open(uint64_t start_value, char *id) {
             sem_spaces[i].status = UNAVAILABLE;
             mySem_t *sem = &(sem_spaces[i].sem);
             sem->counter = start_value;
-            sem->is_locked = (start_value == 0) ? 1 : 0;
+            sem->is_locked = (start_value > 0) ? 1 : 0;
             str_cpy(sem->identifier, id);
             sem->users_count = 1;  // Creator is the first user
             sem->queue_size = 0;
@@ -85,15 +85,15 @@ uint64_t my_sem_wait(char *id) {
     mySem_t *sem = &(sem_spaces[sem_idx].sem);
     
     int allowed = 0;
-    // for (int i = 0; i < sem->allowed_process_count && !allowed; i++) {
-    //     if (sem->allowed_processes[i] == current_pid) {
-    //         allowed = 1;
-    //     }
-    // }
+     for (int i = 0; i < sem->allowed_process_count && !allowed; i++) {
+         if (sem->allowed_processes[i] == current_pid) {
+             allowed = 1;
+         }
+     }
     
-    // if (!allowed) {
-    //     return -1;  // Current process is not allowed to use this semaphore
-    // }
+     if (!allowed) {
+         return -1;  // Current process is not allowed to use this semaphore
+     }
     uint64_t *lock_addr = &(sem->is_locked);
     enter_region(lock_addr, sem_idx);
     return 0;

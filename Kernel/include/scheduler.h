@@ -3,6 +3,7 @@
 #include <circular_list.h>
 #include <process.h>
 #include <stdint.h>
+#include <mysemaphore.h>
 
 #define QUEUE_QTY 4 // Depends on the number of priorities we want to have
 
@@ -31,7 +32,7 @@ void stop_current_process();
 int getQuantum();
 pcb_t * get_pcb_entry(int pid);
 int add_process_to_removal_queue(int pid);
-int add_process_to_creation_queue(int parent_pid, char * name, size_t stack_size, size_t heap_size, void * entry_point, void * args);
+int add_process_to_creation_queue(int parent_pid, char * name, size_t heap_size, size_t stack_size, void * entry_point, void * args);
 void print_process();
 int current_process_id();
 void change_process_priority(int pid, priority_t priority);

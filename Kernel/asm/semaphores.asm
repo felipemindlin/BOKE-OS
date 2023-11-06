@@ -15,8 +15,9 @@ enter_region:
     push rsi
 
     ; Set up for atomic exchange
-    mov rax, 1  ; We want to set the lock to 1
+    
 lock_acquire:
+    mov rax, 1  ; We want to set the lock to 1
     xchg [rdi], rax  ; Atomically exchange the lock value with rax
     test rax, rax  ; Test if the original value was 0 (lock was free)
     jz lock_acquired  ; If it was free, we acquired the lock

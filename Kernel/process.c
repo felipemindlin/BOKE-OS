@@ -3,10 +3,12 @@
 #include <scheduler.h>
 #include <libasm.h>
 #include <mysemaphore.h>
+#include <naiveConsole.h>
 
 void process_wrapper(void entry_point(char ** argv), char ** argv);
 int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
-    return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+    return add_process_to_creation_queue(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+    //return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
 }
 int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     if(name == NULL || entry_point == NULL){
@@ -77,6 +79,10 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
         return NULL;
     }
 
+    if(heap_size < MIN_HEAP_SIZE){
+        heap_size = MIN_HEAP_SIZE;
+    }
+
     process->heap->base = malloc(heap_size);
     if(process->heap->base == NULL){
         free(process->heap);
@@ -98,6 +104,10 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
         return NULL;
     }
 
+    if(stack_size < MIN_STACK_SIZE){
+        stack_size = MIN_STACK_SIZE;
+    }
+
     process->stack->base = malloc(stack_size);
     if(process->stack->base == NULL){
         free(process->stack);
@@ -109,11 +119,24 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
     }
     
     process->stack->size = stack_size;
-    
+
+/*
+    if(argv != NULL){
+        int i = 0;
+        while(argv[i] != NULL){
+            int len = str_cpy((char *) process->heap->current, argv[i]);
+            process->heap->current = (uintptr_t *) ((uintptr_t) process->heap->current + len + 1);
+            i++;
+            if(i >= MAX_PROCESS_ARGUMENTS){
+                break;
+            }
+        }
+    }
+  */                                                                        /*process->heap->base*/
     process->stack->current = create_stackframe((uintptr_t *)entry_point, (void*)argv, process->stack->base + stack_size, &process_wrapper); // is this correct?
     process->status = READY;
     uintToBase(process->pid, process->sem_name, BASE);
-    my_sem_open(0, process->sem_name);
+    my_sem_open(1, process->sem_name);
     return process;
 }
 
@@ -149,7 +172,6 @@ int kill_process(int pid) {
     
     if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE) {
         
-        waitpid(pid);
         pcb->process->status = DEAD;
     
         add_process_to_removal_queue(pcb->process->pid);

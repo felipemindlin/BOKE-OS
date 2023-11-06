@@ -11,7 +11,6 @@ GLOBAL inb
 GLOBAL outb
 GLOBAL kbflag
 GLOBAL load_settings
-GLOBAL forceTimer
 section .text
 
 %macro enter_func 0
@@ -149,11 +148,5 @@ outb:
 
 	mov rsp, rbp
 	pop rbp
-	ret
-
-
-forceTimer:
-	int 20h
-	ret
-           
+	ret 
 

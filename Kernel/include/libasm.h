@@ -17,5 +17,4 @@ int get_year();
 void sleep(uint32_t seconds);
 void sleepms(int mseconds);
 int kbflag();
-void forceTimer();
 #endif /* LIB_H */
