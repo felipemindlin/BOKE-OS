@@ -28,9 +28,9 @@ void initialize_sems() {
 
 uint64_t my_sem_open(uint64_t start_value, char *id) {
     int sem_idx = locate_sem(id);
-    int creating_pid = current_process_id();
-    sem_spaces[sem_idx].sem.allowed_processes[sem_spaces[sem_idx].sem.allowed_process_count++] = creating_pid;
     if (sem_idx != -1) {
+        int creating_pid = current_process_id();
+        sem_spaces[sem_idx].sem.allowed_processes[sem_spaces[sem_idx].sem.allowed_process_count++] = creating_pid;
         return sem_idx;
     }
     
@@ -45,6 +45,9 @@ uint64_t my_sem_open(uint64_t start_value, char *id) {
             sem->queue_size = 0;
             sem->head = NULL;
             sem->tail = NULL;
+            sem->allowed_process_count = 1;
+            sem->allowed_processes[0] = current_process_id();
+            sem->being_cleared = 0;
             return i;
         }
     }
@@ -56,10 +59,19 @@ void my_sem_close(char *id) {
     if (sem_idx == -1) {
         return;  // Semaphore with this name does not exist
     }
-    while (sem_spaces[sem_idx].sem.queue_size > 0) {
-        remove_from_queue(sem_idx);
+    
+    mySem_t *sem = &(sem_spaces[sem_idx].sem);
+    int current_pid = current_process_id();
+    for (int i = 0; i < sem->allowed_process_count; i++) {
+        if (sem->allowed_processes[i] == current_pid) {
+            sem->allowed_processes[i] = -1;
+            sem->users_count--;
+        }
     }
-    sem_spaces[sem_idx].status = AVAILABLE;
+
+    if (sem->users_count == 0) {
+        clear_sem(id);
+    }
 }
 
 uint64_t my_sem_post(char *id) {
@@ -201,4 +213,44 @@ void wake_up_processes(uint64_t sem_idx){
         os_revive_process(pid);
     }
 
+}
+
+int clear_sem(char * sem_id){
+
+    int sem_idx = locate_sem(sem_id);
+    
+    if(sem_idx == -1 || sem_spaces[sem_idx].sem.being_cleared){
+        return -1;
+    }
+
+    sem_spaces[sem_idx].sem.being_cleared = 1;
+
+    node_t * node = sem_spaces[sem_idx].sem.head;
+    node_t * aux;
+
+    while(node != NULL){
+        aux = node->next;
+        free(node);
+        node = aux;
+    }
+
+    sem_spaces[sem_idx].sem.head = NULL;
+    sem_spaces[sem_idx].sem.tail = NULL;
+    sem_spaces[sem_idx].sem.queue_size = 0;
+
+    for(int i = 0; i < sem_spaces[sem_idx].sem.allowed_process_count; i++){
+        sem_spaces[sem_idx].sem.allowed_processes[i] = 0;
+    }
+    sem_spaces[sem_idx].sem.allowed_process_count = 0;
+    sem_spaces[sem_idx].sem.users_count = 0;
+    sem_spaces[sem_idx].sem.counter = 0;
+    sem_spaces[sem_idx].sem.is_locked = 0;
+
+    for(int i = 0; i < MAX_SEM_NAME; i++){
+        sem_spaces[sem_idx].sem.identifier[i] = 0;
+    }
+
+    sem_spaces[sem_idx].status = AVAILABLE;
+
+    return 0;
 }
