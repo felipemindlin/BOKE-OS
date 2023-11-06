@@ -19,14 +19,19 @@ static space_t sem_spaces[MAX_SEMS];
 void initialize_sems() {
     for (int i = 0; i < MAX_SEMS; i++) {
         sem_spaces[i].status = AVAILABLE;
+        for (int j = 0; j < MAX_PROCESSES_PER_SEM; j++) {
+            sem_spaces[i].sem.allowed_processes[j] = -1;
+        }
+        sem_spaces[i].sem.allowed_process_count = 0;
     }
 }
-
 
 uint64_t my_sem_open(uint64_t start_value, char *id) {
     int sem_idx = locate_sem(id);
     if (sem_idx != -1) {
-        return -1;  // Semaphore with the same name already exists
+        int creating_pid = current_process_id();
+        sem_spaces[sem_idx].sem.allowed_processes[sem_spaces[sem_idx].sem.allowed_process_count++] = creating_pid;
+        return sem_idx;
     }
     
     for (int i = 0; i < MAX_SEMS; i++) {
@@ -46,9 +51,10 @@ uint64_t my_sem_open(uint64_t start_value, char *id) {
     return -1;
 }
 
-void my_sem_close(int sem_idx) {
-    if (sem_idx < 0 || sem_idx >= MAX_SEMS) {
-        return;
+void my_sem_close(char *id) {
+    int sem_idx = locate_sem(id);
+    if (sem_idx == -1) {
+        return;  // Semaphore with this name does not exist
     }
     while (sem_spaces[sem_idx].sem.queue_size > 0) {
         remove_from_queue(sem_idx);
@@ -56,50 +62,43 @@ void my_sem_close(int sem_idx) {
     sem_spaces[sem_idx].status = AVAILABLE;
 }
 
-uint64_t my_sem_post(uint64_t sem_idx) {
-    if (sem_idx >= MAX_SEMS || sem_idx < 0) {
-        return 1;
+uint64_t my_sem_post(char *id) {
+    int sem_idx = locate_sem(id);
+    if (sem_idx == -1) {
+        return 1;  // Semaphore with this name does not exist
     }
 
     mySem_t *sem = &(sem_spaces[sem_idx].sem);
     uint64_t *lock_addr = &(sem->is_locked);
 
-/*    enter_region(lock_addr, sem_idx);
-
-    sem->counter++;
-
-    if (sem->queue_size > 0) {
-        int pid = remove_from_queue(sem_idx);
-        os_revive_process(pid);
-    }
-*/
     leave_region(lock_addr, sem_idx);
     return 0;
 }
 
-uint64_t my_sem_wait(uint64_t sem_idx) {
-    if (sem_idx >= MAX_SEMS || sem_idx < 0) {
-        return 1;
+uint64_t my_sem_wait(char *id) {
+    int sem_idx = locate_sem(id);
+    if (sem_idx == -1) {
+        return -1;  // Semaphore with this name does not exist
     }
 
+    int current_pid = current_process_id();
     mySem_t *sem = &(sem_spaces[sem_idx].sem);
+    
+    int allowed = 0;
+    // for (int i = 0; i < sem->allowed_process_count && !allowed; i++) {
+    //     if (sem->allowed_processes[i] == current_pid) {
+    //         allowed = 1;
+    //     }
+    // }
+    
+    // if (!allowed) {
+    //     return -1;  // Current process is not allowed to use this semaphore
+    // }
     uint64_t *lock_addr = &(sem->is_locked);
-
     enter_region(lock_addr, sem_idx);
-
-    /*if (sem->counter > 0) {
-        sem->counter--;
-        leave_region(lock_addr);
-        return 0;
-    }
-
-    int pid = current_process_id();
-    add_to_queue(sem_idx, pid);
-    os_block_current_process();
-    leave_region(lock_addr);
-    */
     return 0;
 }
+
 
 int add_to_queue(int sem_idx, int pid) {
     if (sem_idx < 0 || sem_idx >= MAX_SEMS) {
@@ -151,7 +150,6 @@ int remove_from_queue(int sem_idx) {
 
     free(node_to_remove);
     sem->queue_size--;
-
     return pid;
 }
 
@@ -165,22 +163,22 @@ int locate_sem(char *id) {
     return -1;
 }
 
-int get_sem(char *id, int start_value) {
-    int sem_idx = locate_sem(id);
-    if (sem_idx == -1) {
-        sem_idx = my_sem_open(start_value, id);
-    }
-    return sem_idx;
-}
+// int get_sem(char *id, int start_value) {
+//     int sem_idx = locate_sem(id);
+//     if (sem_idx == -1) {
+//         sem_idx = my_sem_open(start_value, id);
+//     }
+//     return sem_idx;
+// }
 
-int put_sem(char *id) {
-    int sem_idx = locate_sem(id);
-    if (sem_idx == -1) {
-        return -1;
-    }
-    my_sem_close(sem_idx);
-    return 0;
-}
+// int put_sem(char *id) {
+//     int sem_idx = locate_sem(id);
+//     if (sem_idx == -1) {
+//         return -1;
+//     }
+//     my_sem_close(sem_idx);
+//     return 0;
+// }
 
 void whiff(uint64_t sem_idx) {
   

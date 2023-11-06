@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "shell.h"
 
-static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP"};
+static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","SEM"};
 
 //busca el comando en la lista de comandos y llama a la funcion correspondiente
 void __seek_command__(char * command){
@@ -56,6 +56,7 @@ void invalid_pid(){
     call_sys_write("ERROR - PID invalido",20,2);
     putC('\n');
 }
+void test_sync(char *argv[]);
 void __call_command__(int i, char * command){
     char parsed_command[MAX_COMMAND_LENGTH];
     int pid;
@@ -135,6 +136,14 @@ void __call_command__(int i, char * command){
         return;
     case LOOP:
         call_loop();
+        return;
+    case SEM:
+        char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
+        //call_create_process("test_sync", 0x0000000000010000, 0x0000000000010000, (void *)test_sync, test_args);
+        test_sync(test_args);
+        // Now run the test_sync function without semaphores
+        // char *test_args_no_sem[] = {"3", "2"}; // Test with 10 iterations and semaphores disabled
+        // test_sync(test_args_no_sem);
         return;
     default:
         call_sys_write("ERROR - Comando no reconocido",30,2);

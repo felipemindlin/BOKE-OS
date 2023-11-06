@@ -1,8 +1,13 @@
  #include <process.h>
 #include "interrupts.h"
 #include <scheduler.h>
-void process_wrapper(void entry_point(char ** argv), char ** argv);
+#include <libasm.h>
+#include <mysemaphore.h>
 
+void process_wrapper(void entry_point(char ** argv), char ** argv);
+int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
+    return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+}
 int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     if(name == NULL || entry_point == NULL){
         return -1;
@@ -106,8 +111,9 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
     process->stack->size = stack_size;
     
     process->stack->current = create_stackframe((uintptr_t *)entry_point, (void*)argv, process->stack->base + stack_size, &process_wrapper); // is this correct?
-    
     process->status = READY;
+    uintToBase(process->pid, process->sem_name, BASE);
+    my_sem_open(0, process->sem_name);
     return process;
 }
 
@@ -118,7 +124,6 @@ void process_wrapper(void entry_point(char ** argv), char ** argv){
     kill_process(get_current_pcb()->process->pid);
 
     while(1); // waiting for OP to remove it from scheduler
-
 }
 
 int getAvailablePid(){
@@ -135,17 +140,20 @@ void kill_current_process() {
 
 
 int kill_process(int pid) {
-    pcb_t * pcb = get_pcb_entry(pid);
+    pcb_t *pcb = get_pcb_entry(pid);
     if (pcb == NULL || pcb->process == NULL) {
         return -1;
     }
 
-    pcb_t * parent_pcb = get_pcb_entry(pcb->process->parent_pid);
+    pcb_t *parent_pcb = get_pcb_entry(pcb->process->parent_pid);
     
-    // if parent is dead or child is a zombie, kill the child
     if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE) {
+        
+        waitpid(pid);
         pcb->process->status = DEAD;
+    
         add_process_to_removal_queue(pcb->process->pid);
+        
     } else {
         pcb->process->status = ZOMBIE;
     }
@@ -154,11 +162,12 @@ int kill_process(int pid) {
 }
 
 
+
 int free_process(pcb_t * pcb){
     if(pcb == NULL || pcb->process == NULL){
         return -1;
     }
-
+    my_sem_post(pcb->process->sem_name);
     free(pcb->process->name);
     free(pcb->process->heap->base);
     free(pcb->process->heap);
@@ -181,4 +190,20 @@ void loop(){
         }
     }
 
+}
+
+int waitpid(int pid){
+   
+    pcb_t * pcb = get_pcb_entry(pid);
+    if(pcb == NULL || pcb->process == NULL){
+        return -1;
+    }
+    if(pcb->process->status == DEAD){
+        free_process(pcb);
+        return 0;
+    }
+    my_sem_wait(pcb->process->sem_name);
+    drawWord("Im here!");
+    my_sem_close(pcb->process->sem_name);
+    return 1;
 }

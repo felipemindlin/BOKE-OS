@@ -23,6 +23,13 @@ GLOBAL call_kill
 GLOBAL call_nice
 GLOBAL call_block
 GLOBAL call_loop
+GLOBAL call_create_process
+GLOBAL call_sem_wait
+GLOBAL call_sem_post
+GLOBAL call_sem_close
+GLOBAL call_sem_open
+GLOBAL call_forceTimer
+GLOBAL call_waitpid
 
 section .text
 
@@ -89,3 +96,17 @@ call_block:
     call_to_handler 23
 call_loop:
     call_to_handler 24
+call_create_process:
+    call_to_handler 25
+call_sem_wait:
+    call_to_handler 26
+call_sem_post:
+    call_to_handler 27
+call_sem_close:
+    call_to_handler 28
+call_sem_open:
+    call_to_handler 29
+call_forceTimer:
+    call_to_handler 30
+call_waitpid:
+    call_to_handler 31

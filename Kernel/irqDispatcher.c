@@ -14,7 +14,8 @@
 #include "syscalls.h"
 #include <scheduler.h>
 #include <process.h>
-
+#include <mysemaphore.h>
+#include <libasm.h>
 
 static void int_20();
 static void int_21();
@@ -106,12 +107,9 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		break;
 	case 19:
 		add_process_to_creation_queue(1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL);
-		//create_and_insert_process(0, "print_process", 0x0000000000001000, 0x0000000000001000, &print_process, NULL);
-		//print_process();
 		break;
 	case 20:
 		add_process_to_creation_queue(1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL);
-		//printMem();
 		break;
 	case 21:
 		kill_process(rsi);
@@ -124,6 +122,27 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		break;
 	case 24:
 		loop();
+		break;
+	case 25:
+		return create_and_insert_process_from_current(rsi, rdx, rcx, r8, r9);
+		break;
+	case 26:
+		return my_sem_wait(rsi);
+		break;
+	case 27:
+		return my_sem_post(rsi);
+		break;
+	case 28:
+		my_sem_close(rsi);
+		break;
+	case 29:
+		return my_sem_open(rsi, rdx);
+		break;
+	case 30:
+		forceTimer();
+		break;
+	case 31:
+		return waitpid(rsi);
 		break;
 	default:
 		return 0;

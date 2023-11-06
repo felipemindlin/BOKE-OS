@@ -7,7 +7,9 @@
 #define	__need_size_t
 #define	__need_NULL
 #include <stddef.h>
-#define OS_PID 1
+#define OS_PID 2
+#define MAX_SEM_NAME 5
+#define BASE 10
 static char* status_arr[5] ={
     "BLOCKED",
     "READY",
@@ -47,6 +49,7 @@ typedef struct process_t{
     char * name;
     mem_block_t * stack;
     mem_block_t * heap;
+    char * sem_name[MAX_SEM_NAME];
 } process_t;
 
 typedef struct pcb_t{
@@ -73,5 +76,7 @@ int kill_process(int pid);
 void kill_current_process();
 int free_process(pcb_t * pcb);
 void loop();
+int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+int waitpid(int pid);
 
 #endif

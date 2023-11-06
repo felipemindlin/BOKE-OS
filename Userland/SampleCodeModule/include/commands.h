@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "UserSyscalls.h"
 
-#define COMMAND_LEN 18
+#define COMMAND_LEN 19
 #define COLOR_LEN 5
 #define MAX_COMMAND_LENGTH 256
 enum Commands {
@@ -26,6 +26,7 @@ enum Commands {
     PHYLO,
     FILTER,
     LOOP,
+    SEM,
 };
 enum Colors {
     GREEN_,
