@@ -24,4 +24,6 @@ int null_or_newline(char c);
 char * strtok(char * str, char delim);
 char * strncpy(char * dest, char * src, int n);
 int atoi(char * str);
+int64_t satoi(char *str);
+char* itoa(int num, char* str, int base);
 #endif /* UTILS_H */

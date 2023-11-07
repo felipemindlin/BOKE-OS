@@ -57,6 +57,7 @@ void invalid_pid(){
     putC('\n');
 }
 void test_sync(char *argv[]);
+int phylo();
 void __call_command__(int i, char * command){
     char parsed_command[MAX_COMMAND_LENGTH];
     int pid;
@@ -129,7 +130,8 @@ void __call_command__(int i, char * command){
         wc();
         return;
     case PHYLO:
-        //phylo();
+        //call_create_process("Phylo", 0x0000000000010000, 0x0000000000010000, (void *)phylo, NULL);
+        phylo();
         return;
     case FILTER:
         filter();

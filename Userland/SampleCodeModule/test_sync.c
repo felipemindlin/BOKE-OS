@@ -11,27 +11,7 @@ char *argvInc[] = {"Increaser", NULL, "1", NULL, "sem_1"};
 void my_yield(){
   call_forceTimer();
 }
-int64_t satoi(char *str) {
-  uint64_t i = 0;
-  int64_t res = 0;
-  int8_t sign = 1;
 
-  if (!str)
-    return 0;
-
-  if (str[i] == '-') {
-    i++;
-    sign = -1;
-  }
-
-  for (; str[i] != '\0'; ++i) {
-    if (str[i] < '0' || str[i] > '9')
-      return 0;
-    res = res * 10 + str[i] - '0';
-  }
-
-  return res * sign;
-}
 int64_t global = 0; // shared memory
 void slowInc(int64_t *p, int64_t inc) {
   uint64_t aux = *p;
