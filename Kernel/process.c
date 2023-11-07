@@ -146,7 +146,8 @@ void process_wrapper(void entry_point(char ** argv), char ** argv){
 
     kill_process(get_current_pcb()->process->pid);
 
-    while(1); // waiting for OP to remove it from scheduler
+    //while(1); // waiting for OP to remove it from scheduler
+    finish_current_tick();
 }
 
 int getAvailablePid(){
@@ -169,7 +170,8 @@ int kill_process(int pid) {
     }
 
     pcb_t *parent_pcb = get_pcb_entry(pcb->process->parent_pid);
-    
+    my_sem_post(pcb->process->sem_name);
+
     if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE) {
         
         pcb->process->status = DEAD;
@@ -177,12 +179,11 @@ int kill_process(int pid) {
         
     } else {
         pcb->process->status = ZOMBIE;
-        my_sem_post(pcb->process->sem_name);
         my_sem_close(pcb->process->sem_name);
     }
 
     if(pid == current_process_id()){
-        force_scheduler();
+        finish_current_tick();
     }
 
     return 0;

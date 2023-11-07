@@ -49,7 +49,7 @@ void slowInc(int64_t *p, int64_t inc) {
 
 
   if (n <= 0 || n > 10)
-    n = 4;
+    n = 5;
 
   if (use_sem) {
     if ((my_sem = call_sem_open(0, argv[4])) == -1) {
@@ -63,9 +63,9 @@ void slowInc(int64_t *p, int64_t inc) {
     if (use_sem) {
       call_sem_wait(argv[4]);
     }
-    print(".\n");
-    call_sleepms(8000);
+    call_sleepms(2000);
     slowInc(&global, inc);
+    print("C ID: %d - G: %d\n", get_pid(), (int)global);
     if (use_sem) {
       call_sem_post(argv[4]);
     }

@@ -10,11 +10,10 @@ enter_region:
     push rbp
     mov rbp, rsp
 
-    ; Save registers that might be modified
     push rdi
     push rsi
-
-    ; Set up for atomic exchange
+    
+    mov rax, 1  ; We want to set the lock to 1
     
 lock_acquire:
     mov rax, 1  ; We want to set the lock to 1
@@ -23,8 +22,11 @@ lock_acquire:
     jz lock_acquired  ; If it was free, we acquired the lock
 
     ; If we did not acquire the lock, call whiff
+    pop rsi
     mov rdi, rsi  ; Move the semaphore index into rdi for the whiff call
+    push rsi
     call whiff
+
     jmp lock_acquire  ; Try to acquire the lock again
 
 lock_acquired:

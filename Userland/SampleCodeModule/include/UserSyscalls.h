@@ -38,5 +38,6 @@ uint64_t call_sem_post(char *id);  // Updated to take ID instead of index
 uint64_t call_sem_wait(char *id);  // Updated to take ID instead of index
 void call_forceTimer();
 int call_waitpid(int pid);
+int get_pid();
 
 #endif /* USERSYSCALLS_H */

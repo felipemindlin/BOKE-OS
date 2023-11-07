@@ -161,7 +161,11 @@ int remove_from_queue(int sem_idx) {
     }
 
     free(node_to_remove);
-    sem->queue_size--;
+    sem->queue_size-=1;
+    if(sem->queue_size == 0){
+        sem->head=NULL;
+        sem->tail=NULL;
+    }
     return pid;
 }
 
@@ -201,7 +205,7 @@ void whiff(uint64_t sem_idx) {
 
     add_to_queue(sem_idx, pid);
     os_block_current_process();
-    force_scheduler();
+    finish_current_tick();
 }
 
 void wake_up_processes(uint64_t sem_idx){

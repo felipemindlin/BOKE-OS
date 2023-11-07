@@ -30,7 +30,7 @@ GLOBAL call_sem_close
 GLOBAL call_sem_open
 GLOBAL call_forceTimer
 GLOBAL call_waitpid
-
+GLOBAL get_pid
 section .text
 
 %macro call_to_handler 1
@@ -110,3 +110,5 @@ call_forceTimer:
     call_to_handler 30
 call_waitpid:
     call_to_handler 31
+get_pid:
+    call_to_handler 32

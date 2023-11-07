@@ -388,7 +388,7 @@ int current_process_id(){
 
 void os_revive_process(int pid) {
     pcb_t *pcb = get_pcb_entry(pid); // Fetch the PCB for the given PID
-    if (pcb != NULL && pcb->process->status == BLOCKED) {
+    if (pcb != NULL && (pcb->process->status == BLOCKED || pcb->process->status == RUNNING)) {
         pcb->process->status = READY; // Change status to READY
         // Add the process back to its respective priority queue
 /*        node_t * pcb_node = create_node(pcb);
@@ -449,4 +449,9 @@ void create_processes_in_creation_queue(){
         add_new_process(process);
         process = (process_t *) remove_node(creation_queue, creation_queue->current_node);
     }
+}
+
+void finish_current_tick(){
+    current_pcb->ticks = scheduler[current_pcb->priority]->quantum;
+    force_scheduler();
 }

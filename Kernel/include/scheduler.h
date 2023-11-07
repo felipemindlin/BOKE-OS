@@ -37,4 +37,5 @@ void print_process();
 int current_process_id();
 void change_process_priority(int pid, priority_t priority);
 void block_process(int pid);
+void finish_current_tick();
 #endif
