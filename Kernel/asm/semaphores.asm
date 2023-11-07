@@ -13,11 +13,15 @@ enter_region:
     push rdi
     push rsi
     
-    mov rax, 1  ; We want to set the lock to 1
+    ;mov rax, 1  ; We want to set the lock to 1
     
 lock_acquire:
     mov rax, 1  ; We want to set the lock to 1
+    pop rsi
+    pop rdi
     xchg [rdi], rax  ; Atomically exchange the lock value with rax
+    push rdi
+    push rsi
     test rax, rax  ; Test if the original value was 0 (lock was free)
     jz lock_acquired  ; If it was free, we acquired the lock
 

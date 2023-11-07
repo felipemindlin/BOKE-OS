@@ -1,6 +1,6 @@
 #include <stdint.h>
 //#define SEM_ID "sem_sem"
-#define TOTAL_PAIR_PROCESSES 1
+#define TOTAL_PAIR_PROCESSES 8
 #include <UserSyscalls.h>
 #include <utils.h>
 char * sem_id[]={"sem_1", "sem_2"};
@@ -43,7 +43,7 @@ void slowInc(int64_t *p, int64_t inc) {
     if (use_sem) {
       call_sem_wait(argv[4]);
     }
-    call_sleepms(2000);
+    call_sleepms(500);
     slowInc(&global, inc);
     print("C ID: %d - G: %d\n", get_pid(), (int)global);
     if (use_sem) {

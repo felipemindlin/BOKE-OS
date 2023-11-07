@@ -265,7 +265,7 @@ create_stackframe: ; rdi: entry point, rsi: args, rdx: stack base, rcx: wrapper
 	push 0x00000008 ; CS
 	
 	push rcx ; RIP now is in wrapper code
-
+	xor rax, rax
 	; rdi: entry point
 	; rsi: args
 	; basta con llamar a push state

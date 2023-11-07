@@ -128,10 +128,10 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		return to_ret;
 		break;
 	case 26:
-		return my_sem_wait(rsi);
+		return my_sem_wait((char*)rsi);
 		break;
 	case 27:
-		return my_sem_post(rsi);
+		return my_sem_post((char*)rsi);
 		break;
 	case 28:
 		my_sem_close(rsi);
