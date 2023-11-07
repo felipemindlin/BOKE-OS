@@ -31,6 +31,8 @@ GLOBAL call_sem_open
 GLOBAL call_forceTimer
 GLOBAL call_waitpid
 GLOBAL get_pid
+GLOBAL malloc
+GLOBAL free
 section .text
 
 %macro call_to_handler 1
@@ -112,3 +114,7 @@ call_waitpid:
     call_to_handler 31
 get_pid:
     call_to_handler 32
+malloc:
+    call_to_handler 33
+free:
+    call_to_handler 34

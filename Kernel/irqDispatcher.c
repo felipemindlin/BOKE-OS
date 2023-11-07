@@ -112,13 +112,13 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		add_process_to_creation_queue(1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL);
 		break;
 	case 21:
-		kill_process(rsi);
+		return kill_process(rsi);
 		break;
 	case 22:
 		change_process_priority(rsi, rdx);
 		break;
 	case 23:
-		block_process(rsi);
+		return block_process(rsi);
 		break;
 	case 24:
 		loop();
@@ -147,6 +147,12 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		break;
 	case 32:
 		return get_current_pcb()->process->pid;
+		break;
+	case 33:
+		return malloc((uintptr_t)rsi);
+		break;
+	case 34:
+		return free((void*)rsi);
 		break;
 	default:
 		return 0;

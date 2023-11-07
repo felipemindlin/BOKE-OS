@@ -36,6 +36,6 @@ int add_process_to_creation_queue(int parent_pid, char * name, size_t heap_size,
 void print_process();
 int current_process_id();
 void change_process_priority(int pid, priority_t priority);
-void block_process(int pid);
+int block_process(int pid);
 void finish_current_tick();
 #endif

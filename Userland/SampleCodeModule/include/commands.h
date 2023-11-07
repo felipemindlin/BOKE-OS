@@ -26,7 +26,7 @@ enum Commands {
     PHYLO,
     FILTER,
     LOOP,
-    SEM,
+    TESTS,
 };
 enum Colors {
     GREEN_,

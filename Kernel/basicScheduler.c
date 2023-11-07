@@ -412,16 +412,19 @@ int os_block_current_process() {
     return current_pcb->process->pid; // Return the PID of the blocked process
 }
 
-void block_process(int pid) {
+int  block_process(int pid) {
     pcb_t *pcb = get_pcb_entry(pid); // Fetch the PCB for the given PID
     if (pcb != NULL && pcb->process->status == READY) {
         pcb->process->status = BLOCKED; // Change status to BLOCKED
         remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pcb->process->pid);
         force_context_switch((uintptr_t *)pcb->process->stack->current);
+        return 1;
     } else if (pcb != NULL && pcb->process->status == BLOCKED) {
         pcb->process->status = READY; // Change status to READY
         add_pcb_to_scheduler(scheduler[pcb->priority]->queue->current_node, pcb->process->pid);
+        return 2;
     }
+    return -1;
 }
 
 int add_process_to_creation_queue(int parent_pid, char * name, size_t heap_size, size_t stack_size, void * entry_point, void * args){
