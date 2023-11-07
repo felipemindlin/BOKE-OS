@@ -1,4 +1,5 @@
 #include <utils.h>
+#include <stdbool.h>
 
 void vprint(char * format, va_list ap);
 
@@ -295,3 +296,76 @@ int atoi(char * str){
     return value * sign;
 }
 
+
+int64_t satoi(char *str) {
+  uint64_t i = 0;
+  int64_t res = 0;
+  int8_t sign = 1;
+
+  if (!str)
+    return 0;
+
+  if (str[i] == '-') {
+    i++;
+    sign = -1;
+  }
+
+  for (; str[i] != '\0'; ++i) {
+    if (str[i] < '0' || str[i] > '9')
+      return 0;
+    res = res * 10 + str[i] - '0';
+  }
+
+  return res * sign;
+}
+
+
+
+void reverse(char str[], int length) {
+    int start = 0;
+    int end = length - 1;
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+char* itoa(int num, char* str, int base) {
+    int i = 0;
+    bool isNegative = false;
+
+    // Handle 0 explicitly, otherwise empty string is printed
+    if (num == 0) {
+        str[i++] = '0';
+        str[i] = '\0';
+        return str;
+    }
+
+    // Handle negative numbers if base is 10
+    if (num < 0 && base == 10) {
+        isNegative = true;
+        num = -num;
+    }
+
+    // Process individual digits
+    while (num != 0) {
+        int rem = num % base;
+        str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
+        num = num / base;
+    }
+
+    // Add negative sign for negative numbers
+    if (isNegative) {
+        str[i++] = '-';
+    }
+
+    str[i] = '\0'; // Null-terminate the string
+
+    // Reverse the string
+    reverse(str, i);
+
+    return str;
+}
