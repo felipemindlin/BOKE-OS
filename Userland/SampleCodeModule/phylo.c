@@ -38,7 +38,14 @@ int right(int i) {
     return (i + 1) % num_philosophers;
 }
 
+void intialize(){
+    num_philosophers = 0;
+    last = 0;
+
+}
+
 int phylo() {
+    intialize(); 
     mutex_id = call_sem_open(1, "mutex");
     r_w_sem_index = call_sem_open(1, R_W_SEMNAME);
     add_remove_mutex_index = call_sem_open(1, "philo_ar_mutex");
@@ -56,8 +63,25 @@ int phylo() {
         add_philosopher();
     }
 
-    call_create_process("handler", SIZE, SIZE, handle, NULL);
-    while (!last);
+    call_create_process("handler", SIZE, SIZE, handle, NULL); //si comento esto y
+    while(!last); //esto 
+    // pero descomento lo de aca abajo funcionan los pares pero no los impares. SI lo dejo asi funcionan los impares pero no los pares. WTF.
+    //  char c;
+    // while (!last) {
+    //     c = getC();
+    //     if (c == 'A' || c == 'a') {
+    //         if (num_philosophers < MAX_PHILOSOPHERS) {
+    //             add_philosopher();
+    //         }
+    //     } else if (c == 'R' || c == 'r') {
+    //         if (num_philosophers > MIN_PHILOSOPHERS) {
+    //             remove_philosopher();
+    //         }
+    //     } else if (c == 'Q' || c == 'q') {
+    //         last = 1;
+    //     }
+    // }
+
 
     // Clean up philosophers
     for (int i = 0; i < num_philosophers; i++) {
