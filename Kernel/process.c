@@ -7,8 +7,8 @@
 
 void process_wrapper(void entry_point(char ** argv), char ** argv);
 int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
-    return add_process_to_creation_queue(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
-    //return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+    //return add_process_to_creation_queue(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+    return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
 }
 int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     if(name == NULL || entry_point == NULL){
@@ -173,23 +173,26 @@ int kill_process(int pid) {
     if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE) {
         
         pcb->process->status = DEAD;
-    
         add_process_to_removal_queue(pcb->process->pid);
         
     } else {
         pcb->process->status = ZOMBIE;
+        my_sem_post(pcb->process->sem_name);
+        my_sem_close(pcb->process->sem_name);
+    }
+
+    if(pid == current_process_id()){
+        force_scheduler();
     }
 
     return 0;
 }
 
-
-
 int free_process(pcb_t * pcb){
     if(pcb == NULL || pcb->process == NULL){
         return -1;
     }
-    my_sem_post(pcb->process->sem_name);
+    clear_sem(pcb->process->sem_name);
     free(pcb->process->name);
     free(pcb->process->heap->base);
     free(pcb->process->heap);
@@ -226,6 +229,6 @@ int waitpid(int pid){
     }
     my_sem_wait(pcb->process->sem_name);
     drawWord("Im here!");
-    my_sem_close(pcb->process->sem_name);
+    //my_sem_close(pcb->process->sem_name);
     return 1;
 }

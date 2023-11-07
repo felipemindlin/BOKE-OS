@@ -25,7 +25,7 @@ pcb_t * find_next_process( pcb_t * pcb ) {
         node_t * node = scheduler[i]->queue->current_node;
         while (node) {
             pcb_t *pcb = (pcb_t *)node->data;
-            if (pcb->priority == DEPRECATED) {
+            if (pcb->priority == ZOMBIE) {
                 node = node->next;
                 continue;
             }
@@ -242,7 +242,7 @@ int remove_from_queue_by_pid(queue_t * queue, int pid) {
         pcb_t *pcb = (pcb_t *)current_node->data;
 
         if (pcb->process->pid == pid) {
-            pcb->priority=DEPRECATED;
+            pcb->priority=ZOMBIE;
             remove_node(queue, current_node);
             return 1;
         }

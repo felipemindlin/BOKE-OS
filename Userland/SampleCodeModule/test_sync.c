@@ -1,6 +1,6 @@
 #include <stdint.h>
 //#define SEM_ID "sem_sem"
-#define TOTAL_PAIR_PROCESSES 4
+#define TOTAL_PAIR_PROCESSES 1
 #include <UserSyscalls.h>
 #include <utils.h>
 char * sem_id[]={"sem_1", "sem_2"};
@@ -32,7 +32,7 @@ void slowInc(int64_t *p, int64_t inc) {
     n = 4;
 
   if (use_sem) {
-    if ((my_sem = call_sem_open(1, argv[4])) == -1) {
+    if ((my_sem = call_sem_open(0, argv[4])) == -1) {
       print("test_sync: ERROR opening semaphore\n");
       return;
     }
@@ -43,13 +43,15 @@ void slowInc(int64_t *p, int64_t inc) {
     if (use_sem) {
       call_sem_wait(argv[4]);
     }
+    print(".\n");
+    call_sleepms(8000);
     slowInc(&global, inc);
     if (use_sem) {
-      
       call_sem_post(argv[4]);
     }
   }
   print("Im finishing\n");
+  print("global: %d", global);
   return;
 }
 uint64_t test_sync(char *argv[]) { 
@@ -73,7 +75,7 @@ uint64_t test_sync(char *argv[]) {
     pids[i] = call_create_process( "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
     pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
   }
-  call_forceTimer();
+  //call_forceTimer();
   int64_t idx = satoi(argv[1]);
 
  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {

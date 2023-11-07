@@ -22,6 +22,7 @@ typedef struct {
     uint64_t queue_size;     // number of blocked processes
     int allowed_processes[MAX_PROCESSES_PER_SEM];  // List of PIDs of processes allowed to use the semaphore
     int allowed_process_count;  // The number of processes currently allowed to use the semaphore
+    int being_cleared;
 } mySem_t;
 
 void initialize_sems();
@@ -35,5 +36,6 @@ int remove_from_queue(int sem_idx);
 int get_sem(char *id, int start_value);
 int put_sem(char *id);
 void whiff(uint64_t sem_idx);
+int clear_sem(char *sem_id);
 
 #endif
