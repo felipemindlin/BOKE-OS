@@ -11,7 +11,8 @@
 #include "include/interrupts.h"
 #include "include/libasm.h"
 #include <idle.h>
-#include <mysemaphore.h>
+#include "./include/mysemaphore.h"
+#include "include/pipe.h"
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
@@ -111,6 +112,33 @@ int function1(char * args[]){
 	}
 	return 0;
 }
+
+int write_to_pipe(){
+	int id = create_pipe(1);
+	char message[] = "Probando";
+	drawWord("Por escribir en el pipe\n");
+	pipe_write(id,message,9);
+	pipe pipe = getPipe(id);
+	drawWord("Pipe escrito con :");
+	drawWord(pipe.pipeBuffer);
+	newline();
+	return 0;
+}
+
+int read_from_pipe(){
+	int id = getPipeID(1);
+	pipe pipe = getPipe(id);
+	char dest[10];
+	drawWord("Por leer en el pipe\n");
+	pipe_read(id,dest,8);
+	drawWord("Pipe leido con:");
+	drawWord(pipe.pipeBuffer);
+	newline();
+	drawWord("Se imprime:\n");
+	drawWord(dest);
+	newline();
+}
+
 extern uint64_t test_sync(char *argv[]);
 //uint64_t test_sync();
 int main()
@@ -120,6 +148,7 @@ int main()
 	init_mm((void *)0x0000000000600000, 0x0000000002700000);
 	init_scheduler(2);
 	initialize_sems();
+	init_pipes();
 	
 	/*
 	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
@@ -132,6 +161,9 @@ int main()
 	int shell_pid = create_and_insert_process(1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=1 indicates OS created it
 	create_and_insert_process(2, "test", 1, 0x0000000000001000, &function1, args); // id=1 indicates OS created it
 	change_process_priority(create_and_insert_process(1, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=1 indicates OS created it
+
+	create_and_insert_process(0,"write",4096,4096,&write_to_pipe,NULL);
+	create_and_insert_process(0,"read",4096,4096,&read_from_pipe,NULL);
 
 	enable_multitasking(shell_pid);
 
