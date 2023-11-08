@@ -44,13 +44,10 @@ void slowInc(int64_t *p, int64_t inc) {
       call_sem_wait(argv[4]);
     }
     slowInc(&global, inc);
-    print("C ID: %d - G: %d\n", get_pid(), (int)global);
     if (use_sem) {
       call_sem_post(argv[4]);
     }
   }
-  print("Im finishing\n");
-  print("global: %d", global);
   return;
 }
 uint64_t test_sync(char *argv[]) { 
