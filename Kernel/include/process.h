@@ -7,7 +7,7 @@
 #define	__need_size_t
 #define	__need_NULL
 #include <stddef.h>
-#define OS_PID 2
+#define OS_PID 1
 #define MAX_SEM_NAME 5
 #define BASE 10
 #define MIN_HEAP_SIZE 0x1000
