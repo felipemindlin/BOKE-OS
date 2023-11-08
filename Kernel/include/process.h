@@ -36,8 +36,7 @@ typedef enum priority_t{
     IDLE_PRIORITY,
     LOW_PRIORITY,
     MEDIUM_PRIORITY,
-    HIGH_PRIORITY,
-    DEPRECATED
+    HIGH_PRIORITY
 } priority_t;
 
 typedef struct mem_block_t{

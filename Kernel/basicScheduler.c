@@ -25,7 +25,7 @@ pcb_t * find_next_process( pcb_t * pcb ) {
         node_t * node = scheduler[i]->queue->current_node;
         while (node) {
             pcb_t *pcb = (pcb_t *)node->data;
-            if (pcb->priority == ZOMBIE) {
+            if (pcb->process->status == ZOMBIE) {
                 node = node->next;
                 continue;
             }
@@ -331,52 +331,6 @@ void kill_processes_in_removal_queue(){
     }
 }
 
-
-/*
-void init_OS_pcb(){
-    OS_pcb = (pcb_t *) malloc(sizeof(pcb_t));
-    if(OS_pcb == NULL){
-        return;
-    }
-    OS_pcb->priority = ZOMBIE; // sus
-    OS_pcb->ticks = 0;
-    process_t * process = (process_t *) malloc(sizeof(process_t));
-    if(process == NULL){
-        free(OS_pcb);
-        return;
-    }
-    OS_pcb->process->parent_pid = 0;
-    process->pid = 0;
-    process->status = RUNNING; // imagine it is always running, though it is clearly not always the current process
-    process->name = malloc(str_len("OS") + 1);
-    if(process->name == NULL){
-        free(process);
-        free(OS_pcb);
-        return;
-    }
-    str_cpy(process->name, "OS");
-    process->stack = (mem_block_t *) malloc(sizeof(mem_block_t));
-    if(process->stack == NULL){
-        free(OS_pcb);
-        return;
-    }
-    process->stack->base = NULL;
-    process->stack->size = 0;
-    process->stack->current = NULL;
-    process->heap = (mem_block_t *) malloc(sizeof(mem_block_t));
-    if(process->heap == NULL){
-        free(process->stack);
-        free(OS_pcb);
-        return;
-    }
-    process->heap->base = NULL;
-    process->heap->size = 0;
-    process->heap->current = NULL;
-    OS_pcb->process = process;
-    processes_qty++;
-    // do not add OS to scheduler, it runs when it wants
-}
-*/
 
 
 int current_process_id(){

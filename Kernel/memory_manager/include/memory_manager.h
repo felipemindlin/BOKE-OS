@@ -11,10 +11,7 @@
 #define BLOCK_SIZE 10*/
 
 /* Get size_t and NULL from <stddef.h>.  */
-#define INVALID_ADDRESS -1
-#define FREE 0
-#define ALLOCATED 1
-#define PARCIAL 2
+enum { INVALID_ADDRESS=-1, FREE, ALLOCATED, PARCIAL, START_PAGE_BOUND, END_PAGE_BOUND, SINGLE_PAGE };
 
 #define	__need_size_t
 #define	__need_NULL
@@ -42,7 +39,7 @@ typedef struct Node {
 void init_mm(void * baseAddres, uint64_t mem_ammount);
 void initialize_heap(void * baseAddres, uint64_t mem_ammount);
 void * malloc(uintptr_t bytes);
-void * free(void * mem);
+void free(void * mem);
 void printMem();
 
 #endif

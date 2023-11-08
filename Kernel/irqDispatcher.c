@@ -152,7 +152,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		return malloc((uintptr_t)rsi);
 		break;
 	case 34:
-		return free((void*)rsi);
+		free((void*)rsi);
 		break;
 	default:
 		return 0;

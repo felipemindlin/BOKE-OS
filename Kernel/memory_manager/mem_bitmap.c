@@ -7,6 +7,7 @@
 heap heap_struct; //TO-DO: Implement ADT so we just reserve the memory needed for one memory manager
 
 static uintptr_t get_page_index(void * mem);
+static uintptr_t get_first_page_index(void *¨mem);
 static void initialize_pages();
 static uintptr_t find_pages(size_t pages_needed, uintptr_t start_page);
 static size_t size_to_num_of_pages(size_t size);
@@ -27,12 +28,12 @@ void init_mm(void * baseAddres, uint64_t mem_ammount){
     total_mem_needed+=bitmap_pages*PAGE_SIZE;
 
     if(total_mem_needed>MAX_MEM){
-        drawWord("\nKERNEL PANIC: Not enough memory to initialize heap!\n");
+        drawWord("\nNot enough memory to initialize heap!\n");
         return;
     }
 
     if(bitmap_pages > bitmap_size){
-        drawWord("\nKERNEL PANIC: Not enough memory to initialize heap!\n");
+        drawWord("\nNot enough memory to initialize heap!\n");
         return;
     }
 
@@ -86,52 +87,81 @@ void* malloc(size_t size){
         page_index = find_pages(pages_needed, 0);
     }
     if(page_index==INVALID_ADDRESS){
-        drawWord("\nKERNEL PANIC: Ran out of memory!\n");
+        drawWord("\nRan out of memory!\n");
         return NULL;
     }
 
     for (uintptr_t i = page_index; i < page_index + pages_needed; i++){
-        heap_struct.pages[i] = ALLOCATED; // maybe we should reservate the memory with the pid of the process that is using it
+        if(i==page_index){ 
+            if(pages_needed==1){
+                heap_struct.pages[i] = SINGLE_PAGE;
+            } else{
+                heap_struct.pages[i] = START_PAGE_BOUND;
+            }
+        } else if(i==page_index+pages_needed-1){ // last page
+            heap_struct.pages[i] = END_PAGE_BOUND;
+        } else{
+            heap_struct.pages[i] = ALLOCATED;
+        }
     }
 
     return (void*)( heap_struct.start + page_index * heap_struct.page_size);
 }
 
 
-// this free only frees one page: the one corresponding to the memory address passed as parameter
-void * free(void * mem){
+// the free recieves a void *. It must free the complete block of memory that was allocated. From page_boud to page_bound
+void free(void * mem){
     uintptr_t page_index = get_page_index(mem);
     if(page_index==INVALID_ADDRESS){
-        return NULL;
+        drawWord("\nInvalid address\n");
+        return;
     }
-    heap_struct.pages[page_index] = FREE;
-    heap_struct.last_freed_page = page_index;
-    
-    uint8_t * p = (uint8_t*) mem;
-    for (uintptr_t i = 0; i < heap_struct.page_size; i++){
-        p[i] = 0;
+    if(heap_struct.pages[page_index]==FREE){
+        drawWord("\nInvalid address\n");
+        return;
     }
-    
-    return mem+heap_struct.page_size;
+    if(heap_struct.pages[page_index]==SINGLE_PAGE){
+        heap_struct.pages[page_index]=FREE;
+        return;
+    }
+    uintptr_t i=get_first_page_index(mem);
+    while(heap_struct.pages[i]!=END_PAGE_BOUND){
+        heap_struct.pages[i]=FREE;
+        i++;
+    }
+    heap_struct.pages[i]=FREE;
 }
+
 
 static uintptr_t get_page_index(void * mem){
     if((uintptr_t)mem > heap_struct.end || (uintptr_t) mem < heap_struct.start){
-        drawWord("\nKERNEL PANIC: Invalid address!\n");
+        drawWord("\nInvalid address!\n");
         return INVALID_ADDRESS;
     }
     return ((uintptr_t)mem - heap_struct.start) / heap_struct.page_size;
 }
 
-#define RED 0xFF0000
-#define GREEN 0x00FF00
-#define BLUE 0x0000FF
-#define WHITE 0xFFFFFF
-#define BLACK 0x000000
-#define YELLOW 0xFFFF00
-#define ORANGE 0xFFA500
-
-//static const int color_list[7] = { RED,GREEN,BLUE,WHITE,BLACK,YELLOW,ORANGE};
+static uintptr_t get_first_page_index(void * mem){
+    if((uintptr_t)mem > heap_struct.end || (uintptr_t) mem < heap_struct.start){
+        drawWord("\nInvalid address!\n");
+        return INVALID_ADDRESS;
+    }
+    uintptr_t page_idx = get_page_index(mem);
+    if(heap_struct.pages[page_idx]==SINGLE_PAGE){
+        return page_idx;
+    }
+    if(heap_struct.pages[page_idx]==START_PAGE_BOUND){
+        return page_idx;
+    }
+    if(heap_struct.pages[page_idx]==END_PAGE_BOUND || heap_struct.pages[page_idx]==ALLOCATED){
+        uintptr_t i=page_idx;
+        while(heap_struct.pages[i]!=START_PAGE_BOUND){
+            i--;
+        }
+        return i;
+    }
+    return INVALID_ADDRESS;
+}
 
 int calculate_free_pages(){
     int free_pages = 0;
@@ -150,17 +180,4 @@ void printMem(){
     drawNumber(heap_struct.size - free_pages * heap_struct.page_size);
     drawWord("\nFree memory in bytes: ");
     drawNumber(free_pages * heap_struct.page_size);
-    /*int c = 0;
-    uintptr_t i=0;
-    for (i = 0; i < heap_struct.page_qty; i++){
-        if (heap_struct.pages[i] == 0)
-            drawNumberColor(heap_struct.pages[i], RED);
-        else{
-            drawNumber(heap_struct.pages[i]);
-            if (heap_struct.pages[i] <= 10)
-                c++;
-        }
-        drawWord("|");
-    }
-    drawWord("\n");*/
 }
