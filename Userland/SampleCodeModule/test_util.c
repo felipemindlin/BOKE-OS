@@ -3,7 +3,6 @@
 
 
 void tests() {
-    print("Usage: TEST <test_number> <param_1>\n");
     print("Available tests:\n");
     print("  A - Test memory manager <max_mem>\n");
     print("  B - Test priority\n");
