@@ -20,7 +20,7 @@
 
 #define isMinusc(x) ((x)<='a'?(((x)>='z')?1:0):0)
 #define DEFAULT_FONT_SIZE 2
-
+#define EOF 0x01
 
 void paintScreen(uint64_t hexColor);
 void fillSection(uint64_t hexColor, int startY, int endY);

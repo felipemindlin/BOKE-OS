@@ -8,6 +8,7 @@
 #include "shell.h"
 #include <test_util.h> 
 uint64_t color = BLACK;
+#define EOF 0x01
 static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS", "CLEAR"};
 char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
 static char command_descriptions[COMMAND_LEN][300] = {
@@ -260,7 +261,7 @@ void cat() {
   char c;
   char comm[MAX_COMMAND_LENGTH]={0};
   int i=0;
-  while ((c = getC()) != 0){
+  while ((c = getC()) != EOF){
     putC(c);
     comm[i++]=c;
     if(c=='\n'){
@@ -275,7 +276,7 @@ void cat() {
 void wc() {
   int lines = 0;
   char c;
-  while ((c = getC()) != 0) {
+  while ((c = getC()) != EOF) {
     if (c == '\n' ) {
       lines++;
     }
@@ -293,7 +294,7 @@ int is_vowel(char c) {
 
 void filter() {
   char c;
-  while ((c = getC()) != 0) {
+  while ((c = getC()) != EOF) {
     if (!is_vowel(c)) {
       putC(c);
     }

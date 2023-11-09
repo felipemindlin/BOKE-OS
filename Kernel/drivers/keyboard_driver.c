@@ -36,9 +36,8 @@ void keyboard_handler() {
             return;
         }
         else if(ScanCodes[key] == 'D'){
-            drawWord("contorl D");
-            key=0x01; //implementar bien el EOF porq ya con tocar el contorl o el shift o cualquiera que este en 0 en scancodes sale 
-            //return;
+            drawWord("EOF");
+            key=EOF;
         }
         else if(ScanCodes[key] == 'P'){
             print_process();

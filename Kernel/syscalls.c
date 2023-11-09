@@ -34,6 +34,8 @@ void sys_read( char *buf, int len, int filedescriptor){
                 if (aux > 0 && aux <= 255){
                     if (aux == 0x39)
                         buf[i++]=' ';
+                    else if(aux==EOF)
+                        buf[i++]=EOF;
                     else
                         buf[i++]=ScanCodes[(int)aux];
                     setPos(pos+1);
