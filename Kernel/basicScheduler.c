@@ -200,6 +200,7 @@ void print_process() {
     drawWordPadded(WHITE, "Status", STATUS_WIDTH);
     drawWordPadded(WHITE, "PID", PID_WIDTH);
     drawWordPadded(WHITE, "Priority", PRIORITY_WIDTH);
+    drawWordPadded(WHITE, "Parent PID", PID_WIDTH);
     drawWord("\n");
 
     for (int i = HIGH_PRIORITY; i >= 0; i--) {
@@ -212,6 +213,7 @@ void print_process() {
             drawWordPadded(WHITE, status_arr[(int)pcb->process->status], STATUS_WIDTH);
             drawNumberPadded(WHITE, pcb->process->pid, PID_WIDTH);
             drawNumberPadded(WHITE, i, PRIORITY_WIDTH); 
+            drawNumberPadded(WHITE, pcb->process->parent_pid, PID_WIDTH);
             drawWord("\n");
 
             // Move to the next node
@@ -341,6 +343,22 @@ void stop_current_process() {
 
 int getQuantum(){
     return scheduler[current_pcb->priority]->quantum;
+}
+
+void reassign_children_to_shell(int old_parent_pid) {
+    for (int i = 0; i < QUEUE_QTY; i++) {
+        node_t *current_node = scheduler[i]->queue->current_node;
+        if (current_node == NULL) {
+            continue;
+        }
+        do {
+            pcb_t *current_pcb = (pcb_t *)current_node->data;
+            if (current_pcb->process->parent_pid == old_parent_pid) {
+                current_pcb->process->parent_pid = SHELL_PID;
+            }
+            current_node = current_node->next;
+        } while (current_node != scheduler[i]->queue->current_node);
+    }
 }
 
 void kill_processes_in_removal_queue(){

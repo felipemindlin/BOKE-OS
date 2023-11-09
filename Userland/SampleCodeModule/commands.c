@@ -150,7 +150,7 @@ void __call_command__(int i, char * command){
         wc();
         return;
     case PHYLO:
-        phylo();;
+        phylo();
         return;
     case FILTER:
         filter();

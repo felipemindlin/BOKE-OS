@@ -18,7 +18,7 @@ typedef struct scheduler_queue {
     unsigned int quantum;
     queue_t * queue;
 } scheduler_queue;
-
+#define SHELL_PID 2
 void init_scheduler(int quantum);
 void enable_multitasking(int pid);
 int scheduler_enabled();
@@ -38,4 +38,5 @@ int current_process_id();
 void change_process_priority(int pid, priority_t priority);
 int block_process(int pid);
 void finish_current_tick();
+void reassign_children_to_shell(int old_parent_pid);
 #endif
