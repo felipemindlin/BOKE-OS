@@ -8,7 +8,7 @@
 #include "registers.h"
 #include "include/ScanCodes.h"
 #include <mysemaphore.h>
-
+#include "include/syscalls.h"
 
 void keyboard_handler() {
     uint16_t key = getKey();  // Obtiene el valor de la tecla presionada
@@ -42,6 +42,10 @@ void keyboard_handler() {
         }
         else if(ScanCodes[key] == 'P'){
             print_process();
+        }
+        else if(ScanCodes[key] == 'L'){
+            clear();
+            return;
         }
     }
     if(shift_pressed){

@@ -41,5 +41,5 @@ int call_waitpid(int pid);
 int get_pid();
 void * malloc(uintptr_t bytes);
 void * free(void * mem);
-
+void call_print_word_color(uint64_t hexColor, char* word);
 #endif /* USERSYSCALLS_H */

@@ -33,6 +33,7 @@ GLOBAL call_waitpid
 GLOBAL get_pid
 GLOBAL malloc
 GLOBAL free
+GLOBAL call_print_word_color
 section .text
 
 %macro call_to_handler 1
@@ -118,3 +119,5 @@ malloc:
     call_to_handler 33
 free:
     call_to_handler 34
+call_print_word_color:
+    call_to_handler 35

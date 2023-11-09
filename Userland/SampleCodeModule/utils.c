@@ -227,28 +227,38 @@ int strcmp(char * str1, char * str2){
 }
 
 // Similar a strcmp pero solo compara hasta el primer espacio o el fin de la cadena (lo que ocurra primero)
-int strcmpspace(char * str1, char * str2){
-    char partition[BUFFER_SIZE];
+
+int strcmpspace( char *str1,  char *str2) {
+    // Iterate through str2 until either a space or the end of the string
     int j = 0;
-    for (; str2[j] != '\0' && str2[j] != ' ';j++){
-        partition[j]=str2[j];
+    char partition[BUFFER_SIZE];
+    while (str2[j] != '\0' && str2[j] != ' ') {
+        partition[j] = str2[j];
+        j++;
     }
-    partition[j+1]=0;
-	int i = 0;
-	for (; str1[i] != '\0' && !null_or_space(partition[i]); i++){
-		if (str1[i] > str2[i]){
-			return 1;
-		} else if (str1[i] < str2[i]){
-			return -1;
-		}
-	}
-	if (str1[i] == '\0' && null_or_space(partition[i])) {
+    partition[j] = '\0';  // Null-terminate the partition string
+
+    // Compare str1 and the partition string
+    int i = 0;
+    while (str1[i] != '\0' && !null_or_space(partition[i])) {
+        if (str1[i] > partition[i]) {
+            return 1;
+        } else if (str1[i] < partition[i]) {
+            return -1;
+        }
+        i++;
+    }
+
+    // Check for equality
+    if (str1[i] == '\0' && null_or_space(partition[i])) {
         return 0;
     } else if (null_or_space(partition[i])) {
-        return -1; 
-    } else return 1;
-
+        return -1;
+    } else {
+        return 1;
+    }
 }
+
 
 
 char * strtok(char * str, char delim){
