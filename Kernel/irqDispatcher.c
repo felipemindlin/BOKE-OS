@@ -16,12 +16,13 @@
 #include <process.h>
 #include <mysemaphore.h>
 #include <libasm.h>
+#include "include/pipe.h"
 
 static void int_20();
 static void int_21();
-static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
+static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9,uint64_t r15);
 
-typedef void (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
+typedef void (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9,uint64_t r15);
 InterruptHandler interruption[256] = {
     [0] = &int_20,
     [1] = &int_21,
@@ -29,13 +30,14 @@ InterruptHandler interruption[256] = {
 };
 
 //maneja las interrupciones y recibe el numero de la interrupcion y los registros en el momento de la interrupcion
-void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9,uint64_t r15) {
     if (irq >= 0 && irq < 256 && interruption[irq] != NULL) {
         InterruptHandler handler = interruption[irq];
-        handler(rdi, rsi, rdx, rcx, r8, r9);
+        handler(rdi, rsi, rdx, rcx, r8, r9,r15);
 		return;
     }
 }
+
 
 void int_20() {
 	timer_handler();
@@ -44,9 +46,9 @@ void int_20() {
 void int_21() {
 	keyboard_handler();
 }
-
+int fd[2] = {0,0};
 //maneja las syscalls y recibe el numero de la syscall y los registros en el momento de la syscall
-int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9,uint64_t r15) {
 
     switch (rdi)
 	{
@@ -106,10 +108,10 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		beep(rsi, rdx);
 		break;
 	case 19:
-		add_process_to_creation_queue(1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL);
+		add_process_to_creation_queue(1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL,fd);
 		break;
 	case 20:
-		add_process_to_creation_queue(1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL);
+		add_process_to_creation_queue(1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL,fd);
 		break;
 	case 21:
 		kill_process(rsi);
@@ -124,7 +126,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		loop();
 		break;
 	case 25:
-		return create_and_insert_process_from_current(rsi, rdx, rcx, r8, r9);
+		return create_and_insert_process_from_current(rsi, rdx, rcx, r8, r9,r15);
 		break;
 	case 26:
 		return my_sem_wait(rsi);
@@ -144,8 +146,21 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 	case 31:
 		return waitpid(rsi);
 		break;
+	case 32:
+		return getPipeID(rsi);
+		break;
+	case 33:
+		close_pipe(rsi);
+		break;
+	case 34:
+		return create_pipe(rsi);
+		break;
+	case 35:
+		return create_pipe_anonymous();
+		break;
 	default:
 		return 0;
+		break;
 	}
 	return 0;
 }

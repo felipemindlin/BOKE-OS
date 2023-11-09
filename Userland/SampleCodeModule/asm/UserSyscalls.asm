@@ -30,12 +30,17 @@ GLOBAL call_sem_close
 GLOBAL call_sem_open
 GLOBAL call_forceTimer
 GLOBAL call_waitpid
+GLOBAL call_pipe_open
+GLOBAL call_pipe_close
+GLOBAL call_pipe_create
+GLOBAL call_pipe_create_anonymous
 
 section .text
 
 %macro call_to_handler 1
     push rbp
     mov rbp, rsp
+    mov r10,r8
     mov r9, r8      ;arg 5
     mov r8, rcx     ;arg 4
     mov rcx, rdx    ;arg 3
@@ -110,3 +115,11 @@ call_forceTimer:
     call_to_handler 30
 call_waitpid:
     call_to_handler 31
+call_pipe_open:
+    call_to_handler 32
+call_pipe_close:
+    call_to_handler 33
+call_pipe_create:
+    call_to_handler 34
+call_pipe_create_anonymous:
+    call_to_handler 35

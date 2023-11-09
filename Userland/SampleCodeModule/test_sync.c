@@ -89,9 +89,10 @@ uint64_t test_sync(char *argv[]) {
   size_t process_stack_size = 4096; // Example stack size
 
   uint64_t i;
+  int fd[2]={0,0};
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    pids[i] = call_create_process( "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec);
-    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc);
+    pids[i] = call_create_process( "Decreaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvDec,fd);
+    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", process_heap_size, process_stack_size, (void *)my_process_inc, argvInc,fd);
   }
   int64_t idx = satoi(argv[1]);
 

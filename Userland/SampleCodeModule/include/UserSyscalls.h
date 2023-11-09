@@ -31,12 +31,16 @@ void call_kill(int pid);
 void call_nice(int pid, int priority);
 void call_block(int pid);
 void call_loop();
-int  call_create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+int  call_create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fd[2]);
 uint64_t call_sem_open(uint64_t start_value, char *id);
 void call_sem_close(char *id);  // Updated to take ID instead of index
 uint64_t call_sem_post(char *id);  // Updated to take ID instead of index
 uint64_t call_sem_wait(char *id);  // Updated to take ID instead of index
 void call_forceTimer();
 int call_waitpid(int pid);
-
+int call_pipe_open(int name);
+void call_pipe_close(int name);
+int call_pipe_create(int name);
+int call_pipe_create_anonymous();
+void call_read_pipe(int id,char* dest, int len);
 #endif /* USERSYSCALLS_H */

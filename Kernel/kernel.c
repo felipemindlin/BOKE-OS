@@ -22,6 +22,8 @@ typedef int (*EntryPoint)();
 
 char * args[]={"prueba1", "examen2", NULL};
 
+int fdDefault[] = {0, 0};
+
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
 	memset(bssAddress, 0, bssSize);
@@ -158,12 +160,14 @@ int main()
 
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	
-	int shell_pid = create_and_insert_process(1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL); // id=1 indicates OS created it
-	create_and_insert_process(1, "test", 1, 0x0000000000001000, &function1, args); // id=1 indicates OS created it
-	change_process_priority(create_and_insert_process(1, "idle",1,  0x0000000000001000, &idle, NULL), IDLE_PRIORITY); // id=1 indicates OS created it
+	int fd[2] = {0,0};
 
-	create_and_insert_process(0,"write",4096,4096,&write_to_pipe,NULL);
-	create_and_insert_process(0,"read",4096,4096,&read_from_pipe,NULL);
+	int shell_pid = create_and_insert_process(1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL,fd); // id=1 indicates OS created it
+	create_and_insert_process(1, "test", 1, 0x0000000000001000, &function1, args,fd); // id=1 indicates OS created it
+	change_process_priority(create_and_insert_process(1, "idle",1,  0x0000000000001000, &idle, NULL,fd), IDLE_PRIORITY); // id=1 indicates OS created it
+
+	create_and_insert_process(0,"write",4096,4096,&write_to_pipe,NULL,fd);
+	create_and_insert_process(0,"read",4096,4096,&read_from_pipe,NULL,fd);
 
 	enable_multitasking(shell_pid);
 

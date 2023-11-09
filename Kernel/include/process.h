@@ -10,6 +10,7 @@
 #define OS_PID 2
 #define MAX_SEM_NAME 5
 #define BASE 10
+#define SHELL 0 // FD of shell process
 static char* status_arr[5] ={
     "BLOCKED",
     "READY",
@@ -50,6 +51,8 @@ typedef struct process_t{
     mem_block_t * stack;
     mem_block_t * heap;
     char * sem_name[MAX_SEM_NAME];
+    int fr;
+    int fw
 } process_t;
 
 typedef struct pcb_t{
@@ -67,8 +70,8 @@ static size_t pid = 2;
 #include <scheduler.h>
 
 
-process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
-int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fd[2]);
+int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fd[2]);
 int getAvailablePid();
 void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
 // process_t* create_and_insert_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
@@ -76,7 +79,7 @@ int kill_process(int pid);
 void kill_current_process();
 int free_process(pcb_t * pcb);
 void loop();
-int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fd[2]);
 int waitpid(int pid);
 
 #endif
