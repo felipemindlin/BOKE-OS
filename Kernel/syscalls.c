@@ -16,19 +16,7 @@
 void sys_write(char *buf, int len, int filedescriptor){
 
     pcb_t * currentPCB = get_current_pcb();
-    /*
-    if (currentPCB->process->pid >= 7)
-    {
-    drawWord("En: SYS WRITE");
-    drawWord("    ");
-    drawWord("Proceso llamado:");
-    drawWord(currentPCB->process->name);
-    drawWord("    ");
-    drawWord("FD para esctirutra:");
-    drawNumber(currentPCB->process->fd[FD_WRITE]);
-    newline();
-    }
-    */
+
     if (currentPCB->process->fw == SHELL)
     {
         switch (filedescriptor){
@@ -48,19 +36,7 @@ void sys_write(char *buf, int len, int filedescriptor){
 void sys_read( char *buf, int len, int filedescriptor){
 
     pcb_t * currentPCB = get_current_pcb();
-    /*
-    if (currentPCB->process->pid >= 7){
-        drawWord("En: SYS READ");
-        drawWord("    ");
-        drawWord("Proceso llamado:");
-        drawWord(currentPCB->process->name);
-        drawWord("    ");
-        drawWord("FD para lectura:");
-        drawNumber(currentPCB->process->fd[FD_READ]);
-        newline();
-        sleep(1);
-    }
-    */
+    
     if (currentPCB->process->fr == SHELL)
     {
         switch (filedescriptor){

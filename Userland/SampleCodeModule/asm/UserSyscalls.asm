@@ -40,7 +40,7 @@ section .text
 %macro call_to_handler 1
     push rbp
     mov rbp, rsp
-    mov r10,r8
+
     mov r9, r8      ;arg 5
     mov r8, rcx     ;arg 4
     mov rcx, rdx    ;arg 3

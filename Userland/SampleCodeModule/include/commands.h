@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "UserSyscalls.h"
 
-#define COMMAND_LEN 21
+#define COMMAND_LEN 20
 #define COLOR_LEN 5
 #define MAX_COMMAND_LENGTH 256
 enum Commands {
@@ -28,7 +28,6 @@ enum Commands {
     LOOP,
     SEM,
     WRITE,
-    READ
 };
 enum Colors {
     GREEN_,
@@ -58,5 +57,4 @@ void wc();
 int is_vowel(char c);
 void filter();
 void write();
-void read();
 #endif /*__COMMANDS_H__*/
