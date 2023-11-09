@@ -7,24 +7,39 @@
 #include "keyboard_buffer.h"
 #include "include/interrupts.h"
 #include "drivers/include/ScanCodes.h"
+#include "./include/scheduler.h"
+#include "./include/process.h"
+#include "./include/pipe.h"
 
 
 
 void sys_write(char *buf, int len, int filedescriptor){
 
-    switch (filedescriptor){
+    pcb_t * currentPCB = get_current_pcb();
+
+    if (currentPCB->process->fw == SHELL)
+    {
+        switch (filedescriptor){
         case STDOUT: drawWordLen(buf, len);
             return;
         case STDERR: drawWordColorLen(RED, buf, len);
             return;
         default: invalidFd();
+        }
+    }
+    else{
+        int w = pipe_write(currentPCB->process->fw,buf,len);
     }
     
 }
 
 void sys_read( char *buf, int len, int filedescriptor){
 
-    switch (filedescriptor){
+    pcb_t * currentPCB = get_current_pcb();
+    
+    if (currentPCB->process->fr == SHELL)
+    {
+        switch (filedescriptor){
         case STDIN:;
             int pos = getBufferPosition();
             char aux = 0;
@@ -43,6 +58,10 @@ void sys_read( char *buf, int len, int filedescriptor){
             return;
         default: invalidFd();
     }
-
+    }
+    else{
+        int r = pipe_read(currentPCB->process->fr,buf,len);
+    }
+    
 }
 

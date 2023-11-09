@@ -16,6 +16,7 @@
 #include <process.h>
 #include <mysemaphore.h>
 #include <libasm.h>
+#include "include/pipe.h"
 
 static void int_20();
 static void int_21();
@@ -37,6 +38,7 @@ void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint6
     }
 }
 
+
 void int_20() {
 	timer_handler();
 }
@@ -44,7 +46,7 @@ void int_20() {
 void int_21() {
 	keyboard_handler();
 }
-
+int fd[2] = {0,0};
 //maneja las syscalls y recibe el numero de la syscall y los registros en el momento de la syscall
 int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
 
@@ -106,10 +108,10 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		beep(rsi, rdx);
 		break;
 	case 19:
-		add_process_to_creation_queue(1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL);
+		add_process_to_creation_queue(1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL,fd);
 		break;
 	case 20:
-		add_process_to_creation_queue(1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL);
+		add_process_to_creation_queue(1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL,fd);
 		break;
 	case 21:
 		return kill_process(rsi);
@@ -124,8 +126,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		loop();
 		break;
 	case 25:
-		int to_ret = create_and_insert_process_from_current(rsi, rdx, rcx, r8, r9);
-		return to_ret;
+		return create_and_insert_process_from_current_standard(rsi, rdx, rcx,(size_t *) r8,(int *)r9);
 		break;
 	case 26:
 		return my_sem_wait((char*)rsi);
@@ -154,8 +155,21 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 	case 34:
 		free((void*)rsi);
 		break;
+	case 35:
+		return getPipeID(rsi);
+		break;
+	case 36:
+		close_pipe(rsi);
+		break;
+	case 37:
+		return create_pipe(rsi);
+		break;
+	case 38:
+		return create_pipe_anonymous();
+		break;
 	default:
 		return 0;
+		break;
 	}
 	return 0;
 }

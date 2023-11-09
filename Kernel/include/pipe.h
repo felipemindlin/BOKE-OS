@@ -10,13 +10,15 @@ typedef struct pipe{
     unsigned int writePos;
     unsigned int readPos;
     char *pipeBuffer;
-    //uint8_t eof;
-    //int leftToRead;
+    uint8_t eof;
+    int leftToRead;
 } pipe;
 
 void init_pipes();
 
 int create_pipe(int name);
+
+int create_pipe_anonymous();
 
 int pipe_write(int id, const char *message, unsigned int size);
 

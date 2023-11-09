@@ -6,9 +6,9 @@
 #include "funcAsm.h"
 #include "colors.h"
 #include "shell.h"
-#include <test_util.h>  
-static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS"};
-char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
+
+static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS","SEM","WRITE"};
+
 //busca el comando en la lista de comandos y llama a la funcion correspondiente
 void __seek_command__(char * command){
     
@@ -147,6 +147,9 @@ void __call_command__(int i, char * command){
         // char *test_args_no_sem[] = {"3", "2"}; // Test with 10 iterations and semaphores disabled
         // test_sync(test_args_no_sem);
         return;
+    case WRITE:
+        write();
+        return;
     default:
         call_sys_write("ERROR - Comando no reconocido",30,2);
         putC('\n');
@@ -271,4 +274,34 @@ void filter() {
   }
   putC('\n');
   return;
+}
+
+void auxW(){
+    int pipe = call_pipe_open(3);
+    //print("FD donde escribe el pipe:%d\n",pipe);
+    char message[] = "Hola";
+    call_sys_write(message,4,pipe);
+}
+
+void read_aux(){
+    int pipe = call_pipe_open(3);
+    print("FD donde lee el pipe:%d\n",pipe);
+    char dest;
+    call_sys_read(dest,4,pipe);
+    putString("Se leyo:");
+    call_sys_write(dest,4,STDOUT);
+    
+}
+
+void write(){
+    //int aux = call_pipe_create(2);
+    int pipe1 = call_pipe_create(3); // Crear un segundo descriptor de archivo para pipe
+    print("FD donde escribe el pipe:%d\n", pipe1); // Usar pipe1 para imprimir el valor del FD
+    int fd1[2]={0,pipe1};
+    int fd2[2]={pipe1,0};
+    size_t hs[2]={4096,4096};
+    call_create_process("child1",hs, &auxW, NULL,fd1);
+
+    print("Ahora creo child 2\n");
+    call_create_process("child2",hs, &read_aux, NULL,fd2);
 }

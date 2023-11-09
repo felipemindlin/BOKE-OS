@@ -6,11 +6,13 @@
 #include <naiveConsole.h>
 
 void process_wrapper(void entry_point(char ** argv), char ** argv);
-int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
-    //return add_process_to_creation_queue(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
-    return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+int create_and_insert_process_from_current_standard(const char * name, size_t *heap_and_stack,void * entry_point, char ** argv,int * fd){
+    return create_and_insert_process(get_current_pcb()->process->pid, name, heap_and_stack[0],heap_and_stack[1], entry_point, argv,fd[0],fd[1]);
 }
-int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
+int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fd[2]){
+    return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv,fd[0],fd[1]);
+}
+int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw){
     if(name == NULL || entry_point == NULL){
         return -1;
     }/*
@@ -27,7 +29,7 @@ int create_and_insert_process(int parent_pid, const char * name, size_t heap_siz
             }
     }*/
 
-    process_t * process = create_process(parent_pid, name, heap_size, stack_size, entry_point, argv);
+    process_t * process = create_process(parent_pid, name, heap_size, stack_size, entry_point, argv,fr,fw);
 
     if(process == NULL){
         return -1;
@@ -38,7 +40,7 @@ int create_and_insert_process(int parent_pid, const char * name, size_t heap_siz
 
 }
 
-process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
+process_t * create_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw){
 /*      if(argv!=NULL){
          drawWord("\nCreate_process\n");
             for(int i=0;argv[i]!=NULL;i++){
@@ -120,21 +122,11 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
     
     process->stack->size = stack_size;
 
-    //process->foreground = foreground;
+    //Seteo los FD
+    process->fr = fr;
+    process->fw = fw;
 
-/*
-    if(argv != NULL){
-        int i = 0;
-        while(argv[i] != NULL){
-            int len = str_cpy((char *) process->heap->current, argv[i]);
-            process->heap->current = (uintptr_t *) ((uintptr_t) process->heap->current + len + 1);
-            i++;
-            if(i >= MAX_PROCESS_ARGUMENTS){
-                break;
-            }
-        }
-    }
-  */                                                                        /*process->heap->base*/
+
     process->stack->current = create_stackframe((uintptr_t *)entry_point, (void*)argv, process->stack->base + stack_size, &process_wrapper); // is this correct?
     process->status = READY;
     uintToBase(process->pid, process->sem_name, BASE);
@@ -214,11 +206,11 @@ int free_process(pcb_t * pcb){
     
     return 0;
 }
-
+//int fd1[2] = {0,0};
 int pidd=0;
 void loop(){
     if(!pid){
-        pidd = create_and_insert_process(0, /*1,*/ "loop", 4096, 4096, &loop, NULL);
+        pidd = create_and_insert_process(1, /*1,*/ "loop", 4096, 4096, &loop, NULL, 0, 1);
     }
     while(1){
         if(ticks_elapsed() % 100 == 0){
@@ -244,6 +236,3 @@ int waitpid(int pid){
     return 1;
 }
 
-int kill_foreground_process(){
-    
-}

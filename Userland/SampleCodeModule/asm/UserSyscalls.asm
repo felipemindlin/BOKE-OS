@@ -33,11 +33,17 @@ GLOBAL call_waitpid
 GLOBAL get_pid
 GLOBAL malloc
 GLOBAL free
+GLOBAL call_pipe_open
+GLOBAL call_pipe_close
+GLOBAL call_pipe_create
+GLOBAL call_pipe_create_anonymous
+
 section .text
 
 %macro call_to_handler 1
     push rbp
     mov rbp, rsp
+
     mov r9, r8      ;arg 5
     mov r8, rcx     ;arg 4
     mov rcx, rdx    ;arg 3
@@ -118,3 +124,11 @@ malloc:
     call_to_handler 33
 free:
     call_to_handler 34
+call_pipe_open:
+    call_to_handler 35
+call_pipe_close:
+    call_to_handler 36
+call_pipe_create:
+    call_to_handler 37
+call_pipe_create_anonymous:
+    call_to_handler 38
