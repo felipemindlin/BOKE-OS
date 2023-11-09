@@ -8,7 +8,7 @@ typedef struct MM_rq {
   void *address;
   uint32_t size;
 } mm_rq;
-
+void * memset(void * destiation, int32_t c, uint64_t length);
 uint64_t test_mm() {
 
   mm_rq mm_rqs[MAX_BLOCKS];

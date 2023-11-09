@@ -383,7 +383,7 @@ void drawBall(uint64_t color, int size, int x, int y) {
     }
 }
 
-void drawWordPadded(uint64_t hexColor, const char* word, int width) {
+void drawWordPadded(uint64_t hexColor, char* word, int width) {
     int wordLength = str_len(word); 
     drawWordColor(hexColor, word); 
     for (int i = wordLength; i < width; i++) {
