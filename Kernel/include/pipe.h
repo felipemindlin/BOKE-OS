@@ -2,7 +2,7 @@
 
 #define PIPE_BUFFER_SIZE 1024
 #define MAX_PIPES 10
-#define EOF -1
+#define _EOF_ 1
 typedef struct pipe{
     int name;
     int readSemId;
@@ -31,3 +31,5 @@ int getPipeID(int name);
 void send_eof_to_foreground();
 
 pipe getPipe(int id);
+
+int eof_sent(int id);

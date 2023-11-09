@@ -39,8 +39,12 @@ void sys_read( char *buf, int len, int filedescriptor){
     
     if (currentPCB->process->fr == SHELL)
     {
+        /*if(currentPCB->process->foreground != 1){
+            block_process(currentPCB->process->pid);
+            return;
+        }*/
         switch (filedescriptor){
-        case STDIN:;
+        case STDIN:
             int pos = getBufferPosition();
             char aux = 0;
             for (int i = 0; i < len; ){
@@ -49,6 +53,8 @@ void sys_read( char *buf, int len, int filedescriptor){
                 if (aux > 0 && aux <= 255){
                     if (aux == 0x39)
                         buf[i++]=' ';
+                    else if(aux==_EOF_)
+                        buf[i++]=_EOF_;
                     else
                         buf[i++]=ScanCodes[(int)aux];
                     setPos(pos+1);

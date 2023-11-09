@@ -66,7 +66,7 @@ int pipe_write(int id, const char message[], unsigned int size){
         if (firstEOF && pipeArray[id].eof)
         {
             firstEOF = 0;
-            pipeArray[id].pipeBuffer[pipeArray[id].writePos++] = EOF;
+            pipeArray[id].pipeBuffer[pipeArray[id].writePos++] = _EOF_;
             pipeArray[id].leftToRead++;
             my_sem_post(pipeArray[id].readSemId);
             return -1;
@@ -85,7 +85,7 @@ int pipe_read(int id, char * dest, unsigned int size){
     
     if (pipeArray[id].eof && pipeArray[id].leftToRead == 0)
     {
-        dest[0]= EOF;
+        dest[0]= _EOF_;
         return -1;
     }
     
@@ -100,7 +100,7 @@ int pipe_read(int id, char * dest, unsigned int size){
         
         dest[i] = pipeArray[id].pipeBuffer[pipeArray[id].readPos++];
         
-        if (dest[i] == EOF)
+        if (dest[i] == _EOF_)
         {
             pipeArray[id].leftToRead--;
             my_sem_post(pipeArray[id].writeSemId);
@@ -146,10 +146,20 @@ void send_eof(int id){
 }
 
 void send_eof_to_foreground(){
-
+    pcb_t * foreground_pcb = get_pcb_entry(get_process_foreground_pid());
+    if(foreground_pcb == NULL){
+        return;
+    } else if(foreground_pcb->process->pid == 2){
+        return;
+    }
+    pipeArray[foreground_pcb->process->fr].eof = 1;
 }
 
 
 int create_pipe_anonymous(){
     return create_pipe(maxPipe);
+}
+
+int eof_sent(int id){
+    return pipeArray[id].eof;
 }

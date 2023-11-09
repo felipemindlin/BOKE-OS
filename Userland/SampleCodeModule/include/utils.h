@@ -6,6 +6,7 @@
 #include <UserSyscalls.h>
 #include <buffer.h>
 
+#define _EOF_ 1
 
 char getC();
 void putC(char c);

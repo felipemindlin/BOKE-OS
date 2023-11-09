@@ -108,10 +108,10 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		beep(rsi, rdx);
 		break;
 	case 19:
-		add_process_to_creation_queue(1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL,fd);
+		add_process_to_creation_queue(1, 1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL,fd);
 		break;
 	case 20:
-		add_process_to_creation_queue(1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL,fd);
+		add_process_to_creation_queue(1, 1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL,fd);
 		break;
 	case 21:
 		return kill_process(rsi);
@@ -126,7 +126,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		loop();
 		break;
 	case 25:
-		return create_and_insert_process_from_current_standard(rsi, rdx, rcx,(size_t *) r8,(int *)r9);
+		return create_and_insert_process_from_current_standard(rsi, 1, rdx, rcx, r8, r9); // foreground must be a parameter
 		break;
 	case 26:
 		return my_sem_wait((char*)rsi);

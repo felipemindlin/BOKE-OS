@@ -33,14 +33,19 @@ void keyboard_handler() {
     if(ctrl_pressed){
          if(ScanCodes[key] == 'C'){
             drawWord("contorl C");
-            kill_current_process();
+            kill_foreground_process(get_process_foreground_pid());
+            clear_buffer();
             return;
         }
         else if(ScanCodes[key] == 'D'){
             drawWord("contorl D");
-            send_eof_to_foreground();
-           // key=-1; implementar bien el EOF porq ya con tocar el contorl o el shift o cualquiera que este en 0 en scancodes sale 
-            return;
+            if(get_pcb_entry(get_process_foreground_pid())->process->fr == SHELL){
+                key = _EOF_;
+                shift_pressed = 0;
+            } else {
+                send_eof_to_foreground();
+                return;
+            }
         }
     }
     if(shift_pressed){

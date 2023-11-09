@@ -234,7 +234,7 @@ void cat() {
   char c;
   char comm[MAX_COMMAND_LENGTH]={0};
   int i=0;
-  while ((c = getC()) != 0){
+  while ((c = getC()) != _EOF_){
     putC(c);
     comm[i++]=c;
     if(c=='\n'){
@@ -249,7 +249,7 @@ void cat() {
 void wc() {
   int lines = 0;
   char c;
-  while ((c = getC()) != 0) {
+  while ((c = getC()) != _EOF_) {
     if (c == '\n' ) {
       lines++;
     }
@@ -267,7 +267,7 @@ int is_vowel(char c) {
 
 void filter() {
   char c;
-  while ((c = getC()) != 0) {
+  while ((c = getC()) != _EOF_) {
     if (!is_vowel(c)) {
       putC(c);
     }
@@ -287,9 +287,9 @@ void read_aux(){
     int pipe = call_pipe_open(3);
     print("FD donde lee el pipe:%d\n",pipe);
     char dest;
-    call_sys_read(dest,4,pipe);
+    call_sys_read(&dest,4,pipe);
     putString("Se leyo:");
-    call_sys_write(dest,4,STDOUT);
+    call_sys_write(&dest,4,STDOUT);
     
 }
 
