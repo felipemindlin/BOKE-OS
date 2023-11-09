@@ -138,3 +138,13 @@ int getPipeID(int name){
 pipe getPipe(int id){
     return pipeArray[id];
 }
+
+void send_eof(int id){
+    //pipeArray[id].eof = 1;
+    //pipeArray[id].leftToRead++;
+    //my_sem_post(pipeArray[id].readSemId);//should we do this?
+}
+
+void send_eof_to_foreground(){
+
+}

@@ -26,4 +26,6 @@ void close_pipe(int id);
 
 int getPipeID(int name);
 
+void send_eof_to_foreground();
+
 pipe getPipe(int id);

@@ -8,6 +8,7 @@
 #define	__need_NULL
 #include <stddef.h>
 #define OS_PID 2
+#define SHELL_PID 2
 #define MAX_SEM_NAME 5
 #define BASE 10
 #define MIN_HEAP_SIZE 0x1000
@@ -50,6 +51,7 @@ typedef struct process_t{
     int parent_pid;
     char status;
     char * name;
+    char foreground;
     mem_block_t * stack;
     mem_block_t * heap;
     char sem_name[MAX_SEM_NAME];
@@ -77,6 +79,7 @@ void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ES
 // process_t* create_and_insert_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int kill_process(int pid);
 void kill_current_process();
+int kill_foreground_process(int fg_pid);
 int free_process(pcb_t * pcb);
 void loop();
 int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);

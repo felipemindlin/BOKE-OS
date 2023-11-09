@@ -7,6 +7,7 @@
 #include "interrupts.h"
 #include "registers.h"
 #include "include/ScanCodes.h"
+#include "../include/pipe.h"
 #include <mysemaphore.h>
 
 
@@ -37,6 +38,7 @@ void keyboard_handler() {
         }
         else if(ScanCodes[key] == 'D'){
             drawWord("contorl D");
+            send_eof_to_foreground();
            // key=-1; implementar bien el EOF porq ya con tocar el contorl o el shift o cualquiera que este en 0 en scancodes sale 
             return;
         }

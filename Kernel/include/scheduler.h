@@ -29,6 +29,8 @@ pcb_t * get_current_pcb();
 pcb_t * find_next_process();
 uintptr_t * switch_context(uintptr_t * current_rsp);
 void stop_current_process();
+int get_process_foreground_pid();
+void set_process_foreground_pid(int pid);
 int getQuantum();
 pcb_t * get_pcb_entry(int pid);
 int add_process_to_removal_queue(int pid);

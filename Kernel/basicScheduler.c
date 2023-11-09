@@ -12,6 +12,8 @@ uint8_t scheduler_status = 0;
 pcb_t * current_pcb;
 //pcb_t * OS_pcb;
 
+int foreground_pid;
+
 scheduler_queue * create_queue_array(int quantum);
 int remove_from_queue_by_pid(queue_t * queue, int pid);
 pcb_t * get_idle_pcb();
@@ -113,6 +115,10 @@ void add_new_process(process_t * process){
     pcb_new->priority = HIGH_PRIORITY;
     pcb_new->ticks = 0;
     pcb_new->process = process;
+    
+    if(pcb_new->process->pid != 1 && pcb_new->process->foreground == 1){
+        foreground_pid = pcb_new->process->pid;
+    }
 
     node_t * new_node = create_node(pcb_new);
     if(new_node == NULL){
@@ -316,6 +322,14 @@ void stop_current_process() {
         }
         scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
     }
+}
+
+int get_process_foreground_pid(){
+    return foreground_pid;
+}
+
+void set_process_foreground_pid(int pid){
+    foreground_pid = pid;
 }
 
 int getQuantum(){

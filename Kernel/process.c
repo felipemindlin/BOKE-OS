@@ -1,4 +1,4 @@
- #include <process.h>
+#include <process.h>
 #include "interrupts.h"
 #include <scheduler.h>
 #include <libasm.h>
@@ -120,6 +120,8 @@ process_t * create_process(int parent_pid, const char * name, size_t heap_size, 
     
     process->stack->size = stack_size;
 
+    //process->foreground = foreground;
+
 /*
     if(argv != NULL){
         int i = 0;
@@ -189,6 +191,14 @@ int kill_process(int pid) {
     return 0;
 }
 
+int kill_foreground_process(int fg_pid){
+    if(fg_pid == SHELL_PID){
+        return -1;
+    }
+    set_process_foreground_pid(SHELL_PID);
+    return kill_process(fg_pid);
+}
+
 int free_process(pcb_t * pcb){
     if(pcb == NULL || pcb->process == NULL){
         return -1;
@@ -208,7 +218,7 @@ int free_process(pcb_t * pcb){
 int pidd=0;
 void loop(){
     if(!pid){
-        pidd = create_and_insert_process(0, "loop", 4096, 4096, &loop, NULL);
+        pidd = create_and_insert_process(0, /*1,*/ "loop", 4096, 4096, &loop, NULL);
     }
     while(1){
         if(ticks_elapsed() % 100 == 0){
@@ -232,4 +242,8 @@ int waitpid(int pid){
     drawWord("Im here!");
     //my_sem_close(pcb->process->sem_name);
     return 1;
+}
+
+int kill_foreground_process(){
+    
 }
