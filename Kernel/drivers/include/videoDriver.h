@@ -65,5 +65,6 @@ void drawNumberColorAt(uint64_t hexColor, int value,  uint32_t x, uint32_t y);
 void drawBall(uint64_t color, int size, int x, int y);
 void drawWordColorLen(uint64_t color, char * buff, int len);
 void drawWordLen(char * buff, int len);
-
+void drawNumberPadded(uint64_t hexColor, int number, int width);
+void drawWordPadded(uint64_t hexColor, const char* word, int width);
 #endif /* _VIDEO_DRIVER_H */

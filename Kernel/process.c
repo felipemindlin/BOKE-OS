@@ -161,6 +161,21 @@ void save_reg_state(pcb_t * pcb){
 void kill_current_process() {
     kill_process(get_current_pcb()->process->pid);
 }
+void force_kill(int pid) {
+    pcb_t *pcb = get_pcb_entry(pid);
+    if (pcb == NULL || pcb->process == NULL) {
+        return;
+    }
+
+    my_sem_post(pcb->process->sem_name);
+
+    pcb->process->status = DEAD;
+    add_process_to_removal_queue(pcb->process->pid);
+
+    if (pid == current_process_id()) {
+        finish_current_tick();
+    }
+}
 
 
 int kill_process(int pid) {
@@ -205,18 +220,7 @@ int free_process(pcb_t * pcb){
     return 0;
 }
 
-int pidd=0;
-void loop(){
-    if(!pid){
-        pidd = create_and_insert_process(0, "loop", 4096, 4096, &loop, NULL);
-    }
-    while(1){
-        if(ticks_elapsed() % 100 == 0){
-            drawNumber(pidd);
-        }
-    }
 
-}
 
 int waitpid(int pid){
    

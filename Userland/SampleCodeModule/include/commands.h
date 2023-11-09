@@ -55,4 +55,5 @@ void cat();
 void wc();
 int is_vowel(char c);
 void filter();
+void loop();
 #endif /*__COMMANDS_H__*/

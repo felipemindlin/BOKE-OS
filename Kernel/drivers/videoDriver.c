@@ -205,7 +205,7 @@ void newline(){
 }
 
 void tab(){ //descontinuado por mal funcionamiento
-    int tabWidth = 1;
+    int tabWidth = 5;
         int spaces = tabWidth - (cursorX / (size*8)) % tabWidth;
 
         for (int i = 0; i < spaces; i++) {
@@ -251,7 +251,7 @@ void moveOneLineUp() {
 }
 
 int isWhiteSpace(char c){
- return c == '\t' || c==' ' || c=='\v' || c=='\r' || c=='\a' || c=='\f';
+ return  c==' ' || c=='\v' || c=='\r' || c=='\a' || c=='\f';
 }
 
 void character(uint64_t hexColor, char c){
@@ -263,6 +263,10 @@ void character(uint64_t hexColor, char c){
             return;
         } else if (c == '\n') { // Salto de línea
             newline();
+            return;
+        }
+        else if(c == '\t'){
+            tab();
             return;
         }
         //Carácter
@@ -379,3 +383,16 @@ void drawBall(uint64_t color, int size, int x, int y) {
     }
 }
 
+void drawWordPadded(uint64_t hexColor, const char* word, int width) {
+    int wordLength = str_len(word); 
+    drawWordColor(hexColor, word); 
+    for (int i = wordLength; i < width; i++) {
+        character(hexColor, ' '); 
+    }
+}
+
+void drawNumberPadded(uint64_t hexColor, int number, int width) {
+    char buffer[256];
+    uintToBase(number, buffer, 10); 
+    drawWordPadded(hexColor, buffer, width);
+}

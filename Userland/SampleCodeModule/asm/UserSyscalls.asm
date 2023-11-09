@@ -22,7 +22,7 @@ GLOBAL call_mem
 GLOBAL call_kill
 GLOBAL call_nice
 GLOBAL call_block
-GLOBAL call_loop
+GLOBAL call_force_kill
 GLOBAL call_create_process
 GLOBAL call_sem_wait
 GLOBAL call_sem_post
@@ -96,7 +96,7 @@ call_nice:
     call_to_handler 22
 call_block:
     call_to_handler 23
-call_loop:
+call_force_kill:
     call_to_handler 24
 call_create_process:
     call_to_handler 25

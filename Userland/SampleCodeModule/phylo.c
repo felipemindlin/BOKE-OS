@@ -28,7 +28,7 @@ void think(uint64_t philosopher_num);
 void add_philosopher();
 void remove_philosopher();
 void print_state();
-void *handle(void *parm);
+void handle();
 
 int left(int i) {
     return (i + num_philosophers - 1) % num_philosophers;
@@ -62,30 +62,10 @@ int phylo() {
     for (int i = 0; i < START_PHILOSOPHERS; i++) {
         add_philosopher();
     }
-
-    call_create_process("handler", SIZE, SIZE, handle, NULL); //si comento esto y
-    while(!last); //esto 
-    // pero descomento lo de aca abajo funcionan los pares pero no los impares. SI lo dejo asi funcionan los impares pero no los pares. WTF.
-    //  char c;
-    // while (!last) {
-    //     c = getC();
-    //     if (c == 'A' || c == 'a') {
-    //         if (num_philosophers < MAX_PHILOSOPHERS) {
-    //             add_philosopher();
-    //         }
-    //     } else if (c == 'R' || c == 'r') {
-    //         if (num_philosophers > MIN_PHILOSOPHERS) {
-    //             remove_philosopher();
-    //         }
-    //     } else if (c == 'Q' || c == 'q') {
-    //         last = 1;
-    //     }
-    // }
-
-
+    handle();
     // Clean up philosophers
     for (int i = 0; i < num_philosophers; i++) {
-        call_kill(philosopher_pids[i]);
+        call_force_kill(philosopher_pids[i]);
         call_sem_close(fork_sem_ids[i]);
     }
 
@@ -96,7 +76,7 @@ int phylo() {
     return 0;
 }
 
-void *handle(void *parm) {
+void handle() {
     char c;
     while (!last) {
         c = getC();
@@ -144,7 +124,7 @@ void remove_philosopher() {
         int right = (philosopher_num + 1) % num_philosophers;
         test(left);
         test(right);
-        call_kill(philosopher_pids[philosopher_num]);
+        call_force_kill(philosopher_pids[philosopher_num]);
         fork_states[philosopher_num] = THINKING;
         call_sem_close(fork_sem_ids[philosopher_num]);
         num_philosophers--;

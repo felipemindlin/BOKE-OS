@@ -56,7 +56,7 @@ void invalid_pid(){
     call_sys_write("ERROR - PID invalido",20,2);
     putC('\n');
 }
-
+int loppPid=0;
 int phylo();
 void __call_command__(int i, char * command){
     char parsed_command[MAX_COMMAND_LENGTH];
@@ -130,22 +130,16 @@ void __call_command__(int i, char * command){
         wc();
         return;
     case PHYLO:
-        //call_create_process("Phylo", 0x0000000000010000, 0x0000000000010000, (void *)phylo, NULL);
-        phylo();
+        phylo();;
         return;
     case FILTER:
         filter();
         return;
     case LOOP:
-        call_loop();
+        loppPid = call_create_process( "loop", 4096, 4096, &loop, NULL);
         return;
     case TESTS:
         tests();
-        //call_create_process("test_sync", 0x0000000000010000, 0x0000000000010000, (void *)test_sync, test_args);
-        //test_sync(test_args);
-        // Now run the test_sync function without semaphores
-        // char *test_args_no_sem[] = {"3", "2"}; // Test with 10 iterations and semaphores disabled
-        // test_sync(test_args_no_sem);
         return;
     default:
         call_sys_write("ERROR - Comando no reconocido",30,2);
@@ -173,6 +167,15 @@ void time(){
     putC('\n');
 }
 
+
+void loop(){
+    while(1){
+        if(call_ticks_elapsed() % 18 == 0){
+            print("PID:%d\n",loppPid);
+        }
+    }
+
+}
 
 void setbgEnum(int i){
     switch (i){
