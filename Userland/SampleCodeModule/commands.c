@@ -9,6 +9,28 @@
 #include <test_util.h>  
 static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS"};
 char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
+static char command_descriptions[COMMAND_LEN][300] = {
+    "Display the list of available commands",
+    "Display the current system time",
+    "Display the register state",
+    "Play the Pong game",
+     "Set the background color (usage: SETCOLOR <color>, available colors: GREEN, BLUE, BLACK, YELLOW, ORANGE)",
+    "Trigger a division by zero exception",
+    "Trigger an invalid operation exception",
+    "Draw the Club Atletico Boca Juniors flag",
+    "Display information about running processes",
+    "Display memory information",
+    "Terminate a process by PID (usage: KILL <pid>)",
+    "Change the priority of a process (usage: NICE <pid> <priority>)",
+    "Block a process by PID (usage: BLOCK <pid>)",
+    "Display the contents of Stdin",
+    "Count the number of lines in the input",
+    "Run the dining philosophers solution",
+    "Filter out vowels from the input",
+    "Run an infinite loop process",
+    "Run system tests (opens a menu with the following options:\n\t\t- Test memory manager\n\t\t- Test priority\n\t\t- Test processes\n\t\t- Test synchronization\n\t\t- Test without synchronization\n"
+};
+
 //busca el comando en la lista de comandos y llama a la funcion correspondiente
 void __seek_command__(char * command){
     
@@ -149,11 +171,10 @@ void __call_command__(int i, char * command){
 }
 
 //imprime la lista de comandos disponibles
-void help(){
-    call_sys_write("Lista de commandos disponibles:\n", 34,1);
-    for (int i = 0; i < COMMAND_LEN; i++){
-        call_sys_write(command_list[i],40,1);
-        call_sys_write("\n",1,1);
+void help() {
+    call_sys_write("List of available commands:\n", 29, 1);
+    for (int i = 0; i < COMMAND_LEN; i++) {
+        print("%s:\t%s\n\n",command_list[i], command_descriptions[i]);
     }
 }
 

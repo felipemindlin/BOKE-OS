@@ -2,7 +2,7 @@
 #include <utils.h>
 
 #define MAX_PHILOSOPHERS 20
-#define MIN_PHILOSOPHERS 2
+#define MIN_PHILOSOPHERS 1
 #define START_PHILOSOPHERS 5
 #define THINKING 0
 #define HUNGRY 1

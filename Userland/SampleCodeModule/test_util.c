@@ -4,28 +4,23 @@
 
 void tests() {
     print("Available tests:\n");
-    print("  A - Test memory manager <max_mem>\n");
+    print("  A - Test memory manager\n");
     print("  B - Test priority\n");
-    print("  C - Test processes <max_processes>\n");
-    print("  D - Test synchronization <n>\n");
-    print("  E - Test without synchronization <n>\n");
-    print("  Q - Quit\n");
-    print("Press enter to confrim selection");
+    print("  C - Test processes\n");
+    print("  D - Test synchronization\n");
+    print("  E - Test without synchronization\n");
+    print("  Any other key to quit\n");
     char c;
     int test_num = 0;
-    while ((c = getC()) != 'Q' && test_num == 0) {
-        print("%c", c); // Use %c to print a character.
-        if (c >= 'A' && c <= 'E') {
-            test_num = c - 'A' + 1;
-        } else {
-            print("Invalid test number\n Try again\n");
-        }
+    c = getC();
+    if (c >= 'A' && c <= 'E'){
+      test_num = c - 'A' + 1;
+    }
+    else{
+      print("Quiting...\n");
+      return;
     }
 
-    if (c == 'Q') {
-        print("Exiting...\n");
-        return;
-    }
 
     char *argv_aux[2] = {"3", "1"};
 
