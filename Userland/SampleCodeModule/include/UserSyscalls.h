@@ -46,4 +46,5 @@ void call_pipe_close(int name);
 int call_pipe_create(int name);
 int call_pipe_create_anonymous();
 void call_read_pipe(int id,char* dest, int len);
+void call_example(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10);// to be removed
 #endif /* USERSYSCALLS_H */

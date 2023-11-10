@@ -345,6 +345,7 @@ _irq60Handler:
 	push rbp
 
 	mov rbp, rsp
+	push r10
 	push r9
 	mov r9, r8
 	mov r8, rcx
@@ -356,6 +357,7 @@ _irq60Handler:
 
 
 	pop r9
+	pop r10
     mov rsp, rbp
 	pop rbp
 	pop r15
