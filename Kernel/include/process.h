@@ -55,7 +55,7 @@ typedef struct process_t{
     char foreground;
     mem_block_t * stack;
     mem_block_t * heap;
-    char * sem_name[MAX_SEM_NAME];
+    char sem_name[MAX_SEM_NAME];
     int fr;
     int fw
 } process_t;

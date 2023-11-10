@@ -42,6 +42,11 @@ void keyboard_handler() {
             if(get_pcb_entry(get_process_foreground_pid())->process->fr == SHELL){
                 key = _EOF_;
                 shift_pressed = 0;
+            } else if(ScanCodes[key] == 'P'){
+                print_process();
+            } else if(ScanCodes[key] == 'L'){
+            clear();
+            return;
             } else {
                 send_eof_to_foreground();
                 return;
