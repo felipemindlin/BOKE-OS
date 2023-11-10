@@ -42,5 +42,6 @@ int call_pipe_open(int name);
 void call_pipe_close(int name);
 int call_pipe_create(int name);
 int call_pipe_create_anonymous();
-void call_read_pipe(int id,char* dest, int len);
+void * call_malloc(uintptr_t bytes);
+void * call_free(void * mem);
 #endif /* USERSYSCALLS_H */

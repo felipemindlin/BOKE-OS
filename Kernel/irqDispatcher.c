@@ -158,6 +158,11 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 	case 35:
 		return create_pipe_anonymous();
 		break;
+	case 36:
+		return malloc(rsi);
+		break;
+	case 37:
+		return free((void *)rsi);
 	default:
 		return 0;
 		break;

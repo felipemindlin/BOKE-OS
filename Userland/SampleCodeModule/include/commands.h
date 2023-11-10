@@ -7,6 +7,12 @@
 #define COMMAND_LEN 20
 #define COLOR_LEN 5
 #define MAX_COMMAND_LENGTH 256
+
+#define MAX_ARGS 8
+#define MAX_ARG_SIZE 128
+#define TRUE !0
+#define FALSE 0
+#define PROGRAMS 19
 enum Commands {
     HELP,
     TIME,

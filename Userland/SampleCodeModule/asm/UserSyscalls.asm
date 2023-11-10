@@ -34,6 +34,8 @@ GLOBAL call_pipe_open
 GLOBAL call_pipe_close
 GLOBAL call_pipe_create
 GLOBAL call_pipe_create_anonymous
+GLOBAL call_malloc
+GLOBAL call_free
 
 section .text
 
@@ -123,3 +125,7 @@ call_pipe_create:
     call_to_handler 34
 call_pipe_create_anonymous:
     call_to_handler 35
+call_malloc:
+    call_to_handler 36
+call_free:
+    call_to_handler 37
