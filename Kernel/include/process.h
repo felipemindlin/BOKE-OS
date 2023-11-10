@@ -80,6 +80,6 @@ void kill_current_process();
 int free_process(pcb_t * pcb);
 int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int waitpid(int pid);
-void force_kill(int pid);
+int force_kill(int pid);
 
 #endif

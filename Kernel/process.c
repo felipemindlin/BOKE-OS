@@ -192,10 +192,10 @@ void kill_current_process() {
     kill_process(get_current_pcb()->process->pid);
 }
 
-void force_kill(int pid) {
+int force_kill(int pid) {
     pcb_t *pcb = get_pcb_entry(pid);
     if (pcb == NULL || pcb->process == NULL) {
-        return;
+        return -1;
     }
 
     reassign_children_to_shell(pid);
@@ -208,6 +208,7 @@ void force_kill(int pid) {
     if (pid == current_process_id()) {
         finish_current_tick();
     }
+    return 1;
 }
 
 

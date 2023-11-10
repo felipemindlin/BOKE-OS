@@ -121,7 +121,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		return block_process(rsi);
 		break;
 	case 24:
-		force_kill(rsi);
+		return force_kill(rsi);
 		break;
 	case 25:
 		int to_ret = create_and_insert_process_from_current((char *)rsi, rdx, rcx, r8, r9);
