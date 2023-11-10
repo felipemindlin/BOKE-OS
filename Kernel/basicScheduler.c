@@ -199,12 +199,14 @@ void print_process() {
     const int NAME_WIDTH = 16;
     const int STATUS_WIDTH = 12;
     const int PID_WIDTH = 8;
+    const int FOREGROUND_WIDTH = 8;
     const int PRIORITY_WIDTH = 10;
 
     // Draw the headers with padding
     drawWordPadded(WHITE, "\nName", NAME_WIDTH);
     drawWordPadded(WHITE, "Status", STATUS_WIDTH);
     drawWordPadded(WHITE, "PID", PID_WIDTH);
+    drawWordPadded(WHITE, "Fg", PID_WIDTH);
     drawWordPadded(WHITE, "Priority", PRIORITY_WIDTH);
     drawWordPadded(WHITE, "Parent PID", PID_WIDTH);
     drawWord("\n");
@@ -218,6 +220,7 @@ void print_process() {
             drawWordPadded(WHITE, pcb->process->name, NAME_WIDTH);
             drawWordPadded(WHITE, status_arr[(int)pcb->process->status], STATUS_WIDTH);
             drawNumberPadded(WHITE, pcb->process->pid, PID_WIDTH);
+            drawNumberPadded(WHITE, pcb->process->foreground, FOREGROUND_WIDTH);
             drawNumberPadded(WHITE, i, PRIORITY_WIDTH); 
             drawNumberPadded(WHITE, pcb->process->parent_pid, PID_WIDTH);
             drawWord("\n");
@@ -256,6 +259,9 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
     if(current_pcb->process->status == RUNNING ){
         current_pcb->process->status = READY;
         current_pcb->ticks = 0;
+    }
+    if(new_pcb->process->foreground == 1){
+        foreground_pid = new_pcb->process->pid;
     }
     current_pcb = new_pcb;
     current_pcb->process->status = RUNNING;
@@ -307,41 +313,18 @@ void change_process_priority(int pid, priority_t priority){
 }
 
 void stop_current_process() {
-    // Im debuggin. print all elements from the scheduler array
-/*    for(int i=0 ; i<QUEUE_QTY ; i++){
-        node_t * current_node = scheduler[i]->queue->current_node;
-        drawWord("\n");
-        drawWordColor(RED, "QUEUE: ");
-        drawNumber(i);
-        drawWordColor(RED, "  ");
-        while (current_node) {
-            pcb_t *pcb = (pcb_t *)current_node->data;
-            drawWordColor(RED, pcb->process->name);
-            drawWordColor(RED, "  ");
-            current_node = current_node->next;
-            if (current_node == scheduler[i]->queue->current_node) {
-                break; 
-            }
-        }
-    }
-    drawWord("\n");
-    drawWordColor(RED, "CURRENT PROCESS: ");
-    drawNumber(current_pcb->process->pid);
-*/
-
-    if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {        
-        
-        if (current_pcb->priority > LOW_PRIORITY && current_pcb->priority <= HIGH_PRIORITY) {
+    if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {
+        // Code for moving the process to a lower priority or another appropriate action
+          if (current_pcb->priority > LOW_PRIORITY && current_pcb->priority <= HIGH_PRIORITY) {
            change_process_priority(current_pcb->process->pid, current_pcb->priority - 1);
-        } else if(current_pcb->priority == LOW_PRIORITY || current_pcb->priority==IDLE_PRIORITY) {
-            scheduler[LOW_PRIORITY]->queue->current_node = scheduler[LOW_PRIORITY]->queue->current_node->next;
-        }
-        
+        } 
     } else {
-        // in this csae the process is blocked or finished. We just advance the current node
-        while(1){
-            drawWord("-ERROR-");
-        }
+        // Code for handling the case when the process has not consumed its entire quantum
+        // Update the status and ticks accordingly
+        current_pcb->process->status = READY;
+        current_pcb->ticks = 0;
+
+        // Move to the next node
         scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
     }
 }

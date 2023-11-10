@@ -256,7 +256,7 @@ int waitpid(int pid){
         return -1;
     }
     int ret = pcb->process->pid;
-    my_sem_wait(pcb->process->name);
+    my_sem_wait(pcb->process->sem_name);
 
     force_kill(pcb->process->pid);
     return ret;

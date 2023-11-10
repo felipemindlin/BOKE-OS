@@ -9,6 +9,8 @@
 #include <test_util.h> 
 uint64_t color = BLACK;
 #define EOF 0x01
+int fd[2] = {0,0};
+size_t heap_and_stack[2] = {0x0000000000001000, 0x0000000000001000};
 static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS", "CLEAR"};
 char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
 static char command_descriptions[COMMAND_LEN][300] = {
@@ -157,7 +159,7 @@ void __call_command__(int i, char * command, uint8_t is_fg){
         filter();
         return;
     case LOOP:
-        loppPid = call_create_process( "loop", 1, 4096, 4096, &loop, NULL);
+        loppPid = call_create_process( "loop", 1, heap_and_stack, &loop, NULL, fd);
         return;
     case TESTS:
         tests();
@@ -193,9 +195,16 @@ void time(){
 
 
 void loop(){
+    int flag=1;
+    int ticks=0;
     while(1){
-        if(call_ticks_elapsed() % 18 == 0){
+        ticks = call_ticks_elapsed();
+        if(ticks % 18 == 0 && flag){
             print("PID:%d\n",loppPid);
+            flag=0;
+        }
+        if(ticks % 18 == 1 && !flag){
+            flag=1;
         }
     }
 

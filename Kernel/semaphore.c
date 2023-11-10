@@ -250,7 +250,7 @@ int clear_sem(char * sem_id){
     sem_spaces[sem_idx].sem.counter = 0;
     sem_spaces[sem_idx].sem.is_locked = 0;
 
-    for(int i = 0; i < MAX_SEM_NAME; i++){
+    for(int i = 0; i < MAX_PROCESSES_PER_SEM; i++){
         sem_spaces[sem_idx].sem.identifier[i] = 0;
     }
 
