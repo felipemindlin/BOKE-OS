@@ -227,8 +227,9 @@ int strcmp(char * str1, char * str2){
 }
 
 // Similar a strcmp pero solo compara hasta el primer espacio o el fin de la cadena (lo que ocurra primero)
-/*int strcmpspace(char * str1, char * str2, uint8_t * is_fg){
+int strcmpspace(char * str1, char * str2, uint8_t * is_fg){
     char partition[BUFFER_SIZE];
+    int j=0;
     while (str2[j] != '\0' && str2[j] != ' ') {
         partition[j] = str2[j];
         j++;
@@ -255,10 +256,10 @@ int strcmp(char * str1, char * str2){
         return 1;
     }
 
-}*/
+}
 
 int isspace(char c){
-    return c == ' ' || c == '\n';
+    return c == ' ' || c == '\n' || c == '\0';
 }
 
 int strncmp(char * str1, char * str2, int n){
@@ -277,7 +278,7 @@ int strncmp(char * str1, char * str2, int n){
     } else return 1;
 
 }
-
+/*
 int strcmpspace(char *str1, char *str2, uint8_t *is_fg) {
     // Skip leading whitespaces
     while (isspace(*str1)) str1++;
@@ -308,7 +309,7 @@ int strcmpspace(char *str1, char *str2, uint8_t *is_fg) {
     *is_fg = *str1 == '&';
 
     return cmp;
-}
+}*/
 
 char * strtok(char * str, char delim){
     static char * static_str;

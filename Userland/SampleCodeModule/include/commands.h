@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "UserSyscalls.h"
 
-#define COMMAND_LEN 21
+#define COMMAND_LEN 20
 #define COLOR_LEN 5
 #define MAX_COMMAND_LENGTH 256
 enum Commands {
@@ -27,8 +27,7 @@ enum Commands {
     FILTER,
     LOOP,
     TESTS,
-    WRITE
-    CLEAR
+    CLEAR,
 };
 enum Colors {
     GREEN_,

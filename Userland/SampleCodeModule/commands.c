@@ -37,7 +37,6 @@ static char command_descriptions[COMMAND_LEN][300] = {
 //busca el comando en la lista de comandos y llama a la funcion correspondiente
 void __seek_command__(char * command){
     uint8_t is_fg=0;
-
     for (int i = 0; i < COMMAND_LEN; i++){
         if (strcmpspace(command_list[i],command, &is_fg) == 0){
                 __call_command__(i, command, is_fg);
@@ -158,16 +157,13 @@ void __call_command__(int i, char * command, uint8_t is_fg){
         filter();
         return;
     case LOOP:
-        loppPid = call_create_process( "loop", 4096, 4096, &loop, NULL);
+        loppPid = call_create_process( "loop", 1, 4096, 4096, &loop, NULL);
         return;
     case TESTS:
         tests();
         return;
     case CLEAR:
         call_clearColor(color);
-        return;
-    case WRITE:
-        write();
         return;
     default:
         call_sys_write("ERROR - Comando no reconocido",30,2);
@@ -266,7 +262,7 @@ void cat() {
   char c;
   char comm[MAX_COMMAND_LENGTH]={0};
   int i=0;
-  while ((c = getC()) != _EOF_){
+  while ((c = getC()) != EOF){
     putC(c);
     comm[i++]=c;
     if(c=='\n'){
@@ -281,7 +277,7 @@ void cat() {
 void wc() {
   int lines = 0;
   char c;
-  while ((c = getC()) != _EOF_) {
+  while ((c = getC()) != EOF) {
     if (c == '\n' ) {
       lines++;
     }
@@ -299,41 +295,11 @@ int is_vowel(char c) {
 
 void filter() {
   char c;
-  while ((c = getC()) != _EOF_) {
+  while ((c = getC()) != EOF) {
     if (!is_vowel(c)) {
       putC(c);
     }
   }
   putC('\n');
   return;
-}
-
-void auxW(){
-    int pipe = call_pipe_open(3);
-    //print("FD donde escribe el pipe:%d\n",pipe);
-    char message[] = "Hola";
-    call_sys_write(message,4,pipe);
-}
-
-void read_aux(){
-    int pipe = call_pipe_open(3);
-    print("FD donde lee el pipe:%d\n",pipe);
-    char dest;
-    call_sys_read(&dest,4,pipe);
-    putString("Se leyo:");
-    call_sys_write(&dest,4,STDOUT);
-    
-}
-
-void write(){
-    //int aux = call_pipe_create(2);
-    int pipe1 = call_pipe_create(3); // Crear un segundo descriptor de archivo para pipe
-    print("FD donde escribe el pipe:%d\n", pipe1); // Usar pipe1 para imprimir el valor del FD
-    int fd1[2]={0,pipe1};
-    int fd2[2]={pipe1,0};
-    size_t hs[2]={4096,4096};
-    call_create_process("child1", 1, hs, &auxW, NULL,fd1);
-
-    print("Ahora creo child 2\n");
-    call_create_process("child2", 1, hs, &read_aux, NULL,fd2);
 }
