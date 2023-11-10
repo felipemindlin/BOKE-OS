@@ -24,7 +24,7 @@ void endless_loop_print() {
 }
 void test_prio() {
   int64_t pids[TOTAL_PROCESSES];
-  char *argv[] = {0};
+  char *argv[2] = {0};
   uint64_t i;
 
   argv[0] = "print_loop";
@@ -34,7 +34,9 @@ void test_prio() {
   bussy_wait(WAIT);
   print("\nCHANGING PRIORITIES...\n");
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    call_nice(pids[i], prio[i]);
+    argv[0]=atoi(pids[i]);
+    argv[1]=atoi(prio[i]);
+    call_nice(argv);
 
   bussy_wait(WAIT);
   print("\nBLOCKING...\n");
@@ -45,7 +47,9 @@ void test_prio() {
   print("CHANGING PRIORITIES WHILE BLOCKED...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    call_nice(pids[i], MEDIUM);
+    argv[0]=atoi(pids[i]);
+    argv[1]=atoi(prio[i]);
+    call_nice(argv);
   print("UNBLOCKING...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)

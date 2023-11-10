@@ -39,4 +39,6 @@ void change_process_priority(int pid, priority_t priority);
 int block_process(int pid);
 void finish_current_tick();
 void reassign_children_to_shell(int old_parent_pid);
+void change_process_priority_wrapper(char **argv);
+int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, void * argv);
 #endif

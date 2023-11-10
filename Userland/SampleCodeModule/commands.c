@@ -8,6 +8,8 @@
 #include "shell.h"
 #include <test_util.h> 
 uint64_t color = BLACK;
+#define STACK_SIZE 0x0000000000010000
+#define HEAP_SIZE 0x0000000000010000
 #define EOF 0x01
 static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS", "CLEAR"};
 char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
@@ -113,61 +115,59 @@ void __call_command__(int i, char * command){
     case BOKE:
         call_boke();
         return;
-    case PS:
-        call_ps();
-        return;
-    case MEM:
-        call_mem();
-        return;
-    case KILL:
-        if(pid==-1){
-            invalid_pid();
-            return;
-        }
-        call_kill(pid);
-        return;
-    case NICE:
-      if(pid==-1 || priority==-1){
-            invalid_pid();
-            return;
-        }
-        if(priority>4){
-            priority=4;
-        }
-        call_nice(pid, priority);
-        return;
-    case BLOCK:
-      if(pid==-1){
-            invalid_pid();
-            return;
-        }
-        call_block(pid);
-        return;
-    case CAT:
-        cat();
-        return;
-    case WC:;
-        wc();
-        return;
-    case PHYLO:
-        phylo();
-        return;
-    case FILTER:
-        filter();
-        return;
-    case LOOP:
-        loppPid = call_create_process( "loop", 4096, 4096, &loop, NULL);
-        return;
-    case TESTS:
-        tests();
-        return;
-    case CLEAR:
-        call_clearColor(color);
-        return;
-    default:
-        call_sys_write("ERROR - Comando no reconocido",30,2);
-        putC('\n');
-        return;
+     case PS:
+            call_create_process("ps", STACK_SIZE, HEAP_SIZE, &call_ps, NULL);
+            break;
+        case MEM:
+            call_create_process("mem", STACK_SIZE, HEAP_SIZE, &call_mem, NULL);
+            break;
+        case KILL:
+            if (pid != -1) {
+                call_create_process("kill", STACK_SIZE, HEAP_SIZE, &call_kill, &pid);
+            } else {
+                invalid_pid();
+            }
+            break;
+        case NICE:
+            if (pid != -1 && priority != -1) {
+                char * argv[2] = {satoi(pid), satoi(priority)};
+                call_create_process("nice", STACK_SIZE, HEAP_SIZE, &call_nice, argv);
+            } else {
+                invalid_pid();
+            }
+            break;
+        case BLOCK:
+            if (pid != -1) {
+                call_create_process("block", STACK_SIZE, HEAP_SIZE, &call_block, &pid);
+            } else {
+                invalid_pid();
+            }
+            break;
+        case CAT:
+            call_create_process("cat", STACK_SIZE, HEAP_SIZE, &cat, NULL);
+            break;
+        case WC:
+            call_create_process("wc", STACK_SIZE, HEAP_SIZE, &wc, NULL);
+            break;
+        case PHYLO:
+            call_create_process("phylo", STACK_SIZE, HEAP_SIZE, (void *)phylo, NULL);
+            break;
+        case FILTER:
+            call_create_process("filter", STACK_SIZE, HEAP_SIZE, &filter, NULL);
+            break;
+        case LOOP:
+            loppPid = call_create_process("loop", STACK_SIZE, HEAP_SIZE, &loop, NULL);
+            break;
+        case TESTS:
+            call_create_process("tests", STACK_SIZE, HEAP_SIZE, &tests, NULL);
+            break;
+        case CLEAR:
+            call_create_process("clear", STACK_SIZE, HEAP_SIZE, &call_clearColor, &color);
+            break;
+        default:
+            call_sys_write("ERROR - Unknown command", 25, 2);
+            putC('\n');
+            break;
     }
 }
 #define CYAN 0x00FFFF

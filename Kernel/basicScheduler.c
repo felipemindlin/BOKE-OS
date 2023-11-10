@@ -1,6 +1,7 @@
 #include <scheduler.h>
 #include <time.h>
 #include <process.h>
+#include <lib.h>
 process_t foreground_process;
 size_t processes_qty = 0;
 
@@ -298,7 +299,9 @@ void change_process_priority(int pid, priority_t priority){
         }
     }
 }
-
+void change_process_priority_wrapper(char **argv){
+    change_process_priority(atoi(argv[0]), atoi(argv[1]));
+}
 void stop_current_process() {
     // Im debuggin. print all elements from the scheduler array
 /*    for(int i=0 ; i<QUEUE_QTY ; i++){
@@ -426,8 +429,10 @@ int block_process(int pid) {
     return -1; // Process is in a state where it cannot be blocked/unblocked
 }
 
-
-
+int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, void * argv){
+    //return add_process_to_creation_queue(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+    return add_process_to_creation_queue(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+}
 int add_process_to_creation_queue(int parent_pid, char * name, size_t heap_size, size_t stack_size, void * entry_point, void * args){
     process_t * new_process = create_process(parent_pid, name, heap_size, stack_size, entry_point, args);
     if (new_process == NULL) {

@@ -95,3 +95,18 @@ void nanoms(int nseconds) {
 	int startTime = ticks_elapsed();
 	while (nseconds > ticks_elapsed()*18000 - startTime*18000)_hlt();
 };
+
+
+int atoi(char * str){
+    int value = 0;
+    int sign = 1; //en principio positivo
+    int i = 0;
+    if(str[0] == '-'){
+        sign = -1;
+        i++;
+    }
+    for (; str[i] != '\0'; i++){
+        value = (str[i] - '0') + value*10;
+    }
+    return value * sign;
+}

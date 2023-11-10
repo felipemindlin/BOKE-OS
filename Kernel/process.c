@@ -6,10 +6,10 @@
 #include <naiveConsole.h>
 
 void process_wrapper(void entry_point(char ** argv), char ** argv);
-int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
-    //return add_process_to_creation_queue(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
-    return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
-}
+// int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
+//     //return add_process_to_creation_queue(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+//     return create_and_insert_process(get_current_pcb()->process->pid, name, heap_size, stack_size, entry_point, argv);
+// }
 int create_and_insert_process(int parent_pid, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv){
     if(name == NULL || entry_point == NULL){
         return -1;

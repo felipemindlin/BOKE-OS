@@ -115,7 +115,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		return kill_process(rsi);
 		break;
 	case 22:
-		change_process_priority(rsi, rdx);
+		change_process_priority_wrapper(rsi);
 		break;
 	case 23:
 		return block_process(rsi);

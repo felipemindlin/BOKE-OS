@@ -78,7 +78,7 @@ void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ES
 int kill_process(int pid);
 void kill_current_process();
 int free_process(pcb_t * pcb);
-int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+//int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int waitpid(int pid);
 void force_kill(int pid);
 
