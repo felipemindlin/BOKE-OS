@@ -17,11 +17,11 @@
 #include <mysemaphore.h>
 #include <libasm.h>
 
-static void int_20();
-static void int_21();
-static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
+static uint64_t int_20();
+static uint64_t int_21();
+static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 
-typedef void (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
+typedef uint64_t (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9);
 InterruptHandler interruption[256] = {
     [0] = &int_20,
     [1] = &int_21,
@@ -29,24 +29,25 @@ InterruptHandler interruption[256] = {
 };
 
 //maneja las interrupciones y recibe el numero de la interrupcion y los registros en el momento de la interrupcion
-void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+uint64_t irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
     if (irq >= 0 && irq < 256 && interruption[irq] != NULL) {
         InterruptHandler handler = interruption[irq];
-        handler(rdi, rsi, rdx, rcx, r8, r9);
-		return;
+        return handler(rdi, rsi, rdx, rcx, r8, r9);
     }
+	return -1;
 }
-
-void int_20() {
+uint64_t int_20() {
 	timer_handler();
+	return 0;
 }
 
-void int_21() {
+uint64_t int_21() {
 	keyboard_handler();
+	return 0;
 }
 
 //maneja las syscalls y recibe el numero de la syscall y los registros en el momento de la syscall
-int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
+uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9) {
 
     switch (rdi)
 	{

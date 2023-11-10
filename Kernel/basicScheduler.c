@@ -265,7 +265,7 @@ int remove_from_queue_by_pid(queue_t * queue, int pid) {
         if (pcb->process->pid == pid) {
             pcb->priority=ZOMBIE;
             remove_node(queue, current_node);
-            return 1;
+            return ZOMBIE;
         }
 
         current_node = current_node->next;
@@ -279,16 +279,16 @@ int remove_from_queue_by_pid(queue_t * queue, int pid) {
 }
 
 void change_process_priority(int pid, priority_t priority){
+
     pcb_t * pcb = get_pcb_entry(pid);
     if(pcb == NULL){
         return;
     }
-
-    remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pid);
     
-    pcb->priority = priority;
+    pcb->priority =  remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pid);
     
     node_t * new_node = create_node(pcb);
+
     if(new_node == NULL){
         return;
     }

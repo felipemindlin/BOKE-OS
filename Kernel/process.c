@@ -241,7 +241,6 @@ int waitpid(int pid){
         return 0;
     }
     my_sem_wait(pcb->process->sem_name);
-    drawWord("Im here!");
     //my_sem_close(pcb->process->sem_name);
     return 1;
 }
