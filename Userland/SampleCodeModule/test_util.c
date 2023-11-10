@@ -82,13 +82,13 @@ void endless_loop() {
     ;
 }
 
-void endless_loop_print() {
-  int pid = get_pid();
+// void endless_loop_print() {
+//   int pid = get_pid();
 
-  int wait = 10000;
+//   int wait = 10000;
 
-  while (1) {
-    print("%d ", pid);
-    bussy_wait(wait);
-  }
-}
+//   while (1) {
+//     print("%d ", pid);
+//     bussy_wait(wait);
+//   }
+// }

@@ -12,7 +12,16 @@
 #define HIGHEST 3
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST, MEDIUM, LOWEST};
+void endless_loop_print() {
+  int pid = get_pid();
 
+  int wait = 100000000;
+
+  while (1) {
+    print("%d ", pid);
+    bussy_wait(wait);
+  }
+}
 void test_prio() {
   int64_t pids[TOTAL_PROCESSES];
   char *argv[] = {0};
@@ -20,11 +29,10 @@ void test_prio() {
 
   argv[0] = "print_loop";
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = call_create_process("print_loop", 0x0000000000010000, 0x0000000000010000, endless_loop_print, argv);
+    pids[i] = call_create_process("print_loop", 0x0000000000010000, 0x0000000000010000, &endless_loop_print, NULL);
 
   bussy_wait(WAIT);
   print("\nCHANGING PRIORITIES...\n");
-
   for (i = 0; i < TOTAL_PROCESSES; i++)
     call_nice(pids[i], prio[i]);
 
@@ -38,17 +46,15 @@ void test_prio() {
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
     call_nice(pids[i], MEDIUM);
-
   print("UNBLOCKING...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
     call_block(pids[i]);
-
   bussy_wait(WAIT);
   print("\nKILLING...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    call_kill(pids[i]);
+    call_force_kill(pids[i]);
 
   print("\nTest ended. Processes were not printed because\n");
   print("they were created at background.\n");
