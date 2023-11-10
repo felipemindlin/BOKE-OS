@@ -227,7 +227,7 @@ int strcmp(char * str1, char * str2){
 }
 
 // Similar a strcmp pero solo compara hasta el primer espacio o el fin de la cadena (lo que ocurra primero)
-int strcmpspace(char * str1, char * str2){
+/*int strcmpspace(char * str1, char * str2, uint8_t * is_fg){
     char partition[BUFFER_SIZE];
     int j = 0;
     for (; str2[j] != '\0' && str2[j] != ' ';j++){
@@ -248,8 +248,60 @@ int strcmpspace(char * str1, char * str2){
         return -1; 
     } else return 1;
 
+}*/
+
+int isspace(char c){
+    return c == ' ' || c == '\n';
 }
 
+int strncmp(char * str1, char * str2, int n){
+    int i = 0;
+    for (; str1[i] != '\0' && str2[i] != '\0' && i < n; i++){
+        if (str1[i] > str2[i]){
+            return 1;
+        } else if (str1[i] < str2[i]){
+            return -1;
+        }
+    }
+    if (i == n) {
+        return 0;
+    } else if (str1[i] == '\0') {
+        return -1; 
+    } else return 1;
+
+}
+
+int strcmpspace(char *str1, char *str2, uint8_t *is_fg) {
+    // Skip leading whitespaces
+    while (isspace(*str1)) str1++;
+    while (isspace(*str2)) str2++;
+
+    // Find the end of the first word in both strings
+    char *end1 = str1;
+    char *end2 = str2;
+
+    while (*end1 && !isspace(*end1)) end1++;
+    while (*end2 && !isspace(*end2)) end2++;
+
+    int max_len = end1 - str1 > end2 - str2 ? end1 - str1 : end2 - str2;
+
+    // Compare the first word
+    int cmp = strncmp(end1, end2, max_len);
+
+    // If the first word doesn't match, return the result
+    if (cmp != 0) {
+        return cmp;
+    }
+
+    str1 = end1;
+
+    while(*str1);
+    str1--;
+
+    *is_fg = *str1 == '&';
+
+    return cmp;
+}
 
 char * strtok(char * str, char delim){
     static char * static_str;

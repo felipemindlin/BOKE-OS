@@ -11,15 +11,15 @@ static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", 
 
 //busca el comando en la lista de comandos y llama a la funcion correspondiente
 void __seek_command__(char * command){
-    
+    uint8_t is_fg=0;
 
     for (int i = 0; i < COMMAND_LEN; i++){
-        if (strcmpspace(command_list[i],command) == 0){
-                __call_command__(i, command);
+        if (strcmpspace(command_list[i],command, &is_fg) == 0){
+                __call_command__(i, command, is_fg);
                 return;
         }
     }
-    __call_command__(-1, command);
+    __call_command__(-1, command, is_fg);
 }
 
 
@@ -58,7 +58,7 @@ void invalid_pid(){
 }
 
 int phylo();
-void __call_command__(int i, char * command){
+void __call_command__(int i, char * command, uint8_t is_fg){
     char parsed_command[MAX_COMMAND_LENGTH];
     int pid;
     int priority;
