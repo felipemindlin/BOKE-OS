@@ -300,8 +300,8 @@ void write(){
     int fd1[2]={0,pipe1};
     int fd2[2]={pipe1,0};
     size_t hs[2]={4096,4096};
-    call_create_process("child1",hs, &auxW, NULL,fd1);
+    call_create_process("child1", 1, hs, &auxW, NULL,fd1);
 
     print("Ahora creo child 2\n");
-    call_create_process("child2",hs, &read_aux, NULL,fd2);
+    call_create_process("child2", 1, hs, &read_aux, NULL,fd2);
 }

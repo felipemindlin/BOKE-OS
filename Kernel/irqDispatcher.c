@@ -18,12 +18,12 @@
 #include <libasm.h>
 #include "include/pipe.h"
 
-static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int stack_1, uint64_t stack_2);
+static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10);
 static void int_20();
 static void int_21();
-static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t stack_1, uint64_t stack_2);
+static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
 
-typedef void (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t stack_1, uint64_t stack_2);
+typedef void (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
 InterruptHandler interruption[256] = {
     [0] = &int_20,
     [1] = &int_21,
@@ -31,10 +31,10 @@ InterruptHandler interruption[256] = {
 };
 
 //maneja las interrupciones y recibe el numero de la interrupcion y los registros en el momento de la interrupcion
-void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t stack_1, uint64_t stack_2) {
+void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10){
     if (irq >= 0 && irq < 256 && interruption[irq] != NULL) {
         InterruptHandler handler = interruption[irq];
-        handler(rdi, rsi, rdx, rcx, r8, r9, stack_1, stack_2);
+        handler(rdi, rsi, rdx, rcx, r8, r9, r10);
 		return;
     }
 }
@@ -49,7 +49,7 @@ void int_21() {
 }
 int fd[2] = {0,0};
 //maneja las syscalls y recibe el numero de la syscall y los registros en el momento de la syscall
-int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t stack_1, uint64_t stack_2) {
+int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10){
 
     switch (rdi)
 	{
@@ -127,7 +127,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		loop();
 		break;
 	case 25:
-		return create_and_insert_process_from_current_standard(rsi, 1, rdx, rcx, r8, r9); // foreground must be a parameter
+		return create_and_insert_process_from_current_standard(rsi, rdx, rcx, r8, r9, r10); // foreground must be a parameter
 		break;
 	case 26:
 		return my_sem_wait((char*)rsi);
@@ -169,7 +169,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		return create_pipe_anonymous();
 		break;
 	case 39:
-		example_func(rdi, rsi, rdx, rcx, r8, r9, stack_1, stack_2);
+		example_func(rdi, rsi, rdx, rcx, r8, r9, r10);
 		break;
 	default:
 		return 0;
@@ -178,11 +178,9 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 	return 0;
 }
 
-static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int stack_1, uint64_t stack_2){
-	drawWord("\nstack_2:");
-	drawNumber(stack_2);
-	drawWord("\nstack_1:");
-	drawNumber(stack_1);
+static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10){
+	drawWord("\nr10: ");
+	drawNumber(r10);
 	drawWord("\nr9: ");
 	drawNumber(r9);
 	drawWord("\nr8: ");

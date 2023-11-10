@@ -70,8 +70,8 @@ uint64_t test_sync(char *argv[]) {
   uint64_t i;
   int fd[2]={0,0};
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    pids[i] = call_create_process( "Decreaser",heap_and_stack, (void *)my_process_inc, argvDec,fd);
-    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", heap_and_stack, (void *)my_process_inc, argvInc,fd);
+    pids[i] = call_create_process( "Decreaser",0 ,heap_and_stack, (void *)my_process_inc, argvDec,fd);
+    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", 0, heap_and_stack, (void *)my_process_inc, argvInc,fd);
   }
   //call_forceTimer();
   int64_t idx = satoi(argv[1]);

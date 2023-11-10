@@ -20,7 +20,7 @@ void test_prio() {
 
   argv[0] = "startfull_loop_print";
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = call_create_process("startfull_loop_print", 0x0000000000010000, 0x0000000000010000, endless_loop_print, argv);
+    pids[i] = call_create_process("startfull_loop_print", 1, 0x0000000000010000, 0x0000000000010000, endless_loop_print, argv);
 
   bussy_wait(WAIT);
   print("\nCHANGING PRIORITIES...\n");
