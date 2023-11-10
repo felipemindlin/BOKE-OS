@@ -241,6 +241,7 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
     current_pcb->process->stack->current = current_rsp; // save current rsp for next time
     //drawWord("\n");
     //drawWordColor(RED, current_pcb->process->name);
+    // print_process();
     kill_processes_in_removal_queue();
     create_processes_in_creation_queue();
     stop_current_process();
@@ -263,9 +264,8 @@ int remove_from_queue_by_pid(queue_t * queue, int pid) {
         pcb_t *pcb = (pcb_t *)current_node->data;
 
         if (pcb->process->pid == pid) {
-            pcb->priority=ZOMBIE;
             remove_node(queue, current_node);
-            return ZOMBIE;
+            return pcb->priority;
         }
 
         current_node = current_node->next;
@@ -285,13 +285,14 @@ void change_process_priority(int pid, priority_t priority){
         return;
     }
     
-    pcb->priority =  remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pid);
-    
+    remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pid);
+    pcb->priority = priority;
     node_t * new_node = create_node(pcb);
 
     if(new_node == NULL){
         return;
     }
+
     if(insert_node(scheduler[priority]->queue, new_node)<0){
         while(1){
             drawWord("-ERROR-");
