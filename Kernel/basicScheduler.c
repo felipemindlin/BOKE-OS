@@ -434,8 +434,8 @@ int  block_process(int pid) {
     return -1;
 }
 
-int add_process_to_creation_queue(int parent_pid, char * name, size_t heap_size, size_t stack_size, void * entry_point, void * args){
-    process_t * new_process = create_process(parent_pid, name, heap_size, stack_size, entry_point, args);
+int add_process_to_creation_queue(int parent_pid, uint8_t foreground, char * name, size_t stack_size, size_t heap_size, void * entry_point, void * args,int fd[2]){
+    process_t * new_process = create_process(parent_pid, foreground, name, heap_size, stack_size, entry_point, args,fd[0],fd[1]);
     if (new_process == NULL) {
         return -1; // Error if the process could not be created
     }

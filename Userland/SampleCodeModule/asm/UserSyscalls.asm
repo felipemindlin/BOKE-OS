@@ -34,11 +34,19 @@ GLOBAL get_pid
 GLOBAL malloc
 GLOBAL free
 GLOBAL call_print_word_color
+GLOBAL call_pipe_open
+GLOBAL call_pipe_close
+GLOBAL call_pipe_create
+GLOBAL call_pipe_create_anonymous
+GLOBAL call_example
+
 section .text
 
 %macro call_to_handler 1
+    
     push rbp
     mov rbp, rsp
+    mov r10, r9     ;arg6
     mov r9, r8      ;arg 5
     mov r8, rcx     ;arg 4
     mov rcx, rdx    ;arg 3
@@ -48,6 +56,7 @@ section .text
     int 80h         ;interrupcion 80
     mov rsp, rbp
 	pop rbp
+    
     ret
 %endmacro
 
@@ -119,5 +128,15 @@ malloc:
     call_to_handler 33
 free:
     call_to_handler 34
-call_print_word_color:
+call_pipe_open:
     call_to_handler 35
+call_pipe_close:
+    call_to_handler 36
+call_pipe_create:
+    call_to_handler 37
+call_pipe_create_anonymous:
+    call_to_handler 38
+call_example
+    call_to_handler 39 ; to be removed
+call_print_word_color:
+    call_to_handler 40

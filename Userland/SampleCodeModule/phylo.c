@@ -100,7 +100,7 @@ void add_philosopher() {
     fork_states[philosopher_num] = THINKING;
     char philosopher_id[12];
     itoa(philosopher_num, philosopher_id, 10);
-    philosopher_pids[philosopher_num] = call_create_process(philosopher_id, SIZE, SIZE, philosopher, (void *)(uint64_t)philosopher_num);
+    philosopher_pids[philosopher_num] = call_create_process(philosopher_id, 0, SIZE, SIZE, philosopher, (void *)(uint64_t)philosopher_num);
     if (philosopher_pids[philosopher_num] == -1) {
         print("Failed to create philosopher process.\n");
         call_sem_post(mutex_id);

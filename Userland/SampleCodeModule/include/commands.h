@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "UserSyscalls.h"
 
-#define COMMAND_LEN 20
+#define COMMAND_LEN 21
 #define COLOR_LEN 5
 #define MAX_COMMAND_LENGTH 256
 enum Commands {
@@ -27,7 +27,8 @@ enum Commands {
     FILTER,
     LOOP,
     TESTS,
-    CLEAR,
+    WRITE
+    CLEAR
 };
 enum Colors {
     GREEN_,
@@ -40,7 +41,7 @@ enum Colors {
 
 
 void __seek_command__(char * command); //Busca el comando ingresado por el usuario
-void __call_command__(int i, char * command); //Llama al comando ingresado por el usuario
+void __call_command__(int i, char * command, uint8_t is_fg); //Llama al comando ingresado por el usuario
 void help(); //Imprime la lista de comandos
 void time(); //Imprime la hora actual
 void setbg(char * command); //Cambia el color de fondo de la pantalla
@@ -56,5 +57,6 @@ void cat();
 void wc();
 int is_vowel(char c);
 void filter();
+void write();
 void loop();
 #endif /*__COMMANDS_H__*/

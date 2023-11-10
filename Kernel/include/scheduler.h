@@ -34,7 +34,7 @@ void set_process_foreground_pid(int pid);
 int getQuantum();
 pcb_t * get_pcb_entry(int pid);
 int add_process_to_removal_queue(int pid);
-int add_process_to_creation_queue(int parent_pid, char * name, size_t heap_size, size_t stack_size, void * entry_point, void * args);
+int add_process_to_creation_queue(int parent_pid, uint8_t foreground, char * name, size_t stack_size, size_t heap_size, void * entry_point, void * args,int fd[2]);
 void print_process();
 int current_process_id();
 void change_process_priority(int pid, priority_t priority);

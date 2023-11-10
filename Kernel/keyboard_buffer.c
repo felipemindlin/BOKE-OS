@@ -25,7 +25,7 @@ void consumeBuffAt(int pos){
     ptr->buff[pos] = 0;
 }
 
-void cleanBuffer(){
+void clear_buffer(){
     uint16_t * buffer = ptr->buff;
     for (int i = 0; i < BUFF_SIZE; i++){
         buffer[i] = '\0';
