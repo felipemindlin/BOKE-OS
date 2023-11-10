@@ -265,7 +265,3 @@ int waitpid(int pid){
     //my_sem_close(pcb->process->sem_name);
     return 1;
 }
-
-int kill_foreground_process(){
-    
-}
