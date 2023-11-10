@@ -30,8 +30,8 @@ void call_mem();
 int call_kill(int pid);
 void call_nice(int pid, int priority);
 int call_block(int pid);
-void call_force_kill(int pid);
-int  call_create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
+int call_force_kill(int pid);
+int call_create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 uint64_t call_sem_open(uint64_t start_value, char *id);
 void call_sem_close(char *id);  // Updated to take ID instead of index
 uint64_t call_sem_post(char *id);  // Updated to take ID instead of index

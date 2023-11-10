@@ -8,7 +8,10 @@ typedef struct P_rq {
   int32_t pid;
   enum State state;
 } p_rq;
-
+void endless_loop() {
+  while (1)
+    ;
+}
 int64_t test_processes() {
   uint8_t rq;
   uint8_t alive = 0;
@@ -56,7 +59,7 @@ int64_t test_processes() {
         switch (action) {
         case 0:
           if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED) {
-            if (call_kill(p_rqs[rq].pid) == -1) {
+            if (call_force_kill(p_rqs[rq].pid) == -1) {
               print("test_processes: ERROR killing process\n");
               return -1;
             }
