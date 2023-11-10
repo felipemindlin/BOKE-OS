@@ -6,13 +6,36 @@
 #include "funcAsm.h"
 #include "colors.h"
 #include "shell.h"
-#include <test_util.h>  
-static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS"};
+#include <test_util.h> 
+uint64_t color = BLACK;
+#define EOF 0x01
+static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS", "CLEAR"};
 char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
+static char command_descriptions[COMMAND_LEN][300] = {
+    "Display the list of available commands",
+    "Display the current system time",
+    "Display the register state",
+    "Play the Pong game",
+    "Set the background color (usage: SETCOLOR <color>, available colors: GREEN, BLUE, BLACK, YELLOW, ORANGE)",
+    "Trigger a division by zero exception",
+    "Trigger an invalid operation exception",
+    "Draw the Club Atletico Boca Juniors flag",
+    "Display information about running processes",
+    "Display memory information",
+    "Terminate a process by PID (usage: KILL <pid>)",
+    "Change the priority of a process (usage: NICE <pid> <priority>)",
+    "Block a process by PID (usage: BLOCK <pid>)",
+    "Display the contents of Stdin",
+    "Count the number of lines in the input",
+    "Run the dining philosophers solution",
+    "Filter out vowels from the input",
+    "Run an infinite loop process",
+    "Run system tests (opens a menu with the following options:\n\t\t- Test memory manager\n\t\t- Test priority\n\t\t- Test processes\n\t\t- Test synchronization\n\t\t- Test without synchronization\n",
+    "Clears the screen"
+};
+
 //busca el comando en la lista de comandos y llama a la funcion correspondiente
 void __seek_command__(char * command){
-    
-
     for (int i = 0; i < COMMAND_LEN; i++){
         if (strcmpspace(command_list[i],command) == 0){
                 __call_command__(i, command);
@@ -56,16 +79,13 @@ void invalid_pid(){
     call_sys_write("ERROR - PID invalido",20,2);
     putC('\n');
 }
-
+int loppPid=0;
 int phylo();
 void __call_command__(int i, char * command){
     char parsed_command[MAX_COMMAND_LENGTH];
     int pid;
     int priority;
-   // print("%s",command);
     parse_command(command, parsed_command, &pid, &priority);
-    //print("pid :%d, priority: %d\n",pid, priority);
-
     switch (i)
     {
     case HELP:
@@ -130,22 +150,19 @@ void __call_command__(int i, char * command){
         wc();
         return;
     case PHYLO:
-        //call_create_process("Phylo", 0x0000000000010000, 0x0000000000010000, (void *)phylo, NULL);
         phylo();
         return;
     case FILTER:
         filter();
         return;
     case LOOP:
-        call_loop();
+        loppPid = call_create_process( "loop", 4096, 4096, &loop, NULL);
         return;
     case TESTS:
         tests();
-        //call_create_process("test_sync", 0x0000000000010000, 0x0000000000010000, (void *)test_sync, test_args);
-        //test_sync(test_args);
-        // Now run the test_sync function without semaphores
-        // char *test_args_no_sem[] = {"3", "2"}; // Test with 10 iterations and semaphores disabled
-        // test_sync(test_args_no_sem);
+        return;
+    case CLEAR:
+        call_clearColor(color);
         return;
     default:
         call_sys_write("ERROR - Comando no reconocido",30,2);
@@ -153,13 +170,13 @@ void __call_command__(int i, char * command){
         return;
     }
 }
-
+#define CYAN 0x00FFFF
 //imprime la lista de comandos disponibles
-void help(){
-    call_sys_write("Lista de commandos disponibles:\n", 34,1);
-    for (int i = 0; i < COMMAND_LEN; i++){
-        call_sys_write(command_list[i],40,1);
-        call_sys_write("\n",1,1);
+void help() {
+    call_sys_write("List of available commands:\n", 29, 1);
+    for (int i = 0; i < COMMAND_LEN; i++) {
+        call_print_word_color(CYAN, command_list[i]);
+        print(":\t%s\n\n", command_descriptions[i]);
     }
 }
 
@@ -174,29 +191,42 @@ void time(){
 }
 
 
-void setbgEnum(int i){
+void loop(){
+    while(1){
+        if(call_ticks_elapsed() % 18 == 0){
+            print("PID:%d\n",loppPid);
+        }
+    }
+
+}
+
+uint64_t setbgEnum(int i){
     switch (i){
-        case GREEN_:; call_paintScreen(GREEN);
-            return;
-        case BLUE_:; call_paintScreen(BLUE);
-            return;
-        case BLACK_: ;call_paintScreen(BLACK);
-            return;
-        case YELLOW_: ;call_paintScreen(YELLOW);
-            return;
-        case ORANGE_:; call_paintScreen(ORANGE);
-            return;
+        case GREEN_:
+            call_paintScreen(GREEN);
+            return GREEN;
+        case BLUE_:
+            call_paintScreen(BLUE);
+            return BLUE;
+        case BLACK_:
+            call_paintScreen(BLACK);
+            return BLACK;
+        case YELLOW_:
+            call_paintScreen(YELLOW);
+            return YELLOW;
+        case ORANGE_:
+            call_paintScreen(ORANGE);
+            return ORANGE;
         default:
             return;
     }
 }
+
 static char hexArr[COLOR_LEN][10] = {"GREEN","BLUE","BLACK","YELLOW","ORANGE"};
 void findColor(char * color){
-    
-   
     for (int i = 0; i < COMMAND_LEN; i++){
         if (strcmp(hexArr[i],color) == 0){
-                setbgEnum(i);
+               color = setbgEnum(i);
                 return;
         }
     }
@@ -231,7 +261,7 @@ void cat() {
   char c;
   char comm[MAX_COMMAND_LENGTH]={0};
   int i=0;
-  while ((c = getC()) != 0){
+  while ((c = getC()) != EOF){
     putC(c);
     comm[i++]=c;
     if(c=='\n'){
@@ -246,7 +276,7 @@ void cat() {
 void wc() {
   int lines = 0;
   char c;
-  while ((c = getC()) != 0) {
+  while ((c = getC()) != EOF) {
     if (c == '\n' ) {
       lines++;
     }
@@ -264,7 +294,7 @@ int is_vowel(char c) {
 
 void filter() {
   char c;
-  while ((c = getC()) != 0) {
+  while ((c = getC()) != EOF) {
     if (!is_vowel(c)) {
       putC(c);
     }

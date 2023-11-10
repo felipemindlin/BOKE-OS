@@ -7,9 +7,9 @@
 #define WAIT  10000000       
 
 #define TOTAL_PROCESSES 5
-#define LOWEST 0
-#define MEDIUM 3
-#define HIGHEST 5
+#define LOWEST 1
+#define MEDIUM 2
+#define HIGHEST 3
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST, MEDIUM, LOWEST};
 
@@ -18,9 +18,9 @@ void test_prio() {
   char *argv[] = {0};
   uint64_t i;
 
-  argv[0] = "startfull_loop_print";
+  argv[0] = "print_loop";
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = call_create_process("startfull_loop_print", 0x0000000000010000, 0x0000000000010000, endless_loop_print, argv);
+    pids[i] = call_create_process("print_loop", 0x0000000000010000, 0x0000000000010000, endless_loop_print, argv);
 
   bussy_wait(WAIT);
   print("\nCHANGING PRIORITIES...\n");

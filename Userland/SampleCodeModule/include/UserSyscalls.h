@@ -30,7 +30,7 @@ void call_mem();
 int call_kill(int pid);
 void call_nice(int pid, int priority);
 int call_block(int pid);
-void call_loop();
+void call_force_kill(int pid);
 int  call_create_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 uint64_t call_sem_open(uint64_t start_value, char *id);
 void call_sem_close(char *id);  // Updated to take ID instead of index
@@ -41,5 +41,5 @@ int call_waitpid(int pid);
 int get_pid();
 void * malloc(uintptr_t bytes);
 void * free(void * mem);
-
+void call_print_word_color(uint64_t hexColor, char* word);
 #endif /* USERSYSCALLS_H */

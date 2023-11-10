@@ -160,9 +160,8 @@ void save_reg_state(pcb_t * pcb){
 	save_reg_stateAsm(&pcb->reg_state);
 }
 
-void kill_current_process() {
-    kill_process(get_current_pcb()->process->pid);
-}
+#define SHELL_PID 2
+
 
 
 int kill_process(int pid) {
@@ -171,14 +170,14 @@ int kill_process(int pid) {
         return -1;
     }
 
+    reassign_children_to_shell(pid);
+
     pcb_t *parent_pcb = get_pcb_entry(pcb->process->parent_pid);
     my_sem_post(pcb->process->sem_name);
 
     if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE) {
-        
         pcb->process->status = DEAD;
         add_process_to_removal_queue(pcb->process->pid);
-        
     } else {
         pcb->process->status = ZOMBIE;
         my_sem_close(pcb->process->sem_name);
@@ -198,6 +197,29 @@ int kill_foreground_process(int fg_pid){
     set_process_foreground_pid(SHELL_PID);
     return kill_process(fg_pid);
 }
+
+void kill_current_process() {
+    kill_process(get_current_pcb()->process->pid);
+}
+
+void force_kill(int pid) {
+    pcb_t *pcb = get_pcb_entry(pid);
+    if (pcb == NULL || pcb->process == NULL) {
+        return;
+    }
+
+    reassign_children_to_shell(pid);
+
+    my_sem_post(pcb->process->sem_name);
+
+    pcb->process->status = DEAD;
+    add_process_to_removal_queue(pcb->process->pid);
+
+    if (pid == current_process_id()) {
+        finish_current_tick();
+    }
+}
+
 
 int free_process(pcb_t * pcb){
     if(pcb == NULL || pcb->process == NULL){

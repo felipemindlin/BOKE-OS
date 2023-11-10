@@ -9,7 +9,7 @@
 #include "include/ScanCodes.h"
 #include "../include/pipe.h"
 #include <mysemaphore.h>
-
+#include "include/syscalls.h"
 
 void keyboard_handler() {
     uint16_t key = getKey();  // Obtiene el valor de la tecla presionada
@@ -37,8 +37,15 @@ void keyboard_handler() {
             return;
         }
         else if(ScanCodes[key] == 'D'){
-            drawWord("contorl D");
+            drawWord("EOF");
             send_eof_to_foreground();
+            key=EOF;
+        }
+        else if(ScanCodes[key] == 'P'){
+            print_process();
+        }
+        else if(ScanCodes[key] == 'L'){
+            clear();
            // key=-1; implementar bien el EOF porq ya con tocar el contorl o el shift o cualquiera que este en 0 en scancodes sale 
             return;
         }

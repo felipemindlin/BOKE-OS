@@ -20,7 +20,7 @@
 
 #define isMinusc(x) ((x)<='a'?(((x)>='z')?1:0):0)
 #define DEFAULT_FONT_SIZE 2
-
+#define EOF 0x01
 
 void paintScreen(uint64_t hexColor);
 void fillSection(uint64_t hexColor, int startY, int endY);
@@ -65,5 +65,6 @@ void drawNumberColorAt(uint64_t hexColor, int value,  uint32_t x, uint32_t y);
 void drawBall(uint64_t color, int size, int x, int y);
 void drawWordColorLen(uint64_t color, char * buff, int len);
 void drawWordLen(char * buff, int len);
-
+void drawNumberPadded(uint64_t hexColor, int number, int width);
+void drawWordPadded(uint64_t hexColor,  char* word, int width);
 #endif /* _VIDEO_DRIVER_H */

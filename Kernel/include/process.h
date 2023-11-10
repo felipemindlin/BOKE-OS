@@ -7,7 +7,7 @@
 #define	__need_size_t
 #define	__need_NULL
 #include <stddef.h>
-#define OS_PID 2
+#define OS_PID 1
 #define SHELL_PID 2
 #define MAX_SEM_NAME 5
 #define BASE 10
@@ -81,8 +81,8 @@ int kill_process(int pid);
 void kill_current_process();
 int kill_foreground_process(int fg_pid);
 int free_process(pcb_t * pcb);
-void loop();
 int create_and_insert_process_from_current(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int waitpid(int pid);
+void force_kill(int pid);
 
 #endif

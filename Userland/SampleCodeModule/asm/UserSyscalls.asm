@@ -22,7 +22,7 @@ GLOBAL call_mem
 GLOBAL call_kill
 GLOBAL call_nice
 GLOBAL call_block
-GLOBAL call_loop
+GLOBAL call_force_kill
 GLOBAL call_create_process
 GLOBAL call_sem_wait
 GLOBAL call_sem_post
@@ -33,6 +33,7 @@ GLOBAL call_waitpid
 GLOBAL get_pid
 GLOBAL malloc
 GLOBAL free
+GLOBAL call_print_word_color
 section .text
 
 %macro call_to_handler 1
@@ -96,7 +97,7 @@ call_nice:
     call_to_handler 22
 call_block:
     call_to_handler 23
-call_loop:
+call_force_kill:
     call_to_handler 24
 call_create_process:
     call_to_handler 25
@@ -118,3 +119,5 @@ malloc:
     call_to_handler 33
 free:
     call_to_handler 34
+call_print_word_color:
+    call_to_handler 35
