@@ -199,10 +199,10 @@ void kill_current_process() {
     kill_process(get_current_pcb()->process->pid);
 }
 
-void force_kill(int pid) {
+int force_kill(int pid) {
     pcb_t *pcb = get_pcb_entry(pid);
     if (pcb == NULL || pcb->process == NULL) {
-        return;
+        return -1;
     }
 
     reassign_children_to_shell(pid);
@@ -215,6 +215,7 @@ void force_kill(int pid) {
     if (pid == current_process_id()) {
         finish_current_tick();
     }
+    return 1;
 }
 
 
@@ -248,18 +249,15 @@ void loop(){
 }
 
 int waitpid(int pid){
-   
-    pcb_t * pcb = get_pcb_entry(pid);
-    if(pcb == NULL || pcb->process == NULL){
+   pcb_t *pcb = get_pcb_entry(pid);
+
+    if (pcb == NULL)
+    {
         return -1;
     }
-    if(pcb->process->status == DEAD){
-        free_process(pcb);
-        return 0;
-    }
-    my_sem_wait(pcb->process->sem_name);
-    drawWord("Im here!");
-    //my_sem_close(pcb->process->sem_name);
-    return 1;
-}
+    int ret = pcb->process->pid;
+    my_sem_wait(pcb->process->name);
 
+    force_kill(pcb->process->pid);
+    return ret;
+}

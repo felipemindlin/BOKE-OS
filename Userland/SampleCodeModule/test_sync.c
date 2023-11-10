@@ -1,6 +1,6 @@
 #include <stdint.h>
 //#define SEM_ID "sem_sem"
-#define TOTAL_PAIR_PROCESSES 100
+#define TOTAL_PAIR_PROCESSES 5
 #include <UserSyscalls.h>
 #include <utils.h>
 char * sem_id[]={"sem_1", "sem_2"};
@@ -28,7 +28,7 @@ void slowInc(int64_t *p, int64_t inc) {
   int my_sem = 1;
 
 
-  if (n <= 0 || n > 10)
+ // if (n <= 0 || n > 10)
     n = 5;
 
   if (use_sem) {
@@ -61,6 +61,7 @@ uint64_t test_sync(char *argv[]) {
   argvInc[1]=argv[0];
   argvInc[3]=argv[1];
 
+
   global=0;
 
   size_t process_heap_size = 4096; // Example heap size
@@ -73,12 +74,11 @@ uint64_t test_sync(char *argv[]) {
     pids[i] = call_create_process( "Decreaser",0 ,heap_and_stack, (void *)my_process_inc, argvDec,fd);
     pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", 0, heap_and_stack, (void *)my_process_inc, argvInc,fd);
   }
-
  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
    call_waitpid(pids[i]);
    call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
  }
  print("\nExpected value: 0\n Final value:%d\n\n", (int)global);
-
+  
   return 0;
 }

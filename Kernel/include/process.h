@@ -88,6 +88,6 @@ int free_process(pcb_t * pcb);
 void loop();
 int create_and_insert_process_from_current(const char * name, uint8_t foreground, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fd[2]);
 int waitpid(int pid);
-void force_kill(int pid);
+int force_kill(int pid);
 
 #endif

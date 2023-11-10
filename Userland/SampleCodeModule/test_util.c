@@ -1,7 +1,7 @@
 #include <test_util.h>
 #include <utils.h>
 
-
+char *argv_aux[2];
 void tests() {
     print("Available tests:\n");
     print("  A - Test memory manager\n");
@@ -22,7 +22,8 @@ void tests() {
     }
 
 
-    char *argv_aux[2] = {"3", "1"};
+    argv_aux[0] = "3";
+    argv_aux[1]= "1";
 
     switch (test_num) {
         case 1:
@@ -77,18 +78,15 @@ void bussy_wait(uint64_t n) {
     ;
 }
 
-void endless_loop() {
-  while (1)
-    ;
-}
 
-void endless_loop_print() {
-  int pid = get_pid();
 
-  int wait = 10000;
+// void endless_loop_print() {
+//   int pid = get_pid();
 
-  while (1) {
-    print("%d ", pid);
-    bussy_wait(wait);
-  }
-}
+//   int wait = 10000;
+
+//   while (1) {
+//     print("%d ", pid);
+//     bussy_wait(wait);
+//   }
+// }

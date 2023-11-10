@@ -19,11 +19,11 @@
 #include "include/pipe.h"
 
 static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10);
-static void int_20();
-static void int_21();
-static int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
+static uint64_t int_20();
+static uint64_t int_21();
+static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
 
-typedef void (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
+typedef uint64_t (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
 InterruptHandler interruption[256] = {
     [0] = &int_20,
     [1] = &int_21,
@@ -31,25 +31,25 @@ InterruptHandler interruption[256] = {
 };
 
 //maneja las interrupciones y recibe el numero de la interrupcion y los registros en el momento de la interrupcion
-void irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10){
+uint64_t irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10) {
     if (irq >= 0 && irq < 256 && interruption[irq] != NULL) {
         InterruptHandler handler = interruption[irq];
-        handler(rdi, rsi, rdx, rcx, r8, r9, r10);
-		return;
+        return handler(rdi, rsi, rdx, rcx, r8, r9, r10);
     }
+	return -1;
 }
-
-
-void int_20() {
+uint64_t int_20() {
 	timer_handler();
+	return 0;
 }
 
-void int_21() {
+uint64_t int_21() {
 	keyboard_handler();
+	return 0;
 }
 int fd[2] = {0,0};
 //maneja las syscalls y recibe el numero de la syscall y los registros en el momento de la syscall
-int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10){
+uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10) {
 
     switch (rdi)
 	{
@@ -124,7 +124,7 @@ int int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, 
 		return block_process(rsi);
 		break;
 	case 24:
-		force_kill(rsi);
+		return force_kill(rsi);
 		break;
 	case 25:
 		return create_and_insert_process_from_current_standard(rsi, rdx, rcx, r8, r9, r10); // foreground must be a parameter

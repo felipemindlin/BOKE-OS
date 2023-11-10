@@ -247,6 +247,7 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
     current_pcb->process->stack->current = current_rsp; // save current rsp for next time
     //drawWord("\n");
     //drawWordColor(RED, current_pcb->process->name);
+    // print_process();
     kill_processes_in_removal_queue();
     create_processes_in_creation_queue();
     stop_current_process();
@@ -265,15 +266,12 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
 
 int remove_from_queue_by_pid(queue_t * queue, int pid) {
     node_t * current_node = queue->current_node;
-    //drawWord("PID removed from queue: ");
-    //drawNumber(pid);
     while (current_node) {
         pcb_t *pcb = (pcb_t *)current_node->data;
 
         if (pcb->process->pid == pid) {
-            pcb->priority=ZOMBIE;
             remove_node(queue, current_node);
-            return 1;
+            return pcb->priority;
         }
 
         current_node = current_node->next;
@@ -287,19 +285,20 @@ int remove_from_queue_by_pid(queue_t * queue, int pid) {
 }
 
 void change_process_priority(int pid, priority_t priority){
+
     pcb_t * pcb = get_pcb_entry(pid);
     if(pcb == NULL){
         return;
     }
-
+    
     remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pid);
-    
     pcb->priority = priority;
-    
     node_t * new_node = create_node(pcb);
+
     if(new_node == NULL){
         return;
     }
+
     if(insert_node(scheduler[priority]->queue, new_node)<0){
         while(1){
             drawWord("-ERROR-");
@@ -419,20 +418,30 @@ int os_block_current_process() {
     return current_pcb->process->pid; // Return the PID of the blocked process
 }
 
-int  block_process(int pid) {
+int block_process(int pid) {
     pcb_t *pcb = get_pcb_entry(pid); // Fetch the PCB for the given PID
-    if (pcb != NULL && pcb->process->status == READY) {
-        pcb->process->status = BLOCKED; // Change status to BLOCKED
-        remove_from_queue_by_pid(scheduler[pcb->priority]->queue, pcb->process->pid);
-        force_context_switch((uintptr_t *)pcb->process->stack->current);
-        return 1;
-    } else if (pcb != NULL && pcb->process->status == BLOCKED) {
-        pcb->process->status = READY; // Change status to READY
-        add_pcb_to_scheduler(scheduler[pcb->priority]->queue->current_node, pcb->process->pid);
-        return 2;
+    if (pcb == NULL) {
+        return -1; // Process not found
     }
-    return -1;
+    
+    // Toggle the status of the process based on its current state
+    if (pcb->process->status == READY) {
+        pcb->process->status = BLOCKED; // Change status to BLOCKED
+        // If the process to block is the current running process, then force a context switch
+        if (pcb == current_pcb) {
+            force_context_switch((uintptr_t *)pcb->process->stack->current);
+        }
+        return 1; // Indicate the process was successfully blocked
+    } else if (pcb->process->status == BLOCKED) {
+        pcb->process->status = READY; // Change status to READY
+        // No need to add it back to the queue, as we are not removing it when blocking
+        return 2; // Indicate the process was successfully unblocked
+    }
+    
+    return -1; // Process is in a state where it cannot be blocked/unblocked
 }
+
+
 
 int add_process_to_creation_queue(int parent_pid, uint8_t foreground, char * name, size_t stack_size, size_t heap_size, void * entry_point, void * args,int fd[2]){
     process_t * new_process = create_process(parent_pid, foreground, name, heap_size, stack_size, entry_point, args,fd[0],fd[1]);
