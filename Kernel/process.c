@@ -229,18 +229,16 @@ int free_process(pcb_t * pcb){
 }
 
 
-
 int waitpid(int pid){
-   
-    pcb_t * pcb = get_pcb_entry(pid);
-    if(pcb == NULL || pcb->process == NULL){
+   pcb_t *pcb = get_pcb_entry(pid);
+
+    if (pcb == NULL)
+    {
         return -1;
     }
-    if(pcb->process->status == DEAD){
-        free_process(pcb);
-        return 0;
-    }
-    my_sem_wait(pcb->process->sem_name);
-    //my_sem_close(pcb->process->sem_name);
-    return 1;
+    int ret = pcb->process->pid;
+    my_sem_wait(pcb->process->name);
+
+    force_kill(pcb->process->pid);
+    return ret;
 }
