@@ -50,7 +50,7 @@ void initialize()
 }
 
 void vision(){
-    while (phil_qty){
+    while (!last){
         print_state();
         call_sleepms(100);
     }

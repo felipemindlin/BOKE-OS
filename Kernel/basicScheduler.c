@@ -36,7 +36,7 @@ pcb_t * find_next_process( pcb_t * pcb ) {
             }
             if (pcb->process->status == READY) {
                 pcb->process->status = RUNNING;
-                // scheduler[i]->queue->current_node = node->next;
+                scheduler[i]->queue->current_node = node->next;
                 return pcb;
             }
             node = node->next;
@@ -324,7 +324,7 @@ void stop_current_process() {
         current_pcb->ticks = 0;
 
         // Move to the next node
-        scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
+        // scheduler[current_pcb->priority]->queue->current_node = scheduler[current_pcb->priority]->queue->current_node->next;
     }
 }
 
