@@ -106,7 +106,7 @@ void add_philosopher() {
     itoa(philosopher_num, philosopher_id, 10);
     char name[20] = "philosopher";
     concat(name, philosopher_id);
-    philosopher_pids[philosopher_num] = call_create_process(philosopher_id, 1, heap_stack_vec, philosopher, (void *)(uint64_t)philosopher_num, filedes);
+    philosopher_pids[philosopher_num] = call_create_process(name, 1, heap_stack_vec, philosopher, (void *)(uint64_t)philosopher_num, filedes);
 
     if (philosopher_pids[philosopher_num] == -1) {
         print("Failed to create philosopher process.\n");
