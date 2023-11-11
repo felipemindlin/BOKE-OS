@@ -19,5 +19,10 @@ uint8_t memcheck(void *start, uint8_t value, uint32_t size);
 int64_t satoi(char *str);
 void bussy_wait(uint64_t n);
 void endless_loop_print();
-
+void * get_testmm();
+void * get_test_prio();
+void * get_test_processes();
+void * get_test_sync();
+void * get_tests();
+char * concat(char * str1, char * str2);
 #endif

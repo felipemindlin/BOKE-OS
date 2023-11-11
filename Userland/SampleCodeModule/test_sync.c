@@ -1,8 +1,9 @@
 #include <stdint.h>
 //#define SEM_ID "sem_sem"
-#define TOTAL_PAIR_PROCESSES 5
+#define TOTAL_PAIR_PROCESSES 10
 #include <UserSyscalls.h>
 #include <utils.h>
+#include <test_util.h>
 char * sem_id[]={"sem_1", "sem_2"};
 
 char *argvDec[] = {"Decreaser", NULL, "-1", NULL, "sem_1"};
@@ -11,7 +12,9 @@ char *argvInc[] = {"Increaser", NULL, "1", NULL, "sem_1"};
 void my_yield(){
   call_forceTimer();
 }
-
+void * get_test_sync(){
+  return &test_sync;
+}
 int64_t global = 0; // shared memory
 void slowInc(int64_t *p, int64_t inc) {
   uint64_t aux = *p;

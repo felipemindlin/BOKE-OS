@@ -88,31 +88,32 @@ void __call_command__(int i, char * command, uint8_t is_fg){
     char parsed_command[MAX_COMMAND_LENGTH];
     int pid;
     int priority;
+    void * fun;
+    void * args=NULL;
     parse_command(command, parsed_command, &pid, &priority);
     switch (i)
-    {
+{
     case HELP:
-        help();
-        return;
+        fun = help;
+        break;
     case TIME:
-        time();
-        return;
+        fun = time;
+        break;
     case REG_STATE:
-        call_regState();
-        return;
+        fun = call_regState;
+        break;
     case PONG:
-        Pong();
-        __shell_init__();    
-        return;
+        fun = get_Pong();
+        break;
     case SETCOLOR:
         setbg(command);
         return;
     case DIV0:
-        Div0();
-        return;
+        fun = Div0;
+        break;
     case INVALOP:
-        invalidOp();
-        return;
+        fun = invalidOp;
+        break;
     case BOKE:
         call_boke();
         return;
@@ -123,55 +124,57 @@ void __call_command__(int i, char * command, uint8_t is_fg){
         call_mem();
         return;
     case KILL:
-        if(pid==-1){
+        if (pid == -1) {
             invalid_pid();
             return;
         }
         call_kill(pid);
-        return;
+        break;
     case NICE:
-      if(pid==-1 || priority==-1){
+        if (pid == -1 || priority == -1) {
             invalid_pid();
             return;
         }
-        if(priority>4){
-            priority=4;
+        if (priority > 4) {
+            priority = 4;
         }
         call_nice(pid, priority);
-        return;
+        break;
     case BLOCK:
-      if(pid==-1){
+        if (pid == -1) {
             invalid_pid();
             return;
         }
         call_block(pid);
-        return;
+        break;
     case CAT:
-        cat();
-        return;
-    case WC:;
-        wc();
-        return;
+        fun = cat;
+        break;
+    case WC:
+        fun = wc;
+        break;
     case PHYLO:
-        phylo();
-        return;
+        fun = get_Phylo();
+        break;
     case FILTER:
-        filter();
-        return;
+        fun = filter;
+        break;
     case LOOP:
-        loppPid = call_create_process( "loop", 1, heap_and_stack, &loop, NULL, fd);
-        return;
+        fun = loop; 
+        break;
     case TESTS:
-        tests();
-        return;
+        fun = get_tests();
+        break;
     case CLEAR:
-        call_clearColor(color);
-        return;
+        fun = call_clearColor;
+        break;
     default:
-        call_sys_write("ERROR - Comando no reconocido",30,2);
+        call_sys_write("ERROR - Comando no reconocido", 30, 2);
         putC('\n');
         return;
     }
+    call_create_process(command_list[i], 1, heap_and_stack, fun, args, fd);
+    return;
 }
 #define CYAN 0x00FFFF
 //imprime la lista de comandos disponibles
@@ -181,6 +184,7 @@ void help() {
         call_print_word_color(CYAN, command_list[i]);
         print(":\t%s\n\n", command_descriptions[i]);
     }
+
 }
 
 void time(){

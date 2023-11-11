@@ -10,6 +10,8 @@
 #define LOWEST 1
 #define MEDIUM 2
 #define HIGHEST 3
+int fileds[2] = {0,0};
+size_t heap_stacks[2] = {0x0000000000001000, 0x0000000000001000};
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST, MEDIUM, LOWEST};
 void endless_loop_print() {
@@ -22,6 +24,10 @@ void endless_loop_print() {
     bussy_wait(wait);
   }
 }
+void * get_test_prio(){
+  return &test_prio;
+}
+
 void test_prio() {
   int64_t pids[TOTAL_PROCESSES];
   char *argv[] = {0};
@@ -29,7 +35,7 @@ void test_prio() {
 
   argv[0] = "print_loop";
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = call_create_process("print_loop", 1, 0x0000000000010000, 0x0000000000010000, endless_loop_print, NULL);
+    pids[i] = call_create_process("print_loop", 1,heap_stacks, endless_loop_print, NULL, fileds);
 
   bussy_wait(WAIT);
   print("\nCHANGING PRIORITIES...\n");

@@ -58,4 +58,5 @@ int is_vowel(char c);
 void filter();
 void write();
 void loop();
+void * get_Phylo();
 #endif /*__COMMANDS_H__*/

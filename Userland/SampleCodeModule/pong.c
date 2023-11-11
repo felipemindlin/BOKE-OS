@@ -981,3 +981,6 @@ void Pong() {
     }
 }
 
+void * get_Pong(){
+    return &Pong;
+}

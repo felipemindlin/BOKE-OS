@@ -429,3 +429,20 @@ char* itoa(int num, char* str, int base) {
 
     return str;
 }
+int str_len(const char * str){
+    int i = 0;
+    while (str[i] != '\0'){
+        i++;
+    }
+    return i;
+}
+
+
+char * concat(char * str1, char * str2){
+    int len1 = str_len(str1);
+    int len2 = str_len(str2);
+    for(int i = 0; i < len2; i++){
+        str1[len1 + i] = str2[i];
+    }
+    return len1;
+}

@@ -9,6 +9,11 @@ typedef struct MM_rq {
   uint32_t size;
 } mm_rq;
 void * memset(void * destiation, int32_t c, uint64_t length);
+
+void * get_testmm(){
+  return &test_mm;
+}
+
 uint64_t test_mm() {
 
   mm_rq mm_rqs[MAX_BLOCKS];

@@ -1,6 +1,6 @@
 #include <UserSyscalls.h>
 #include <utils.h>
-
+#include <commands.h>
 #define MAX_PHILOSOPHERS 20
 #define MIN_PHILOSOPHERS 1
 #define START_PHILOSOPHERS 5
@@ -18,6 +18,8 @@ uint64_t fork_sem_ids[MAX_PHILOSOPHERS];
 int philosopher_pids[MAX_PHILOSOPHERS];
 int r_w_sem_index;
 int add_remove_mutex_index;
+int filedes[2] = {0,0};
+size_t heap_stack_vec[2] = {0x0000000000001000, 0x0000000000001000};
 
 void philosopher(uint64_t id);
 void take_forks(uint64_t philosopher_num);
@@ -43,6 +45,8 @@ void intialize(){
     last = 0;
 
 }
+
+
 
 int phylo() {
     intialize(); 
@@ -100,7 +104,10 @@ void add_philosopher() {
     fork_states[philosopher_num] = THINKING;
     char philosopher_id[12];
     itoa(philosopher_num, philosopher_id, 10);
-    philosopher_pids[philosopher_num] = call_create_process(philosopher_id, 0, SIZE, SIZE, philosopher, (void *)(uint64_t)philosopher_num);
+    char name[20] = "philosopher";
+    concat(name, philosopher_id);
+    philosopher_pids[philosopher_num] = call_create_process(philosopher_id, 1, heap_stack_vec, philosopher, (void *)(uint64_t)philosopher_num, filedes);
+
     if (philosopher_pids[philosopher_num] == -1) {
         print("Failed to create philosopher process.\n");
         call_sem_post(mutex_id);
@@ -195,4 +202,9 @@ void print_state() {
     }
     print("\n");
     call_sem_post(mutex_id);
+}
+
+
+void * get_Phylo(){
+    return &phylo;
 }

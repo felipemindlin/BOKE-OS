@@ -115,7 +115,8 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		add_process_to_creation_queue(1, 1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL,fd);
 		break;
 	case 21:
-		return kill_process(rsi);
+		// return kill_process(rsi);
+		return force_kill(rsi);
 		break;
 	case 22:
 		change_process_priority(rsi, rdx);

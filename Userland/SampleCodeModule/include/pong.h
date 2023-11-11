@@ -61,5 +61,6 @@ void drawBorders(); //dibuja los bordes
 void Pong(); //funcion principal del juego pong
 void drawMiddleLine(); //dibuja la linea del medio
 void resetGame(); //resetea el juego
+void * get_Pong();
 
 #endif /* PONG_H */

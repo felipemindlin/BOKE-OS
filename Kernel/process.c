@@ -6,7 +6,7 @@
 #include <naiveConsole.h>
 
 void process_wrapper(void entry_point(char ** argv), char ** argv);
-int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack,void * entry_point, char ** argv,int * fd){
+int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack,void * entry_point, void * argv,int * fd){
     return create_and_insert_process(get_current_pcb()->process->pid, foreground, name, heap_and_stack[0],heap_and_stack[1], entry_point, argv,fd[0],fd[1]);
 }
 int create_and_insert_process_from_current(const char * name, uint8_t foreground, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fd[2]){
@@ -139,7 +139,7 @@ void process_wrapper(void entry_point(char ** argv), char ** argv){
 
     entry_point(argv);
 
-    kill_process(get_current_pcb()->process->pid);
+    force_kill(get_current_pcb()->process->pid);
 
     //while(1); // waiting for OP to remove it from scheduler
     finish_current_tick();

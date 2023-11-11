@@ -28,4 +28,6 @@ int atoi(char * str);
 int64_t satoi(char *str);
 char* itoa(int num, char* str, int base);
 int isspace(char c);
+char * concat(char * str1, char * str2);
+int str_len(const char * str);
 #endif /* UTILS_H */

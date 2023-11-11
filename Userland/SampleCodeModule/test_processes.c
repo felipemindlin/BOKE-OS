@@ -3,7 +3,8 @@
 #include <UserSyscalls.h>
 #define SIZE 0x0000000000010000
 enum State { RUNNING, BLOCKED, KILLED };
-
+int filede[2] = {0,0};
+size_t heap_stackd[2] = {0x0000000000001000, 0x0000000000001000};
 typedef struct P_rq {
   int32_t pid;
   enum State state;
@@ -12,6 +13,9 @@ void endless_loop() {
   while (1)
     ;
 }
+
+
+
 int64_t test_processes() {
   uint8_t rq;
   uint8_t alive = 0;
@@ -34,11 +38,9 @@ int64_t test_processes() {
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
     //   argvAux[0] = "&";
-      p_rqs[rq].pid = call_create_process("endless_loop", 0, SIZE, SIZE, endless_loop,NULL);
+      p_rqs[rq].pid = call_create_process("endless_loop",  1, heap_stackd, endless_loop,NULL,filede);
 
       print("Created PID: %d\n", (int)p_rqs[rq].pid);
-
-      call_sleepms(100);
 
       if (p_rqs[rq].pid == -1) {
         print("test_processes: ERROR creating process\n");
@@ -98,4 +100,7 @@ int64_t test_processes() {
   print("\nTest ended. Processes were not printed because\n");
   print("they were created at background.\n");
   return 0;
+}
+void * get_test_processes(){
+  return &test_processes;
 }

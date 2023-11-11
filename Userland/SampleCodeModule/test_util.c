@@ -1,7 +1,12 @@
 #include <test_util.h>
 #include <utils.h>
-
+int filed[2] = {0,0};
+size_t heap_stack[2] = {0x0000000000001000, 0x0000000000001000};
 char *argv_aux[2];
+void * get_tests(){
+    return &tests;
+}
+
 void tests() {
     print("Available tests:\n");
     print("  A - Test memory manager\n");
@@ -27,20 +32,20 @@ void tests() {
 
     switch (test_num) {
         case 1:
-            test_mm();
+            call_create_process("test_mm", 1, heap_stack, get_testmm(), NULL, filed);
             break;
         case 2:
-            test_prio();
+            call_create_process("test_prio", 1, heap_stack, get_test_prio(), NULL, filed);
             break;
         case 3:
-            test_processes();
+            call_create_process("test_processes", 1, heap_stack, get_test_processes(), NULL, filed);
             break;
         case 4:
-            test_sync(argv_aux);
+            call_create_process("test_sync", 1, heap_stack, get_test_sync(), argv_aux, filed);
             break;
         case 5:
             argv_aux[1] = "0";
-            test_sync(argv_aux);
+            call_create_process("test_sync", 1, heap_stack, get_test_sync(), argv_aux, filed);
             break;
     }
 }
