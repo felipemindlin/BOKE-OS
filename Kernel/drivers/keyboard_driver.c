@@ -21,14 +21,21 @@ void keyboard_handler() {
     if (key == NULL)  // Si no se presionó ninguna tecla, retorna
         return;
         
-    if (key == 0x2A || key == 0x36)
+    if (key == 0x2A || key == 0x36){
         shift_pressed = 1;
-    else if (key == 0xAA || key == 0xB6)
+        return;
+        }
+    else if (key == 0xAA || key == 0xB6){
         shift_pressed = 0;
-    else if (key == 0x1D)
+        return;}
+    else if (key == 0x1D){
         ctrl_pressed = 1;
-    else if (key == 0x9D)
+        return;
+        }
+    else if (key == 0x9D){
         ctrl_pressed = 0;
+        return;
+        }
     
     uint16_t * buff = getBufferAddress();  
     int buff_pos = getBufferPosition();  

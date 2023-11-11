@@ -250,7 +250,6 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
     current_pcb->process->stack->current = current_rsp; // save current rsp for next time
     //drawWord("\n");
     //drawWordColor(RED, current_pcb->process->name);
-    // print_process();
     kill_processes_in_removal_queue();
     create_processes_in_creation_queue();
     stop_current_process();

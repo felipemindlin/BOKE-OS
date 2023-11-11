@@ -8,9 +8,13 @@
 #include "shell.h"
 #include <test_util.h> 
 uint64_t color = BLACK;
+#define EOF 0x01
 int fd[2] = {0,0};
 size_t heap_and_stack[2] = {0x0000000000001000, 0x0000000000001000};
 static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS", "CLEAR"};
+static int command_args[COMMAND_LEN] = {0,0,0,0,1,0,0,0,0,0,1,2,1,0,0,0,0,0,0,0};
+#define START_SIZE 80
+#define COMMAND_SIZE 10
 char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
 static char command_descriptions[COMMAND_LEN][300] = {
     "Display the list of available commands",
@@ -36,60 +40,138 @@ static char command_descriptions[COMMAND_LEN][300] = {
 };
 
 //busca el comando en la lista de comandos y llama a la funcion correspondiente
+//busca el comando en la lista de comandos y llama a la funcion correspondiente
 void __seek_command__(char * command){
-    uint8_t is_fg=0;
+    uint8_t is_fg1=1;
+    uint8_t is_fg2=1;
+
+    int the_one = -1;
+    char ** args = user_malloc(START_SIZE);
+    for (int k = 0; k < START_SIZE/8; k++){
+        args[k] = user_malloc(COMMAND_SIZE);
+    }
+
+    int default_fd[2] = {0,0};
+
+    int w = 0;
+    int j=0;
+    int end_first_com = 0;
+    int arg_count = 0;
+
+    int pipe_id = call_pipe_create_anonymous();
+    int fd1[2] = {0,pipe_id};
+    int fd2[2] = {pipe_id,0};
+    int hs[2] = {1,1};
+
     for (int i = 0; i < COMMAND_LEN; i++){
-        if (strcmpspace(command_list[i],command, &is_fg) == 0){
-                __call_command__(i, command, is_fg);
-                return;
+        // if (strcmpspace(command_list[i],command, &is_fg) == 0){
+        //         __call_command__(i, command, is_fg);
+        //         return;
+        // }
+
+        args[w][j] = command[i];
+        j++;
+
+        if (command[i] == ' '){
+            args[w][j-1] = '\0';
+            // print(args[w]);
+            j=0;
+            w++;
         }
+
+        if (command[i] == '\0'){
+            w++;
+            break;
+        }
+
+        if (command[i] == '|'){
+            end_first_com = w;
+            i++; 
+            j=0;
+            is_fg1 = 0;
+        }
+
+        if (command[i] == '&'){
+            is_fg1 = 0;
+            break;
+        }
+        // args[w][j] = '\0';  // Null-terminate the partition string
+        
     }
-    __call_command__(-1, command, is_fg);
-}
+
+    int index_second_command = 1;
+    // int command_number = 0;
+    // for (int i = 0; i <= COMMAND_LEN;i++){
+    //     command_number = strcmp(command_list[i],args[0]);
+       
+    //     if (command_number == 0){
+    //         break;
+    //     }
+    // }
+    
+
+    char * argv1[2];
+    
 
 
-void parse_command(char *command, char *parsed_command, int *pid, int *priority) {
-    char cpid[5]={0};
-    char cprio[5]={0};
-    *pid=-1;
-    *priority=-1;
-    int k=0;
-    for(int i=0; command[i]; i++) {
-        if( *pid==-1 && command[i]==' '){
-            for(int j=i+1; *pid==-1 && command[j] && command[j]!=' '; j++){
-                cpid[k++]=command[j];
-            }
-            if(*pid==-1){
-                cpid[k]='\0';
-                *pid=atoi(cpid);
-            }
-        }
-        else if( *priority==-1 && command[i]==' '){
-            k=0;
-            for(int j=i+1; *priority==-1 && command[j] && command[j]!=' '; j++){
-                cprio[k++]=command[j];
-            }
-            if(*priority==-1){
-                cprio[k]='\0';
-                *priority=atoi(cprio);
-            }
+    
+
+    for (int i = 0; i < COMMAND_LEN; i++){
+        
+        if (strcmp(command_list[i],args[0]) == 0){
+                arg_count = command_args[i];
+                for (int k = 1; k <= arg_count; k++){
+                    argv1[k-1] = args[k];
+                }
+                index_second_command += arg_count;
+                if (end_first_com != 0)
+                    __call_command__(i, args[0], is_fg1, argv1,fd1);
+                else __call_command__(i, args[0], is_fg1, argv1,default_fd);
+
+                i=COMMAND_LEN;
         }
     }
+
+    // if (end_first_com == 0)
+    //     return;
+    
+
+    char * argv2[2];
+
+     
+         
+    for (int i = 0; i < COMMAND_LEN; i++){
+     
+        if (strcmp(command_list[i],args[index_second_command]) == 0){
+                arg_count = command_args[i];
+                for (int k = 1; k <= arg_count; k++){
+                    argv2[k-1] = args[index_second_command+k];
+                }
+                __call_command__(i, args[index_second_command], is_fg2, argv2,fd2);
+               
+                i=COMMAND_LEN;
+        }
+    }
+
+
+
+    //     print(args[0]);
+    // print(" and ");
+    // print(args[index_second_command]);
+
 }
+
 
 void invalid_pid(){
     call_sys_write("ERROR - PID invalido",20,2);
     putC('\n');
 }
-int loppPid=0;
-int phylo();
-void __call_command__(int i, char * command, uint8_t is_fg){
-    char parsed_command[MAX_COMMAND_LENGTH];
+
+void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int fd[2]){
+    void * fun;
+    void * args=argv;
     int pid;
     int priority;
-    void * fun;
-    void * args=NULL;
-    parse_command(command, parsed_command, &pid, &priority);
     switch (i)
 {
     case HELP:
@@ -123,23 +205,24 @@ void __call_command__(int i, char * command, uint8_t is_fg){
         call_mem();
         return;
     case KILL:
-        if (pid == -1) {
+        pid = satoi(argv[0]);
+        if(pid==-1){
             invalid_pid();
             return;
         }
+        print(" pid pid %d", pid);
         call_kill(pid);
         return;
     case NICE:
-        if (pid == -1 || priority == -1) {
+        pid = satoi(argv[0]);
+        priority = satoi(argv[1]);
+      if(pid==-1 || priority==-1){
             invalid_pid();
             return;
         }
-        if (priority > 4) {
-            priority = 4;
-        }
-        call_nice(pid, priority);
         return;
     case BLOCK:
+        pid = satoi(argv[0]);
         if (pid == -1) {
             invalid_pid();
             return;
@@ -172,9 +255,10 @@ void __call_command__(int i, char * command, uint8_t is_fg){
         putC('\n');
         return;
     }
-    call_create_process(command_list[i], 1, heap_and_stack, fun, args, fd);
+    call_create_process(command_list[i], is_fg, heap_and_stack, fun, argv, fd);
+
     return;
-}
+} 
 #define CYAN 0x00FFFF
 //imprime la lista de comandos disponibles
 void help() {
@@ -203,7 +287,7 @@ void loop(){
     while(1){
         ticks = call_ticks_elapsed();
         if(ticks % 18 == 0 && flag){
-            print("PID:%d\n",loppPid);
+            print("asd");
             flag=0;
         }
         if(ticks % 18 == 1 && !flag){
