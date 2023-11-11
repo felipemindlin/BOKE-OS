@@ -31,14 +31,13 @@ GLOBAL call_sem_open
 GLOBAL call_forceTimer
 GLOBAL call_waitpid
 GLOBAL get_pid
-GLOBAL malloc
-GLOBAL free
+GLOBAL user_malloc
+GLOBAL user_free
 GLOBAL call_print_word_color
 GLOBAL call_pipe_open
 GLOBAL call_pipe_close
 GLOBAL call_pipe_create
 GLOBAL call_pipe_create_anonymous
-GLOBAL call_example
 
 section .text
 
@@ -124,9 +123,9 @@ call_waitpid:
     call_to_handler 31
 get_pid:
     call_to_handler 32
-malloc:
+user_malloc:
     call_to_handler 33
-free:
+user_free:
     call_to_handler 34
 call_pipe_open:
     call_to_handler 35
@@ -136,7 +135,5 @@ call_pipe_create:
     call_to_handler 37
 call_pipe_create_anonymous:
     call_to_handler 38
-call_example
-    call_to_handler 39 ; to be removed
 call_print_word_color:
-    call_to_handler 40
+    call_to_handler 39

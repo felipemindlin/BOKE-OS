@@ -170,10 +170,7 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		return create_pipe_anonymous();
 		break;
 	case 39:
-		example_func(rdi, rsi, rdx, rcx, r8, r9, r10);
-		break;
-	case 40:
-		drawWordColor(rsi, (char*)rdx);
+		drawWordColor(rsi, (char*)rdx);;
 		break;
 	default:
 		return 0;
