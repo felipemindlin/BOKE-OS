@@ -100,8 +100,8 @@ void __call_command__(int i, char * command, uint8_t is_fg){
         fun = time;
         break;
     case REG_STATE:
-        fun = call_regState;
-        break;
+        call_regState();
+        return;
     case PONG:
         fun = get_Pong();
         break;
@@ -109,11 +109,11 @@ void __call_command__(int i, char * command, uint8_t is_fg){
         setbg(command);
         return;
     case DIV0:
-        fun = Div0;
-        break;
+        Div0();
+        return;
     case INVALOP:
-        fun = invalidOp;
-        break;
+        invalidOp();
+        return;
     case BOKE:
         call_boke();
         return;

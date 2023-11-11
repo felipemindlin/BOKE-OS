@@ -201,7 +201,7 @@ void kill_current_process() {
 
 int force_kill(int pid) {
     pcb_t *pcb = get_pcb_entry(pid);
-    if (pcb == NULL || pcb->process == NULL) {
+    if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID) {
         return -1;
     }
 
