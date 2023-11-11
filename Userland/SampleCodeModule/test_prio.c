@@ -30,10 +30,8 @@ void * get_test_prio(){
 
 void test_prio() {
   int64_t pids[TOTAL_PROCESSES];
-  char *argv[] = {0};
   uint64_t i;
 
-  argv[0] = "print_loop";
   for (i = 0; i < TOTAL_PROCESSES; i++)
     pids[i] = call_create_process("print_loop", 1,heap_stacks, endless_loop_print, NULL, fileds);
 

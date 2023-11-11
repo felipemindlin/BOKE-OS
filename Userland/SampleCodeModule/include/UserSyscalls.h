@@ -33,20 +33,19 @@ int call_block(int pid);
 void call_loop();
 int call_force_kill(int pid);
 int  call_create_process(const char * name, uint8_t foreground, size_t heap_and_stack[2], void * entry_point, void * argv,int fd[2]);
-uint64_t call_sem_open(uint64_t start_value, char *id);
-void call_sem_close(char *id);  // Updated to take ID instead of index
-uint64_t call_sem_post(char *id);  // Updated to take ID instead of index
-uint64_t call_sem_wait(char *id);  // Updated to take ID instead of index
+uint64_t call_sem_open(uint64_t start_value, uint64_t id);
+uint64_t call_sem_wait(uint64_t id);
+uint64_t call_sem_post(uint64_t id);
+void call_sem_close(uint64_t id);
 void call_forceTimer();
 int call_waitpid(int pid);
 int get_pid();
-void * malloc(uintptr_t bytes);
-void * free(void * mem);
+void *user_malloc(uintptr_t bytes);
+void user_free(void *mem);
 int call_pipe_open(int name);
 void call_pipe_close(int name);
 int call_pipe_create(int name);
 int call_pipe_create_anonymous();
-void call_read_pipe(int id,char* dest, int len);
-void call_example(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10);// to be removedvoid 
-call_print_word_color(uint64_t hexColor, char* word);
+void call_read_pipe(int id, char* dest, int len);
+void call_print_word_color(uint64_t hexColor, char* word);
 #endif /* USERSYSCALLS_H */

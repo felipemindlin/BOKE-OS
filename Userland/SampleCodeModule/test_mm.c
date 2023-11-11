@@ -13,7 +13,8 @@ void * memset(void * destiation, int32_t c, uint64_t length);
 void * get_testmm(){
   return &test_mm;
 }
-
+void *user_malloc(uintptr_t bytes);
+void user_free(void *mem);
 uint64_t test_mm() {
 
   mm_rq mm_rqs[MAX_BLOCKS];
@@ -31,7 +32,7 @@ uint64_t test_mm() {
     while (rq < MAX_BLOCKS && total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
       //print("Size: %d - ", (int)mm_rqs[rq].size);
-      mm_rqs[rq].address = malloc(mm_rqs[rq].size);
+      mm_rqs[rq].address = user_malloc(mm_rqs[rq].size);
       //print("Addr: %x\n", (uint64_t)mm_rqs[rq].address);
 
       if (mm_rqs[rq].address) {
@@ -58,7 +59,7 @@ uint64_t test_mm() {
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address) {
         //print("Free addr: %x\n", (uint64_t)mm_rqs[i].address);
-        free(mm_rqs[i].address);
+        user_free(mm_rqs[i].address);
       }
   }
 }
