@@ -129,7 +129,7 @@ void __call_command__(int i, char * command, uint8_t is_fg){
             return;
         }
         call_kill(pid);
-        break;
+        return;
     case NICE:
         if (pid == -1 || priority == -1) {
             invalid_pid();
@@ -139,14 +139,14 @@ void __call_command__(int i, char * command, uint8_t is_fg){
             priority = 4;
         }
         call_nice(pid, priority);
-        break;
+        return;
     case BLOCK:
         if (pid == -1) {
             invalid_pid();
             return;
         }
         call_block(pid);
-        break;
+        return;
     case CAT:
         fun = cat;
         break;
@@ -166,8 +166,8 @@ void __call_command__(int i, char * command, uint8_t is_fg){
         fun = get_tests();
         break;
     case CLEAR:
-        fun = call_clearColor;
-        break;
+        call_clearColor(color);
+        return;
     default:
         call_sys_write("ERROR - Comando no reconocido", 30, 2);
         putC('\n');
