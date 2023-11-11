@@ -11,13 +11,13 @@
 #include "./include/process.h"
 #include "./include/pipe.h"
 
-
+char key_sem_id[]="key";
 
 void sys_write(char *buf, int len, int filedescriptor){
 
     pcb_t * currentPCB = get_current_pcb();
 
-    if (currentPCB->process->fw == SHELL)
+    if (currentPCB->process->fw == SHELL && currentPCB->process->pid == get_process_foreground_pid())
     {
         switch (filedescriptor){
         case STDOUT: drawWordLen(buf, len);
@@ -39,12 +39,14 @@ void sys_read( char *buf, int len, int filedescriptor){
     
     if (currentPCB->process->fr == SHELL)
     {
-        /*if(currentPCB->process->foreground != 1){
-            block_process(currentPCB->process->pid);
-            return;
-        }*/
+        
         switch (filedescriptor){
         case STDIN:
+            my_sem_open(1,key_sem_id);
+            my_sem_wait(key_sem_id);
+            if(current_process_id()!=SHELL_PID){
+                my_sem_close(key_sem_id);
+            }
             int pos = getBufferPosition();
             char aux = 0;
             for (int i = 0; i < len; ){
@@ -63,7 +65,7 @@ void sys_read( char *buf, int len, int filedescriptor){
             }
             return;
         default: invalidFd();
-    }
+        }
     }
     else{
         int r = pipe_read(currentPCB->process->fr,buf,len);

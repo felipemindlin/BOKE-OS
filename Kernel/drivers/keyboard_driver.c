@@ -11,10 +11,12 @@
 #include <mysemaphore.h>
 #include "include/syscalls.h"
 
+char sem_id[]="key";
+
 void keyboard_handler() {
     uint16_t key = getKey();  // Obtiene el valor de la tecla presionada
     static int shift_pressed = 0, ctrl_pressed = 0;
-
+    my_sem_open(1,sem_id);
     
     if (key == NULL)  // Si no se presionó ninguna tecla, retorna
         return;
@@ -35,24 +37,28 @@ void keyboard_handler() {
             drawWord("contorl C");
             kill_foreground_process(get_process_foreground_pid());
             clear_buffer();
+            my_sem_post(sem_id);
+            
             return;
-        }
-        else if(ScanCodes[key] == 'D'){
+        } else if(ScanCodes[key] == 'D'){
             drawWord("contorl D");
             if(get_pcb_entry(get_process_foreground_pid())->process->fr == SHELL){
                 key = _EOF_;
                 shift_pressed = 0;
-            } 
             }
-            else if(ScanCodes[key] == 'P'){
-                print_process();
-            } else if(ScanCodes[key] == 'L'){
-                clear();
+            my_sem_post(sem_id);
+            
+        } else if(ScanCodes[key] == 'P'){
+            print_process();
             return;
-            } else {
-                send_eof_to_foreground();
-                return;
-            }
+        } else if(ScanCodes[key] == 'L'){
+            clear();
+            return;
+        return;
+        } else {
+            send_eof_to_foreground();
+            return;
+        }
     }
     if(shift_pressed){
         if(ScanCodes[key] == '7'){
@@ -79,7 +85,7 @@ void keyboard_handler() {
         saveState();  // Guarda el estado actual
         flag_snapshot_taken = 1;  // Establece la bandera indicando que se tomó una instantánea
     }
-    
+    my_sem_post(sem_id);
     return; 
 }
 

@@ -260,9 +260,9 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
         current_pcb->process->status = READY;
         current_pcb->ticks = 0;
     }
-    if(new_pcb->process->foreground == 1){
-        foreground_pid = new_pcb->process->pid;
-    }
+    //if(new_pcb->process->foreground == 1){
+    //    foreground_pid = new_pcb->process->pid;
+    //}
     current_pcb = new_pcb;
     current_pcb->process->status = RUNNING;
     

@@ -159,7 +159,7 @@ void save_reg_state(pcb_t * pcb){
 
 int kill_process(int pid) {
     pcb_t *pcb = get_pcb_entry(pid);
-    if (pcb == NULL || pcb->process == NULL) {
+    if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID) {
         return -1;
     }
 
@@ -192,17 +192,21 @@ int kill_foreground_process(int fg_pid){
         return -1;
     }
     set_process_foreground_pid(SHELL_PID);
-    return kill_process(fg_pid);
+    return force_kill(fg_pid);
 }
 
 void kill_current_process() {
     kill_process(get_current_pcb()->process->pid);
 }
 
-int force_kill(int pid) {
+int force_kill(int pid){
     pcb_t *pcb = get_pcb_entry(pid);
     if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID) {
         return -1;
+    }
+
+    if(pcb->process->foreground){
+        set_process_foreground_pid(SHELL_PID);
     }
 
     reassign_children_to_shell(pid);
