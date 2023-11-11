@@ -8,7 +8,6 @@
 #include "shell.h"
 #include <test_util.h> 
 uint64_t color = BLACK;
-#define EOF 0x01
 int fd[2] = {0,0};
 size_t heap_and_stack[2] = {0x0000000000001000, 0x0000000000001000};
 static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS", "CLEAR"};

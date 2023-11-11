@@ -137,3 +137,5 @@ call_pipe_create_anonymous:
     call_to_handler 38
 call_print_word_color:
     call_to_handler 39
+call_yield:
+    call_to_handler 40
