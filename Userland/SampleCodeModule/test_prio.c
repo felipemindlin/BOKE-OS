@@ -33,7 +33,7 @@ void test_prio() {
   uint64_t i;
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = call_create_process("print_loop", 1,heap_stacks, endless_loop_print, NULL, fileds);
+    pids[i] = call_create_process("print_loop", 0,heap_stacks, endless_loop_print, NULL, fileds);
 
   bussy_wait(WAIT);
   print("\nCHANGING PRIORITIES...\n");
