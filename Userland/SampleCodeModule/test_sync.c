@@ -76,6 +76,8 @@ uint64_t test_sync(char *argv[]) {
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     pids[i] = call_create_process( "Decreaser",0 ,heap_and_stack, (void *)my_process_inc, argvDec,fd);
     pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", 0, heap_and_stack, (void *)my_process_inc, argvInc,fd);
+    print("Created Decreaser with PID: %d\n", (int)pids[i]);
+    print("Created Increaser with PID: %d\n", (int)pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
 print("Starting test...\n");
