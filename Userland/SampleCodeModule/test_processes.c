@@ -38,7 +38,7 @@ int64_t test_processes() {
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
     //   argvAux[0] = "&";
-      p_rqs[rq].pid = call_create_process("endless_loop",  1, heap_stackd, endless_loop,NULL,filede);
+      p_rqs[rq].pid = call_create_process("endless_loop",  0, heap_stackd, endless_loop,NULL,filede);
 
       print("Created PID: %d\n", (int)p_rqs[rq].pid);
 

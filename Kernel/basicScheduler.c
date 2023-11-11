@@ -12,7 +12,7 @@ uint8_t scheduler_status = 0;
 pcb_t * current_pcb;
 //pcb_t * OS_pcb;
 
-int foreground_pid;
+int foreground_pid = 2;
 
 scheduler_queue * create_queue_array(int quantum);
 int remove_from_queue_by_pid(queue_t * queue, int pid);

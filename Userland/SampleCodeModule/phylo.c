@@ -19,6 +19,7 @@ int philosopher_pids[MAX_PHILOSOPHERS];
 int r_w_sem_index;
 int add_remove_mutex_index;
 int filedes[2] = {0, 0};
+int phil_qty=0;
 size_t heap_stack_vec[2] = {0x0000000000001000, 0x0000000000001000};
 
 void philosopher(uint64_t id);
@@ -48,13 +49,19 @@ void initialize()
     last = 0;
 }
 
+void vision(){
+    while (phil_qty){
+        print_state();
+        call_sleepms(100);
+    }
+}
+
 int phylo()
 {
     initialize();
     mutex_id = call_sem_open(1, "mutex");
     r_w_sem_index = call_sem_open(1, R_W_SEMNAME);
     add_remove_mutex_index = call_sem_open(1, "philo_ar_mutex");
-
     for (int i = 0; i < MAX_PHILOSOPHERS; i++)
     {
         char sem_name[10];
@@ -68,12 +75,15 @@ int phylo()
     for (int i = 0; i < START_PHILOSOPHERS; i++)
     {
         add_philosopher();
+        phil_qty++;
     }
+    call_create_process("philo_vision", 1, heap_stack_vec, vision, NULL, filedes);
     handle();
 
     // Clean up philosophers
     for (int i = 0; i < num_philosophers; i++)
     {
+        phil_qty--;
         call_force_kill(philosopher_pids[i]);
         call_sem_close(fork_sem_ids[i]);
     }
@@ -96,6 +106,7 @@ void handle()
             if (num_philosophers < MAX_PHILOSOPHERS)
             {
                 add_philosopher();
+                phil_qty++;
             }
         }
         else if (c == 'R' || c == 'r')
@@ -103,6 +114,7 @@ void handle()
             if (num_philosophers > MIN_PHILOSOPHERS)
             {
                 remove_philosopher();
+                phil_qty--;
             }
         }
         else if (c == 'Q' || c == 'q')
@@ -121,7 +133,7 @@ void add_philosopher()
     itoa(philosopher_num, philosopher_id, 10);
     char name[20] = "philosopher";
     concat(name, philosopher_id);
-    philosopher_pids[philosopher_num] = call_create_process(name, 1, heap_stack_vec, philosopher, (void *)(uint64_t)philosopher_num, filedes);
+    philosopher_pids[philosopher_num] = call_create_process(name, 0, heap_stack_vec, philosopher, (void *)(uint64_t)philosopher_num, filedes);
 
     if (philosopher_pids[philosopher_num] == -1)
     {
@@ -216,7 +228,6 @@ void eat(uint64_t philosopher_num)
 {
     if (fork_states[philosopher_num] == EATING)
     {
-        print_state();
         call_sleepms(100);
     }
 }

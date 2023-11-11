@@ -139,6 +139,7 @@ int read_from_pipe(){
 	drawWord("Se imprime:\n");
 	drawWord(dest);
 	newline();
+	return 0;
 }
 
 extern uint64_t test_sync(char *argv[]);
@@ -161,13 +162,14 @@ int main()
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	
 	// SHELL IS INIT PROCESS
-	int shell_pid = create_and_insert_process(1, 1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL,0,0); // id=1 indicates OS created it
 
-	//create_and_insert_process(1, 1, "test", 1, 0x0000000000001000, &function1, args,0,0); // id=1 indicates OS created it
+	int shell_pid = create_and_insert_process(1, 1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL,0,0); // id=1 indicates OS created it
 	change_process_priority(create_and_insert_process(1, 0, "idle",1,  0x0000000000001000, &idle, NULL,0,0), IDLE_PRIORITY); // id=1 indicates OS created it
 
-	create_and_insert_process(1, 1, "write",4096,4096,&write_to_pipe,NULL,0,0);
-	create_and_insert_process(1, 1, "read",4096,4096,&read_from_pipe,NULL,0,0);
+	//create_and_insert_process(1, 1, "test", 1, 0x0000000000001000, &function1, args,0,0); // id=1 indicates OS created it
+
+	create_and_insert_process(1, 0, "write",4096,4096,&write_to_pipe,NULL,0,0);
+	create_and_insert_process(1, 0, "read",4096,4096,&read_from_pipe,NULL,0,0);
 
 	enable_multitasking(shell_pid);
 

@@ -20,6 +20,7 @@ void tests() {
     c = getC();
     if (c >= 'A' && c <= 'E'){
       test_num = c - 'A' + 1;
+      
     }
     else{
       print("Quiting...\n");
@@ -29,23 +30,23 @@ void tests() {
 
     argv_aux[0] = "3";
     argv_aux[1]= "1";
-
+int filed1[2] = {0,0};
     switch (test_num) {
         case 1:
-            call_create_process("test_mm", 1, heap_stack, get_testmm(), NULL, filed);
+            call_create_process("test_mm", 1, heap_stack, get_testmm(), NULL, filed1);
             break;
         case 2:
-            call_create_process("test_prio", 1, heap_stack, get_test_prio(), NULL, filed);
+            call_create_process("test_prio", 1, heap_stack, get_test_prio(), NULL, filed1);
             break;
         case 3:
-            call_create_process("test_processes", 1, heap_stack, get_test_processes(), NULL, filed);
+            call_create_process("test_processes", 1, heap_stack, get_test_processes(), NULL,filed1);
             break;
         case 4:
-            call_create_process("test_sync", 1, heap_stack, get_test_sync(), argv_aux, filed);
+            call_create_process("test_sync", 1, heap_stack, get_test_sync(), argv_aux, filed1);
             break;
         case 5:
             argv_aux[1] = "0";
-            call_create_process("test_sync", 1, heap_stack, get_test_sync(), argv_aux, filed);
+            call_create_process("test_sync", 1, heap_stack, get_test_sync(), argv_aux, filed1);
             break;
     }
 }

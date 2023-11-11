@@ -124,6 +124,10 @@ process_t * create_process(int parent_pid, uint8_t foreground, const char * name
 
     process->foreground = foreground;
 
+    if (process->foreground){
+        (process->pid);
+    }
+
     process->fr = fr;
     process->fw = fw;
 
@@ -168,7 +172,11 @@ int kill_process(int pid) {
     pcb_t *parent_pcb = get_pcb_entry(pcb->process->parent_pid);
     my_sem_post(pcb->process->sem_name);
 
-    if(pcb->process->foreground){
+    // if(pcb->process->foreground){
+    //     set_process_foreground_pid(SHELL_PID);
+    // }
+
+   if(get_process_foreground_pid() == pcb->process->pid){
         set_process_foreground_pid(SHELL_PID);
     }
 
@@ -205,10 +213,12 @@ int force_kill(int pid){
         return -1;
     }
 
-    if(pcb->process->foreground){
+    // if(pcb->process->foreground){
+    //     set_process_foreground_pid(SHELL_PID);
+    // }
+  if(get_process_foreground_pid() == pcb->process->pid){
         set_process_foreground_pid(SHELL_PID);
     }
-
     reassign_children_to_shell(pid);
 
     my_sem_post(pcb->process->sem_name);

@@ -41,18 +41,16 @@ void keyboard_handler() {
     int buff_pos = getBufferPosition();  
     if(ctrl_pressed){
          if(ScanCodes[key] == 'C'){
-            drawWord("contorl C");
             kill_foreground_process(get_process_foreground_pid());
             clear_buffer();
             my_sem_post(sem_id);
             
             return;
         } else if(ScanCodes[key] == 'D'){
-            drawWord("contorl D");
-            if(get_pcb_entry(get_process_foreground_pid())->process->fr == SHELL){
+            // if(get_pcb_entry(get_process_foreground_pid())->process->fr == SHELL){
                 key = _EOF_;
                 shift_pressed = 0;
-            }
+            // }
             my_sem_post(sem_id);
             
         } else if(ScanCodes[key] == 'P'){

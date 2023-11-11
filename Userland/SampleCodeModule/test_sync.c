@@ -77,9 +77,13 @@ uint64_t test_sync(char *argv[]) {
     pids[i] = call_create_process( "Decreaser",0 ,heap_and_stack, (void *)my_process_inc, argvDec,fd);
     pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", 0, heap_and_stack, (void *)my_process_inc, argvInc,fd);
   }
+
+print("Starting test...\n");
  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
    call_waitpid(pids[i]);
    call_waitpid(pids[i + TOTAL_PAIR_PROCESSES]);
+  print("Pid %d finishing...\n", pids[i]);
+  print("Pid %d finishing...\n", pids[i + TOTAL_PAIR_PROCESSES]);
  }
  print("\nExpected value: 0\n Final value:%d\n\n", (int)global);
   

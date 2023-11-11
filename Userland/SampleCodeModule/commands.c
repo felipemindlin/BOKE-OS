@@ -126,7 +126,13 @@ void __seek_command__(char * command){
                 index_second_command += arg_count;
                 if (end_first_com != 0)
                     __call_command__(i, args[0], is_fg1, argv1,fd1);
-                else __call_command__(i, args[0], is_fg1, argv1,default_fd);
+                else {__call_command__(i, args[0], is_fg1, argv1,default_fd);
+                    for (int k = 0; k < START_SIZE/8; k++){
+                        user_free(args[k]);
+                    }
+                    user_free(args);
+                    return;
+                }
 
                 i=COMMAND_LEN;
         }
@@ -360,18 +366,21 @@ void cat() {
   int i=0;
   while ((c = getC()) != EOF){
     putC(c);
-    comm[i++]=c;
-    if(c=='\n'){
-        comm[i]='\0';
-        print("%s\n", comm);
-        comm[0]='\0';
-        i=0;
-    }
+    // comm[i++]=c;
+    // if(c=='\n'){
+    //     comm[i]='\0';
+    //     print("%s\n", comm);
+    //     comm[0]='\0';
+    //     i=0;
+    // }
   }
+  putC(c);
+  return;
+//   comm[i++]=c;
 }
 
 void wc() {
-  int lines = 0;
+  int lines = 1;
   char c;
   while ((c = getC()) != EOF) {
     if (c == '\n' ) {
@@ -379,6 +388,8 @@ void wc() {
     }
     putC(c);
   }
+  putC('\n');
+
   print("Line count: %d\n", lines); 
   putC('\n');
 }
