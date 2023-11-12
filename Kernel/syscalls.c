@@ -11,6 +11,16 @@
 #include "./include/process.h"
 #include "./include/pipe.h"
 
+int process_started = 0;
+
+void set_process_started(int value){
+    process_started = value;
+}
+
+int get_process_started(){
+    return process_started;
+}
+
 char key_sem_id[]="key";
 
 void sys_write(char *buf, int len, int filedescriptor){
