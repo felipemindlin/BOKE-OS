@@ -5,4 +5,4 @@
 void invalid_opAsm();
 
 
-#endif /* _FUNCASM_H */
+#endif 

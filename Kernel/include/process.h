@@ -60,16 +60,13 @@ typedef struct pcb_t{
     register_struct_t reg_state;
 } pcb_t;
 
-/*
-    LEAVE THIS INCLUDE HERE. IT MUST BE HERE BC OF THE ORDER THE INCLUDES ARE PERFORMED.
-*/
 #include <scheduler.h>
 
 
 process_t * create_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv, int fr, int fw);
 int create_and_insert_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv, int fr, int fw);
 int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack, void * entry_point, void * argv, int * fd);
-void save_reg_state(pcb_t * pcb/*, register_struct_t * registers*/); int kill_process(int pid);
+void save_reg_state(pcb_t * pcb); int kill_process(int pid);
 void kill_current_process();
 int kill_foreground_process();
 int free_process(pcb_t * pcb);

@@ -1,14 +1,14 @@
-/* BareMetal File System Utility */
-/* Written by Ian Seyler of Return Infinity */
 
-/* Global includes */
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
 #include <ctype.h>
 
-/* Global defines */
+
 struct BMFSEntry
 {
 	char FileName[32];
@@ -18,11 +18,11 @@ struct BMFSEntry
 	unsigned long long Unused;
 };
 
-/* Global constants */
+
 // Min disk size is 6MiB (three blocks of 2MiB each.)
 const unsigned long long minimumDiskSize = (6 * 1024 * 1024);
 
-/* Global variables */
+
 FILE *file, *disk;
 unsigned int filesize, disksize;
 char tempfilename[32], tempstring[32];
@@ -42,7 +42,7 @@ char *FileBlocks;
 char Directory[4096];
 char DiskInfo[512];
 
-/* Built-in functions */
+
 int findfile(char *filename, struct BMFSEntry *fileentry, int *entrynumber);
 void list();
 void format();
@@ -52,9 +52,9 @@ void read(char *filename);
 void write(char *filename);
 void delete(char *filename);
 
-/* Program code */
+
 int main(int argc, char *argv[]){
-	/* Parse arguments */
+	
 	if (argc < 3)
 	{
 		printf("BareMetal File System Utility v1.0 (2013 04 10)\n");
@@ -809,4 +809,4 @@ void delete(char *filename){
 }
 
 
-/* EOF */
+

@@ -12,21 +12,21 @@ const char *argp_program_version =
 const char *argp_program_bug_address =
   "arq-catedra@googlegroups.com";
 
-/* Program documentation. */
+
 static char doc[] =
   "ModulePacker is an appender of binary files to be loaded all together";
 
-/* A description of the arguments we accept. */
+
 static char args_doc[] = "KernelFile Module1 Module2 ...";
 
-/* The options we understand. */
+
 static struct argp_option options[] = {
   {"output",   'o', "FILE", 0,
    "Output to FILE instead of standard output" },
   { 0 }
 };
 
-/* Our argp parser. */
+
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
 
@@ -114,12 +114,10 @@ int write_file(FILE *target, FILE *source){
 }
 
 
-/* Parse a single option. */
+
 static error_t
 parse_opt (int key, char *arg, struct argp_state *state){
-  /* Get the input argument from argp_parse, which we
-     know is a pointer to our arguments structure. */
-  struct arguments *arguments = state->input;
+    struct arguments *arguments = state->input;
 
   switch (key)
     {

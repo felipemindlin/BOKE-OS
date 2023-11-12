@@ -63,10 +63,7 @@ pcb_t * get_idle_pcb(){
 }
 
 pcb_t * get_pcb_entry(int pid){
-    /*if(pid == 0){
-        return OS_pcb;
-    }*/
-    for (int i = 0; i < QUEUE_QTY; i++){
+        for (int i = 0; i < QUEUE_QTY; i++){
         node_t * current_node = scheduler[i]->queue->current_node;
 
         while (current_node){
@@ -143,17 +140,6 @@ int add_process_to_removal_queue(int pid){
     return waiting_for_remove->qty;
 }
 
-/*
-int remove_process_from_removal_queue(){
-    node_t * node = waiting_for_remove->current_node;
-    if(node == NULL || waiting_for_remove->qty == 0){
-        return -1;
-    }
-    int pid = (int)(uintptr_t)node->data;
-    remove_node(waiting_for_remove, node);
-    return pid;
-}
-*/
 
 scheduler_queue * create_queue_array(int quantum){
     scheduler_queue * queue = (scheduler_queue *) malloc(sizeof(scheduler_queue));
@@ -368,11 +354,7 @@ int current_process_id(){
 
 void os_revive_process(int pid){
     pcb_t *pcb = get_pcb_entry(pid);     if (pcb != NULL && (pcb->process->status == BLOCKED || pcb->process->status == RUNNING)){
-        pcb->process->status = READY;         /*        node_t * pcb_node = create_node(pcb);
-        if (pcb_node != NULL){
-            add_pcb_to_scheduler(pcb_node, pcb->priority);
-        }*/
-    }
+        pcb->process->status = READY;             }
 }
 
 

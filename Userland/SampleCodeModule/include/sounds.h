@@ -7,4 +7,4 @@ void goal();
  
  void bounce();
 
-#endif /* SOUNDS_H */
+#endif 

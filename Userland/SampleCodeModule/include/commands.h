@@ -51,4 +51,4 @@ void filter();
 void write();
 void loop();
 void * get_phylo();
-#endif /*__COMMANDS_H__*/
+#endif 

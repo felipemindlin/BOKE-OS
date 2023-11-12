@@ -23,4 +23,4 @@ void guru_meditation();
 
 void force_scheduler();
 
-#endif /* LIB_H */
+#endif 

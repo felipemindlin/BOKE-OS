@@ -20,7 +20,7 @@ typedef struct {
 } array_t;
 
 
-/* Used by main to communicate with parse_opt. */
+
 struct arguments
 {
   char *args[MAX_FILES];                

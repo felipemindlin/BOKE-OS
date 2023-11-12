@@ -17,4 +17,4 @@ extern register_struct_t registers;
 extern int flag_snapshot_taken;
 
 void printRegisters(register_struct_t * dumpedRegisters);
-#endif /* _REGISTERS_H */
+#endif 

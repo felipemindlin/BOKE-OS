@@ -6,4 +6,4 @@
 
 void clear_buffer(char * line);
 
-#endif /* __BUFFER_H__ */
+#endif 

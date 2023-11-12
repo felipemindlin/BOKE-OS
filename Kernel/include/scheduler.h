@@ -6,12 +6,6 @@
 #include <mysemaphore.h>
 
 #define QUEUE_QTY 4 
-/*
-    Sugerencia para el scheduler:
-        1) Scheduler que retorna siempre el mismo stack
-        2) 2 procesos que hacen while(1) o un print en el while
-        3) implementar una syscasll para checkear que efectivamente se bloquee
-*/
 
 typedef struct scheduler_queue {
     unsigned int quantum;

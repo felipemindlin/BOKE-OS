@@ -4,13 +4,8 @@
 #include <stdint.h>
 #include <init_info.h>
 #include "../drivers/include/videoDriver.h"
-/*
-#define MAX 1001
-#define START 0
-#define END 1000
-#define BLOCK_SIZE 10*/
 
-/* Get size_t and NULL from <stddef.h>.  */
+
 enum { INVALID_ADDRESS=-1, FREE, ALLOCATED, PARCIAL, START_PAGE_BOUND, END_PAGE_BOUND, SINGLE_PAGE };
 
 #define	__need_size_t

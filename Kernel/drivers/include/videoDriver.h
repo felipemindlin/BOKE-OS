@@ -64,4 +64,4 @@ void draw_word_colorLen(uint64_t color, char * buff, int len);
 void draw_wordLen(char * buff, int len);
 void draw_number_padded(uint64_t hexColor, int number, int width);
 void draw_word_padded(uint64_t hexColor,  char* word, int width);
-#endif /* _VIDEO_DRIVER_H */
+#endif 

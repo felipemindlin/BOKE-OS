@@ -49,4 +49,4 @@ int call_pipe_create_anonymous();
 void call_read_pipe(int id, char* dest, int len);
 void call_print_word_color(uint64_t hexColor, char* word);
 void call_yield();      
-#endif /* USERSYSCALLS_H */
+#endif 

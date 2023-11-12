@@ -272,34 +272,6 @@ int strncmp(char * str1, char * str2, int n){
     } else return 1;
 
 }
-/*
-int strcmpspace(char *str1, char *str2, uint8_t *is_fg){
-        while (isspace(*str1)) str1++;
-    while (isspace(*str2)) str2++;
-
-        char *end1 = str1;
-    char *end2 = str2;
-
-    while (*end1 && !isspace(*end1)) end1++;
-    while (*end2 && !isspace(*end2)) end2++;
-
-    int max_len = end1 - str1 > end2 - str2 ? end1 - str1 : end2 - str2;
-
-        int cmp = strncmp(end1, end2, max_len);
-
-        if (cmp != 0){
-        return cmp;
-    }
-
-    str1 = end1;
-
-    while(*str1);
-    str1--;
-
-    *is_fg = *str1 == '&';
-
-    return cmp;
-}*/
 
 char * strtok(char * str, char delim){
     static char * static_str;

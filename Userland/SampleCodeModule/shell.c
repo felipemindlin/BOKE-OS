@@ -17,16 +17,6 @@ void putLineStart(){
     clear_buffer(buffer);
 }
 
-/*
-La función bufferize() lee caracteres de entrada y los almacena en un búfer hasta que se cumplan ciertas condiciones: 
-retroceso (\b), salto de línea (\n) o el búfer alcanza su capacidad máxima. 
-Si se detecta un retroceso, se retrocede una posición en el búfer si es posible. 
-Si se detecta un salto de línea, muestra el caracter en la salida, 
-almacena el búfer en una línea y retorna. 
-En caso contrario, si el búfer no ha alcanzado su capacidad máxima, 
-se almacena el caracter en el búfer y se muestra en la salida. 
-La función finaliza cuando se completa el búfer o no hay más caracteres de entrada.
-*/
 void bufferize (){
     
     int i = 0;
