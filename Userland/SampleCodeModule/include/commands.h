@@ -51,4 +51,6 @@ void filter();
 void write();
 void loop();
 void * get_phylo();
+void * get_wc();
+void * get_filter();
 #endif 

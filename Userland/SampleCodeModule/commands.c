@@ -345,6 +345,10 @@ void cat(){
     comm[i++]=c;
 }
 
+void * get_wc(){
+    return &wc;
+}
+
 void wc(){
   int lines = 1;
   char c;
@@ -364,6 +368,10 @@ void wc(){
 int is_vowel(char c){
   return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
           c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U');
+}
+
+void * get_filter(){
+    return &filter;
 }
 
 void filter(){

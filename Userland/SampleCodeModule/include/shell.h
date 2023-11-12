@@ -6,5 +6,6 @@
 #include "utils.h"
 
 int __shell_init__();
+void clear_shell_buffer();
 
 #endif 

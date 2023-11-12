@@ -6,6 +6,8 @@
 
 static char buffer[BUFFER_SIZE] = {0};
 
+
+
 void lineRead(char * line){
     __seek_command__(line);
         clear_buffer(buffer);

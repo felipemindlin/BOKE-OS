@@ -14,11 +14,12 @@ void tests(){
     print("  C - Test processes\n");
     print("  D - Test synchronization\n");
     print("  E - Test without synchronization\n");
+    print("  F - Test Pipe IPC\n");
     print("  Any other key to quit\n");
     char c;
     int test_num = 0;
     c = get_c();
-    if (c >= 'A' && c <= 'E'){
+    if (c >= 'A' && c <= 'F'){
       test_num = c - 'A' + 1;
       
     }
@@ -47,6 +48,9 @@ int filed1[2] = {0, 0};
         case 5:
             argv_aux[1] = "0";
             call_create_process("test_sync", 1, heap_stack, get_test_sync(), argv_aux, filed1);
+            break;
+        case 6:
+            call_create_process("test_pipes", 1, heap_stack, get_test_pipes(), argv_aux, filed1);
             break;
     }
 }
