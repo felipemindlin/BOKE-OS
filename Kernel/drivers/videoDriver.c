@@ -3,7 +3,6 @@
 #include "../include/naiveConsole.h"
 #include <naiveConsole.h>
 #include <lib.h>
-#include "../include/mysemaphore.h"
 
 unsigned int SCREEN_WIDTH = 1024;
 unsigned int SCREEN_HEIGHT = 768;
@@ -299,11 +298,9 @@ void characterAt(uint64_t hexColor, char c, uint32_t x, uint32_t y){
 }
 
 void drawWordColor(uint64_t hexColor, char* word) {
-    int len = 0;
     for (int i=0; word[i] != 0; i++) {
-        len++;
+        character(hexColor, word[i]);
     }
-    drawWordColorLen(hexColor, word, len);
 }
 
 void drawWordColorAt(uint64_t hexColor, char* word, uint32_t x, uint32_t y){
@@ -388,14 +385,9 @@ void drawBall(uint64_t color, int size, int x, int y) {
 
 void drawWordPadded(uint64_t hexColor, char* word, int width) {
     int wordLength = str_len(word); 
-    drawWordColor(hexColor, word);
-    char spaces[64]={0};
-    for(int i = 0; i < width - wordLength; i++) {
-        spaces[i] = ' ';
-    }
-    drawWordColor(hexColor, spaces);
-    for(int i = 0; i < width - wordLength; i++) {
-        spaces[i] = 0;
+    drawWordColor(hexColor, word); 
+    for (int i = wordLength; i < width; i++) {
+        character(hexColor, ' '); 
     }
 }
 
