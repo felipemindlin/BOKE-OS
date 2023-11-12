@@ -233,6 +233,9 @@ void print_process() {
             }
         }
     }
+    drawWord("Current foreground pid: ");
+    drawNumber(foreground_pid);
+    drawWord("\n");
 }
 
 

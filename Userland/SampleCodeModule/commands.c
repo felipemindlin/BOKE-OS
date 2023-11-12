@@ -360,22 +360,22 @@ void invalidOp(){
 
 
 void cat() {
-  char c;
-  //char comm[MAX_COMMAND_LENGTH]={0};
-  //int i=0;
-  while ((c = getC()) != _EOF_){
+    char c;
+    char comm[MAX_COMMAND_LENGTH]={0};
+    int i=0;
+    while ((c = getC()) != _EOF_){
+        putC(c);
+        comm[i++]=c;
+        if(c=='\n'){
+            comm[i]='\0';
+            print("%s\n", comm);
+            comm[0]='\0';
+            i=0;
+        }
+    }
     putC(c);
-    // comm[i++]=c;
-    // if(c=='\n'){
-    //     comm[i]='\0';
-    //     print("%s\n", comm);
-    //     comm[0]='\0';
-    //     i=0;
-    // }
-  }
-  putC(c);
-  return;
-//   comm[i++]=c;
+    return;
+    comm[i++]=c;
 }
 
 void wc() {
