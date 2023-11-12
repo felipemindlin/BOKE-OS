@@ -2,20 +2,20 @@ GLOBAL call_sys_read
 GLOBAL call_sys_write
 GLOBAL call_timeClock
 GLOBAL call_regState
-GLOBAL call_paintScreen
+GLOBAL call_paint_screen
 GLOBAL call_boke
-GLOBAL call_invalidOp
-GLOBAL call_drawRectangle
-GLOBAL call_drawBall
-GLOBAL call_clearColor
+GLOBAL call_invalid_op
+GLOBAL call_draw_rectangle
+GLOBAL call_draw_ball
+GLOBAL call_clear_color
 GLOBAL call_put_square
-GLOBAL call_getBufferPosition
-GLOBAL call_getCharAt
+GLOBAL call_get_buffer_position
+GLOBAL call_get_char_at
 GLOBAL call_sleepms
 GLOBAL call_ticks_elapsed
-GLOBAL call_setFontSize
-GLOBAL call_drawWordColorAt
-GLOBAL call_characterAt
+GLOBAL call_set_font_size
+GLOBAL call_draw_word_colorAt
+GLOBAL call_character_at
 GLOBAL call_beep
 GLOBAL call_ps
 GLOBAL call_mem
@@ -28,7 +28,7 @@ GLOBAL call_sem_wait
 GLOBAL call_sem_post
 GLOBAL call_sem_close
 GLOBAL call_sem_open
-GLOBAL call_forceTimer
+GLOBAL call_force_timer
 GLOBAL call_waitpid
 GLOBAL get_pid
 GLOBAL user_malloc
@@ -67,31 +67,31 @@ call_timeClock:
     call_to_handler 3
 call_regState:
     call_to_handler 4
-call_paintScreen:
+call_paint_screen:
     call_to_handler 5
 call_boke:
     call_to_handler 6
-call_drawRectangle:
+call_draw_rectangle:
     call_to_handler 7
-call_drawBall:
+call_draw_ball:
     call_to_handler 8
-call_clearColor:
+call_clear_color:
     call_to_handler 9
 call_put_square:
     call_to_handler 10
-call_getBufferPosition:
+call_get_buffer_position:
     call_to_handler 11
-call_getCharAt:
+call_get_char_at:
     call_to_handler 12
 call_sleepms:
     call_to_handler 13
 call_ticks_elapsed:
     call_to_handler 14
-call_setFontSize:
+call_set_font_size:
     call_to_handler 15
-call_drawWordColorAt:
+call_draw_word_colorAt:
     call_to_handler 16
-call_characterAt:
+call_character_at:
     call_to_handler 17
 call_beep:
     call_to_handler 18
@@ -117,7 +117,7 @@ call_sem_close:
     call_to_handler 28
 call_sem_open:
     call_to_handler 29
-call_forceTimer:
+call_force_timer:
     call_to_handler 30
 call_waitpid:
     call_to_handler 31

@@ -2,7 +2,7 @@
  #define SCANCODES_H
 
  
-static char ScanCodes[256] = {
+static char scan_codes[256] = {
     0,   // 0x00 - Null
     0,   // 0x01 - Escape
     '1', // 0x02 - '1'

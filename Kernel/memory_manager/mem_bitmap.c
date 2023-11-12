@@ -28,12 +28,12 @@ void init_mm(void * baseAddres, uint64_t mem_ammount){
     total_mem_needed+=bitmap_pages*PAGE_SIZE;
 
     if(total_mem_needed>MAX_MEM){
-        drawWord("\nNot enough memory to initialize heap!\n");
+        draw_word("\nNot enough memory to initialize heap!\n");
         return;
     }
 
     if(bitmap_pages > bitmap_size){
-        drawWord("\nNot enough memory to initialize heap!\n");
+        draw_word("\nNot enough memory to initialize heap!\n");
         return;
     }
 
@@ -87,7 +87,7 @@ void* malloc(size_t size){
         page_index = find_pages(pages_needed, 0);
     }
     if(page_index==INVALID_ADDRESS){
-        drawWord("\nRan out of memory!\n");
+        draw_word("\nRan out of memory!\n");
         return NULL;
     }
 
@@ -113,11 +113,11 @@ void* malloc(size_t size){
 void free(void * mem){
     uintptr_t page_index = get_page_index(mem);
     if(page_index==INVALID_ADDRESS){
-        drawWord("\nInvalid address\n");
+        draw_word("\nInvalid address\n");
         return;
     }
     if(heap_struct.pages[page_index]==FREE){
-        drawWord("\nInvalid address\n");
+        draw_word("\nInvalid address\n");
         return;
     }
     if(heap_struct.pages[page_index]==SINGLE_PAGE){
@@ -135,7 +135,7 @@ void free(void * mem){
 
 static uintptr_t get_page_index(void * mem){
     if((uintptr_t)mem > heap_struct.end || (uintptr_t) mem < heap_struct.start){
-        drawWord("\nInvalid address!\n");
+        draw_word("\nInvalid address!\n");
         return INVALID_ADDRESS;
     }
     return ((uintptr_t)mem - heap_struct.start) / heap_struct.page_size;
@@ -143,7 +143,7 @@ static uintptr_t get_page_index(void * mem){
 
 static uintptr_t get_first_page_index(void * mem){
     if((uintptr_t)mem > heap_struct.end || (uintptr_t) mem < heap_struct.start){
-        drawWord("\nInvalid address!\n");
+        draw_word("\nInvalid address!\n");
         return INVALID_ADDRESS;
     }
     uintptr_t page_idx = get_page_index(mem);
@@ -174,10 +174,10 @@ int calculate_free_pages(){
 
 void printMem(){
     int free_pages = calculate_free_pages();
-    drawWord("\nTotal memory in bytes: ");
+    draw_word("\nTotal memory in bytes: ");
     drawNumber(heap_struct.size);
-    drawWord("\nUsed memory in bytes: ");
+    draw_word("\nUsed memory in bytes: ");
     drawNumber(heap_struct.size - free_pages * heap_struct.page_size);
-    drawWord("\nFree memory in bytes: ");
+    draw_word("\nFree memory in bytes: ");
     drawNumber(free_pages * heap_struct.page_size);
 }

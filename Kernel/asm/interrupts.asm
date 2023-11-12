@@ -26,17 +26,17 @@ GLOBAL save_reg_stateAsm
 EXTERN scheduler_enabled
 EXTERN ticks_remaining
 EXTERN switch_context
-EXTERN guruMeditation
-EXTERN retUserland
+EXTERN guru_meditation
+EXTERN ret_userland
 EXTERN printRegisters
 EXTERN irqDispatcher
-EXTERN exceptionDispatcher
+EXTERN exception_dispatcher
 EXTERN sampleCodeModuleAddress
 EXTERN clear
-EXTERN clearColor
-EXTERN getStackBase
-EXTERN getKey
-EXTERN drawWord
+EXTERN clear_color
+EXTERN get_stack_base
+EXTERN get_key
+EXTERN draw_word
 
 
 SECTION .text
@@ -191,27 +191,27 @@ saveState:
 	push_state
 	dState
 	mov qword rdi, 0x0000FF
-	call clearColor
+	call clear_color
 
-	;call retUserland
+	;call ret_userland
 	;mov rsi, rax
 	mov rax, userland_start_address
 	mov rax, [rsp+120]
 	cmp rax, rsi ; Check if error happened within Kernel bounds
 	jge .nopanic
-	call guruMeditation
+	call guru_meditation
 
 .nopanic:
 	mov rsi, registers
 	mov rdi, %1 ; pasaje de parametro
-	call exceptionDispatcher
+	call exception_dispatcher
 	call clear
 	pop_state
 	
-	call getStackBase
+	call get_stack_base
 	sub rax, 20h
 	mov qword [rsp+8*3], rax
-	call retUserland
+	call ret_userland
 	mov qword [rsp], rax
 	iretq
 %endmacro

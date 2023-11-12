@@ -6,7 +6,7 @@
 static void loadModule(uint8_t ** module, void * targetModuleAddress);
 static uint32_t readUint32(uint8_t ** address);
 
-void loadModules(void * payloadStart, void ** targetModuleAddress)
+void load_modules(void * payloadStart, void ** targetModuleAddress)
 {
 	int i;
 	uint8_t * currentModule = (uint8_t*)payloadStart;

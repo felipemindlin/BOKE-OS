@@ -8,7 +8,7 @@ extern void enter_region(uint64_t *lock, uint64_t sem_idx);
 extern void leave_region(uint64_t *lock, uint64_t sem_idx);
 
 typedef struct {
-    mySem_t sem;
+    my_sem_t sem;
     uint64_t status;
 } space_t;
 
@@ -26,7 +26,7 @@ void initialize_sems() {
 
 void init_keyboard_sem(){
     sem_spaces[0].status = UNAVAILABLE;
-    mySem_t *sem = &(sem_spaces[0].sem);
+    my_sem_t *sem = &(sem_spaces[0].sem);
     sem->counter = 1;
     sem->is_locked = 0;
     sem->queue_size = 0;
@@ -52,7 +52,7 @@ uint64_t my_sem_open(uint64_t start_value, char *id) {
     for (int i = 0; i < MAX_SEMS; i++) {
         if (sem_spaces[i].status == AVAILABLE) {
             sem_spaces[i].status = UNAVAILABLE;
-            mySem_t *sem = &(sem_spaces[i].sem);
+            my_sem_t *sem = &(sem_spaces[i].sem);
             sem->counter = start_value;
             sem->is_locked = (start_value > 0) ? 1 : 0;
             str_cpy(sem->identifier, id);
@@ -75,7 +75,7 @@ void my_sem_close(char *id) {
         return;  // Semaphore with this name does not exist
     }
     
-    mySem_t *sem = &(sem_spaces[sem_idx].sem);
+    my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     int current_pid = current_process_id();
     for (int i = 0; i < sem->allowed_process_count; i++) {
         if (sem->allowed_processes[i] == current_pid) {
@@ -95,7 +95,7 @@ uint64_t my_sem_post(char *id) {
         return 1;  // Semaphore with this name does not exist
     }
 
-    mySem_t *sem = &(sem_spaces[sem_idx].sem);
+    my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     uint64_t *lock_addr = &(sem->is_locked);
 
     leave_region(lock_addr, sem_idx);
@@ -109,7 +109,7 @@ uint64_t my_sem_wait(char *id) {
     }
 
     int current_pid = current_process_id();
-    mySem_t *sem = &(sem_spaces[sem_idx].sem);
+    my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     
     int allowed = 0;
      for (int i = 0; i < sem->allowed_process_count && !allowed; i++) {
@@ -132,7 +132,7 @@ int add_to_queue(int sem_idx, int pid) {
         return -1;
     }
 
-    mySem_t *sem = &(sem_spaces[sem_idx].sem);
+    my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     node_t *new_node = (node_t *)malloc(sizeof(node_t));
 
     if (!new_node) {
@@ -160,7 +160,7 @@ int remove_from_queue(int sem_idx) {
         return -1;
     }
 
-    mySem_t *sem = &(sem_spaces[sem_idx].sem);
+    my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     if (!sem->head) {
         return -1;
     }
@@ -224,7 +224,7 @@ void whiff(uint64_t sem_idx) {
 }
 
 void wake_up_processes(uint64_t sem_idx){
-    mySem_t *sem = &(sem_spaces[sem_idx].sem);
+    my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     //uint64_t *lock_addr = &(sem->is_locked);
 
     for(int i = 0; i < sem->queue_size; i++){

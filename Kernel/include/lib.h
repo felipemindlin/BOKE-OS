@@ -14,12 +14,12 @@ int str_len(const char * str);
 void sleep(uint32_t seconds);
 void sleepms(int mseconds);
 void nanoms(int nseconds);
-char * cpuVendor(char* vendor);
+char * cpu_vendor(char* vendor);
 
 void force_context_switch(uintptr_t * rsp);
 void * create_stackframe(void * entry_point, char ** args, void * stack_base, void * wrapper);
 
-void guruMeditation();
+void guru_meditation();
 
 void force_scheduler();
 

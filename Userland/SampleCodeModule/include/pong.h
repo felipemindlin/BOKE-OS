@@ -50,17 +50,17 @@ typedef struct {
     uint64_t color;
 } Ball;
 
-void setPaddle(Paddle *paddle, int x, int y, int width, int height, int speed, char directon, uint64_t color); //setea los valores de la estructura paddle
-void drawPaddle(Paddle* paddle, uint64_t color); //dibuja el paddle
-void clearPaddle(Paddle* paddle); //borra el paddle
-void movePaddleUp(Paddle* paddle); //mueve el paddle hacia arriba
-void movePaddleDown(Paddle* paddle); //mueve el paddle hacia abajo
-void setBall(int x, int y, int size, int speedX, int speedY, uint64_t color); //setea los valores de la estructura ball
-void moveBall(); //mueve la pelota
-void drawBorders(); //dibuja los bordes
-void Pong(); //funcion principal del juego pong
-void drawMiddleLine(); //dibuja la linea del medio
+void set_paddle(Paddle *paddle, int x, int y, int width, int height, int speed, char directon, uint64_t color); //setea los valores de la estructura paddle
+void draw_paddle(Paddle* paddle, uint64_t color); //dibuja el paddle
+void clear_paddle(Paddle* paddle); //borra el paddle
+void move_paddle_up(Paddle* paddle); //mueve el paddle hacia arriba
+void move_paddle_down(Paddle* paddle); //mueve el paddle hacia abajo
+void set_ball(int x, int y, int size, int speedX, int speedY, uint64_t color); //setea los valores de la estructura ball
+void move_ball(); //mueve la pelota
+void draw_borders(); //dibuja los bordes
+void pong(); //funcion principal del juego pong
+void draw_middle_line(); //dibuja la linea del medio
 void resetGame(); //resetea el juego
-void * get_Pong();
+void * get_pong();
 
 #endif /* PONG_H */

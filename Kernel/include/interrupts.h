@@ -9,7 +9,7 @@
 #define INTERRUPS_H_
 #include <registers.h>
 #include "idtLoader.h"
-typedef struct registerStrucT registerStructT;
+typedef struct register_struc_t register_struct_t;
 
 void _irq00Handler(void);
 void _irq01Handler(void);
@@ -24,7 +24,7 @@ void _exception6Handler(void);
 void _exception13Handler(void);
 void printRegAsm(void);
 void saveState(void);
-void save_reg_stateAsm( registerStructT * proc_rec);
+void save_reg_stateAsm( register_struct_t * proc_rec);
 
 void _cli(void);
 

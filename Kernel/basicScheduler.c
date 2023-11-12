@@ -212,13 +212,13 @@ void print_process() {
     const int PRIORITY_WIDTH = 10;
 
     // Draw the headers with padding
-    drawWordPadded(WHITE, "\nName", NAME_WIDTH);
-    drawWordPadded(WHITE, "Status", STATUS_WIDTH);
-    drawWordPadded(WHITE, "PID", PID_WIDTH);
-    drawWordPadded(WHITE, "Fg", PID_WIDTH);
-    drawWordPadded(WHITE, "Priority", PRIORITY_WIDTH);
-    drawWordPadded(WHITE, "Parent PID", PID_WIDTH);
-    drawWord("\n");
+    draw_word_padded(WHITE, "\nName", NAME_WIDTH);
+    draw_word_padded(WHITE, "Status", STATUS_WIDTH);
+    draw_word_padded(WHITE, "PID", PID_WIDTH);
+    draw_word_padded(WHITE, "Fg", PID_WIDTH);
+    draw_word_padded(WHITE, "Priority", PRIORITY_WIDTH);
+    draw_word_padded(WHITE, "Parent PID", PID_WIDTH);
+    draw_word("\n");
 
     for (int i = HIGH_PRIORITY; i >= 0; i--) {
         node_t *node = scheduler[i]->queue->current_node;
@@ -226,13 +226,13 @@ void print_process() {
         while (node) {
             pcb_t *pcb = (pcb_t *)node->data;
 
-            drawWordPadded(WHITE, pcb->process->name, NAME_WIDTH);
-            drawWordPadded(WHITE, status_arr[(int)pcb->process->status], STATUS_WIDTH);
-            drawNumberPadded(WHITE, pcb->process->pid, PID_WIDTH);
-            drawNumberPadded(WHITE, pcb->process->foreground, FOREGROUND_WIDTH);
-            drawNumberPadded(WHITE, i, PRIORITY_WIDTH); 
-            drawNumberPadded(WHITE, pcb->process->parent_pid, PID_WIDTH);
-            drawWord("\n");
+            draw_word_padded(WHITE, pcb->process->name, NAME_WIDTH);
+            draw_word_padded(WHITE, status_arr[(int)pcb->process->status], STATUS_WIDTH);
+            draw_number_padded(WHITE, pcb->process->pid, PID_WIDTH);
+            draw_number_padded(WHITE, pcb->process->foreground, FOREGROUND_WIDTH);
+            draw_number_padded(WHITE, i, PRIORITY_WIDTH); 
+            draw_number_padded(WHITE, pcb->process->parent_pid, PID_WIDTH);
+            draw_word("\n");
 
             // Move to the next node
             node = node->next;
@@ -242,9 +242,9 @@ void print_process() {
             }
         }
     }
-    drawWord("Current foreground pid: ");
+    draw_word("Current foreground pid: ");
     drawNumber(foreground_pid);
-    drawWord("\n");
+    draw_word("\n");
 }
 
 
@@ -260,8 +260,8 @@ void print_process() {
 
 uintptr_t * switch_context(uintptr_t * current_rsp) {
     current_pcb->process->stack->current = current_rsp; // save current rsp for next time
-    //drawWord("\n");
-    //drawWordColor(RED, current_pcb->process->name);
+    //draw_word("\n");
+    //draw_word_color(RED, current_pcb->process->name);
     kill_processes_in_removal_queue();
     create_processes_in_creation_queue();
     stop_current_process();
@@ -318,7 +318,7 @@ void change_process_priority(int pid, priority_t priority){
 
     if(insert_node(scheduler[priority]->queue, new_node)<0){
         while(1){
-            drawWord("-ERROR-");
+            draw_word("-ERROR-");
         }
     }
 }
@@ -348,7 +348,7 @@ void set_process_foreground_pid(int pid){
     foreground_pid = pid;
 }
 
-int getQuantum(){
+int get_quantum(){
     return scheduler[current_pcb->priority]->quantum;
 }
 
@@ -449,7 +449,7 @@ int add_process_to_creation_queue(int parent_pid, uint8_t foreground, char * nam
     if (insert_node(creation_queue, new_node) < 0) {
         return -1; // Error if the node could not be inserted
     }
-    //drawWord("\n");
+    //draw_word("\n");
     return creation_queue->qty;
 }
 

@@ -31,7 +31,7 @@ uintptr_t * switch_context(uintptr_t * current_rsp);
 void stop_current_process();
 int get_process_foreground_pid();
 void set_process_foreground_pid(int pid);
-int getQuantum();
+int get_quantum();
 pcb_t * get_pcb_entry(int pid);
 int add_process_to_removal_queue(int pid);
 int add_process_to_creation_queue(int parent_pid, uint8_t foreground, char * name, size_t stack_size, size_t heap_size, void * entry_point, void * args,int fd[2]);

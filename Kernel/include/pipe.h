@@ -5,13 +5,13 @@
 #define _EOF_ 1
 typedef struct pipe{
     int name;
-    char * readSemId;
-    char * writeSemId;
-    unsigned int writePos;
-    unsigned int readPos;
-    char *pipeBuffer;
+    char * read_sem_id;
+    char * write_sem_id;
+    unsigned int write_pos;
+    unsigned int read_pos;
+    char *pipe_buffer;
     uint8_t eof;
-    int leftToRead;
+    int left_to_read;
 } pipe;
 
 void init_pipes();
@@ -26,10 +26,10 @@ int pipe_read(int id, char * dest, unsigned int size);
 
 void close_pipe(int id);
 
-int getPipeID(int name);
+int get_pipe_id(int name);
 
 void send_eof_to_foreground();
 
-pipe getPipe(int id);
+pipe get_pipe(int id);
 
 int eof_sent(int id);

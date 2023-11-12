@@ -4,6 +4,6 @@
 #define STDIN 0
 #define BUFFER_SIZE 128
 
-void clearBuffer(char * line);
+void clear_buffer(char * line);
 
 #endif /* __BUFFER_H__ */

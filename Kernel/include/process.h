@@ -59,7 +59,7 @@ typedef struct pcb_t{
     size_t ticks;
     priority_t priority;
     process_t * process;
-    registerStructT reg_state;
+    register_struct_t reg_state;
 } pcb_t;
 
 /*
@@ -71,7 +71,7 @@ typedef struct pcb_t{
 process_t * create_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw);
 int create_and_insert_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw);
 int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack,void * entry_point, void * argv,int * fd);
-void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
+void save_reg_state(pcb_t * pcb/*, register_struct_t * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
 // process_t* create_and_insert_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int kill_process(int pid);
 void kill_current_process();

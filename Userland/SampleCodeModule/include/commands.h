@@ -44,11 +44,11 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
 void help(); //Imprime la lista de comandos
 void time(); //Imprime la hora actual
 void setbg(char * command); //Cambia el color de fondo de la pantalla
-uint64_t setbgEnum(int i); 
-void findColor(char * color); //Busca el color ingresado por el usuario
+uint64_t setbg_enum(int i); 
+void find_color(char * color); //Busca el color ingresado por el usuario
 void call_boke(); 
 void Div0(); //Divide por 0 y genera una excepcion
-void invalidOp(); //Genera una excepcion de operacion invalida
+void invalid_op(); //Genera una excepcion de operacion invalida
 void call_ps();
 void parse_command(char *command, char *parsed_command, int *pid, int *priority);
 void invalid_pid();
@@ -58,5 +58,5 @@ int is_vowel(char c);
 void filter();
 void write();
 void loop();
-void * get_Phylo();
+void * get_phylo();
 #endif /*__COMMANDS_H__*/

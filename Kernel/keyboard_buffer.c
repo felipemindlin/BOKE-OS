@@ -4,24 +4,24 @@ static struct keyboard_buffer buff = { 0, 0, {0} };
 
 static buff_ptr ptr = &buff;
 
-int getBufferPosition(){
+int get_buffer_position(){
     return ptr->bufferPos;
 }
-int setPos(int new_pos){
+int set_pos(int new_pos){
     ptr->bufferPos = new_pos;
     return new_pos;
 }
 
-uint16_t * getBufferAddress(){
+uint16_t * get_buffer_address(){
     return ptr->buff;
 }
 
-uint16_t getCharAt(int pos){
+uint16_t get_char_at(int pos){
     return ptr->buff[pos];
 }
 
 
-void consumeBuffAt(int pos){
+void consume_buff_at(int pos){
     ptr->buff[pos] = 0;
 }
 

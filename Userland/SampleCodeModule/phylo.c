@@ -100,7 +100,7 @@ void handle()
     char c;
     while (!last)
     {
-        c = getC();
+        c = get_c();
         if (c == 'A' || c == 'a')
         {
             if (num_philosophers < MAX_PHILOSOPHERS)
@@ -251,7 +251,7 @@ void print_state()
     call_sem_post(mutex_id);
 }
 
-void *get_Phylo()
+void *get_phylo()
 {
     return &phylo;
 }

@@ -67,28 +67,28 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		printRegAsm();
 		break;
 	case 5:
-		paintScreen((uint64_t)rsi);
+		paint_screen((uint64_t)rsi);
 		break;
 	case 6:
 		boke();
 		break;
 	case 7:
-		drawRectangle(rsi, rdx, rcx, r8, r9);
+		draw_rectangle(rsi, rdx, rcx, r8, r9);
 		break;
 	case 8:
-		drawBall(rsi, rdx, rcx, r8);
+		draw_ball(rsi, rdx, rcx, r8);
 		break;
 	case 9:
-		clearColor(rsi);
+		clear_color(rsi);
 		break;
 	case 10:
 		put_square(rsi, rdx, rcx, r8);
 		break;
 	case 11:
-		 return getBufferPosition();
+		 return get_buffer_position();
 		 break;
 	case 12:
-		return getCharAt(rsi);
+		return get_char_at(rsi);
 		break;
 	case 13:
 		sleepms(rsi);
@@ -97,13 +97,13 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		return ticks_elapsed();
 		break;
 	case 15:
-		setFontSize(rsi);
+		set_font_size(rsi);
 		break;
 	case 16:
-		drawWordColorAt(rsi, (char*)rdx, rcx, r8);
+		draw_word_colorAt(rsi, (char*)rdx, rcx, r8);
 		break;
 	case 17:
-		characterAt(rsi, (char)rdx, rcx, r8);
+		character_at(rsi, (char)rdx, rcx, r8);
 		break;
 	case 18:
 		beep(rsi, rdx);
@@ -158,7 +158,7 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		free((void*)rsi);
 		break;
 	case 35:
-		return getPipeID(rsi);
+		return get_pipe_id(rsi);
 		break;
 	case 36:
 		close_pipe(rsi);
@@ -170,7 +170,7 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		return create_pipe_anonymous();
 		break;
 	case 39:
-		drawWordColor(rsi, (char*)rdx);;
+		draw_word_color(rsi, (char*)rdx);;
 		break;
 	case 40:
 		finish_current_tick();
@@ -183,19 +183,19 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 }
 /*
 static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10){
-	drawWord("\nr10: ");
+	draw_word("\nr10: ");
 	drawNumber(r10);
-	drawWord("\nr9: ");
+	draw_word("\nr9: ");
 	drawNumber(r9);
-	drawWord("\nr8: ");
+	draw_word("\nr8: ");
 	drawNumber(r8);
-	drawWord("\nrcx: ");
+	draw_word("\nrcx: ");
 	drawNumber(rcx);
-	drawWord("\nrdx: ");
+	draw_word("\nrdx: ");
 	drawNumber(rdx);
-	drawWord("\nrsi: ");
+	draw_word("\nrsi: ");
 	drawNumber(rsi);
-	drawWord("\nrdi: ");
+	draw_word("\nrdi: ");
 	drawNumber(rdi);
 }
 */

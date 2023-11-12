@@ -10,14 +10,14 @@ static char buffer[BUFFER_SIZE] = {0};
 void lineRead(char * line){
     __seek_command__(line);
     //---
-    clearBuffer(buffer);
+    clear_buffer(buffer);
 }
 
 void putLineStart()
 {   
     char s[] = "O] ";
     print(s);
-    clearBuffer(buffer);
+    clear_buffer(buffer);
 }
 
 /*
@@ -36,16 +36,16 @@ void bufferize (){
     int end_of_buffer = 0;
     int put_falg = 0;
     while (i < BUFFER_SIZE) {
-        char c = getC();
+        char c = get_c();
         end_of_buffer = (i == BUFFER_SIZE-1);
         if (c == '\b'){
             if ( i > 0)
                 i--;
             else put_falg = 1;
         } else if (c == '\n'){
-            putC(c);
+            put_c(c);
             if ( i == 0 ){
-                clearBuffer(buffer);
+                clear_buffer(buffer);
                 return;
             }
             buffer[i]=0;
@@ -57,17 +57,17 @@ void bufferize (){
             else
                 put_falg = 1;}
         if (!put_falg)
-            putC(c);
+            put_c(c);
         put_falg = 0;
     }
     return;
 }
 
 void welcome(){
-    call_paintScreen(BLACK);
+    call_paint_screen(BLACK);
      char WELCOME_MESSAGE[] = "Welcome to BOKE OS\nEnter a command to proceed:\n(Enter HELP to view all commands)\n";
     for (int j=0; WELCOME_MESSAGE[j] != 0; j++){
-        putC(WELCOME_MESSAGE[j]);
+        put_c(WELCOME_MESSAGE[j]);
     }
 }
 

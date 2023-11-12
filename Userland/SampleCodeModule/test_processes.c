@@ -56,7 +56,7 @@ int64_t test_processes() {
     while (alive > 0) {
 
       for (rq = 0; rq < max_processes; rq++) {
-        action = GetUniform(100) % 2;
+        action = get_uniform(100) % 2;
 
         switch (action) {
         case 0:
@@ -86,7 +86,7 @@ int64_t test_processes() {
 
       // Randomly unblocks processes
       for (rq = 0; rq < max_processes; rq++)
-        if (p_rqs[rq].state == BLOCKED && GetUniform(100) % 2) {
+        if (p_rqs[rq].state == BLOCKED && get_uniform(100) % 2) {
           if (call_block(p_rqs[rq].pid) == -1) {
             print("test_processes: ERROR unblocking process\n");
             return -1;

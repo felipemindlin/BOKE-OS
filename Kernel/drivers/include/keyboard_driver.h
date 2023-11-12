@@ -6,7 +6,7 @@
 
 
 void keyboard_handler(); // Función que maneja las interrupciones del teclado
-extern int getKey(); // Función que obtiene el valor de la tecla presionada
+extern int get_key(); // Función que obtiene el valor de la tecla presionada
 
 
 #endif /* KEYBOARD_DRIVER_H */

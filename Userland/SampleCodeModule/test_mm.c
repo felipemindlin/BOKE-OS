@@ -30,7 +30,7 @@ uint64_t test_mm() {
 
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < max_memory) {
-      mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
+      mm_rqs[rq].size = get_uniform(max_memory - total - 1) + 1;
       //print("Size: %d - ", (int)mm_rqs[rq].size);
       mm_rqs[rq].address = user_malloc(mm_rqs[rq].size);
       //print("Addr: %x\n", (uint64_t)mm_rqs[rq].address);

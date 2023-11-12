@@ -13,8 +13,8 @@ void test_prio();
 int64_t test_processes();
 uint64_t test_sync(char **argv);
 
-uint32_t GetUint();
-uint32_t GetUniform(uint32_t max);
+uint32_t get_uint();
+uint32_t get_uniform(uint32_t max);
 uint8_t memcheck(void *start, uint8_t value, uint32_t size);
 int64_t satoi(char *str);
 void bussy_wait(uint64_t n);

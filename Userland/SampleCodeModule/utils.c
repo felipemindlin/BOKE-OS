@@ -10,13 +10,13 @@ int null_or_space(char c){
 int null_or_newline(char c){
     return (c == '\0' || c == '\n');
 }
-char getC(){
+char get_c(){
     char c;
     call_sys_read(&c, 1, STDIN);
     return c;
 }
 
-void putC(char c){
+void put_c(char c){
     call_sys_write(&c, 1, STDOUT);
 }
 
@@ -32,23 +32,23 @@ int own_scanf(char * format, ...){
             switch(*format){
                 case 'c': {
                     char* c = va_arg(args, char*);
-                    *c = getC();
+                    *c = get_c();
                     toRet++;
                     break;
                 }
                 case 'd': {
                     int* d = va_arg(args, int*);
-                    toRet += readInt(d);
+                    toRet += read_int(d);
                     break;
                 }
                 case 's': {
                     char* s = va_arg(args, char*);
-                    toRet += readString(s);
+                    toRet += read_string(s);
                     break;
                 }
                 case 'x': {
                     int* d = va_arg(args, int*);
-                    toRet += readHexInt(d);
+                    toRet += read_hex_int(d);
                     break;
                 }
                 default:
@@ -62,46 +62,46 @@ int own_scanf(char * format, ...){
     return toRet;
 }
 
-int readInt(int* d){
+int read_int(int* d){
     int value = 0;
     int sign = 1; //en principio positivo
-    char c = getC();
+    char c = get_c();
 
     if(c == '-'){
         sign = -1;
-        c = getC();
+        c = get_c();
     }
 
     while((c != '\0') && (c >= '0' && c <= '9')){
         value = (c - '0') + value*10;
-        c = getC();
+        c = get_c();
     }
 
     *d = value * sign;
     return 1;
 }
 
-int readString(char *s){
+int read_string(char *s){
     int i = 0;
-    char c = getC();
+    char c = get_c();
 
     while(c != '\0' && c != '\n'){
         s[i++] = c;
-        c = getC();
+        c = get_c();
     }
     s[i] = '\0'; //null terminated
     return i;
 }
 
 
-int readHexInt(int* d){
+int read_hex_int(int* d){
     int value = 0;
     int sign = 1;
-    char c = getC();
+    char c = get_c();
 
     if(c == '-'){
         sign = -1;
-        c = getC();
+        c = get_c();
     }
 
     while(c != '\0' && ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F'))){
@@ -111,7 +111,7 @@ int readHexInt(int* d){
             c = c - '0';
         }
         value = value * 16 + c;
-        c = getC();
+        c = get_c();
     }
 
     *d = value * sign;
@@ -136,27 +136,27 @@ void vprint(char * format, va_list ap){
             switch(*format){
                 case 'c': {
                     char c = (char) va_arg(ap, int);
-                    putC(c);
+                    put_c(c);
                     break;
                 }
                 case 'd': {
                     int d = va_arg(ap, int);
-                    putInt(d);
+                    put_int(d);
                     break;
                 }
                 case 's': {
                     char* s = va_arg(ap, char*);
-                    putString(s);
+                    put_string(s);
                     break;
                 }
                 case 'x': {
                     uint64_t x = (uint64_t) va_arg(ap, uint64_t);
-                    putHexDir(x);
+                    put_hex_dir(x);
                     break;
                 }
             }
         } else {
-            putC(*format);
+            put_c(*format);
         }
         format++;
     }
@@ -164,16 +164,16 @@ void vprint(char * format, va_list ap){
     return;
 }
 
-void putString(char * str){
+void put_string(char * str){
     while(*str != '\0'){
-        putC(*str);
+        put_c(*str);
         str++;
     }
 }
 
-void putInt(int num) {
+void put_int(int num) {
     if (num < 0) {
-        putC('-');
+        put_c('-');
         num = -num;
     }
 
@@ -184,13 +184,13 @@ void putInt(int num) {
 
     while (divisor > 0) {
         int digit = num / divisor;
-        putC('0' + digit);
+        put_c('0' + digit);
         num %= divisor;
         divisor /= 10;
     }
 }
 
-void putHexDir(uint64_t num){
+void put_hex_dir(uint64_t num){
     char * hex = "0123456789ABCDEF";
     char toPrint[19]={0};
     toPrint[0] = '0';
@@ -206,7 +206,7 @@ void putHexDir(uint64_t num){
         toPrint[i] = '0';
         i--;
     }
-    putString(toPrint);
+    put_string(toPrint);
 }
 
 int strcmp(char * str1, char * str2){

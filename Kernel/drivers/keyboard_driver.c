@@ -14,7 +14,7 @@
 char sem_id_keyboard[]="keyboard";
 
 void keyboard_handler() {
-    uint16_t key = getKey();  // Obtiene el valor de la tecla presionada
+    uint16_t key = get_key();  // Obtiene el valor de la tecla presionada
     static int shift_pressed = 0, ctrl_pressed = 0;
     
     if (key == 0x00)  // Si no se presionó ninguna tecla, retorna
@@ -37,18 +37,18 @@ void keyboard_handler() {
         return;
     }
     
-    uint16_t * buff = getBufferAddress();
-    int buff_pos = getBufferPosition();
+    uint16_t * buff = get_buffer_address();
+    int buff_pos = get_buffer_position();
     if(ctrl_pressed){
-         if(ScanCodes[key] == 'C'){
-            drawWord("contorl C");
+         if(scan_codes[key] == 'C'){
+            draw_word("contorl C");
             kill_foreground_process();
             clear_buffer();
             if(get_process_started()){my_sem_post(sem_id_keyboard);}
             
             return;
-        } else if(ScanCodes[key] == 'D'){
-            drawWord("contorl D");
+        } else if(scan_codes[key] == 'D'){
+            draw_word("contorl D");
             if(get_pcb_entry(get_process_foreground_pid())->process->fr == SHELL){
                 key = _EOF_;
                 shift_pressed = 0;
@@ -59,10 +59,10 @@ void keyboard_handler() {
             }
             
             
-        } else if(ScanCodes[key] == 'P'){
+        } else if(scan_codes[key] == 'P'){
             print_process();
             return;
-        } else if(ScanCodes[key] == 'L'){
+        } else if(scan_codes[key] == 'L'){
             clear();
             return;
         return;
@@ -71,27 +71,27 @@ void keyboard_handler() {
         }
     }
     if(shift_pressed){
-        if(ScanCodes[key] == '7'){
+        if(scan_codes[key] == '7'){
             key=0x54;
         }
-        else if(ScanCodes[key] == '\\'){
+        else if(scan_codes[key] == '\\'){
             key=0x55;
         }
     }
    
     // Verifica si hay espacio suficiente en el búfer para almacenar el valor de la tecla
     if (buff_pos+1 < BUFF_SIZE){
-        setPos(buff_pos+1); 
+        set_pos(buff_pos+1); 
         buff[buff_pos+1] = 0;  
     } else {
-        setPos(0);  
+        set_pos(0);  
         buff[0] = 0;  
     }
     
     buff[buff_pos] = key;  // Almacena el valor de la tecla en el búfer
     
     // Verifica si la tecla presionada es un punto y coma (';')
-    if (ScanCodes[key] == ';'){
+    if (scan_codes[key] == ';'){
         saveState();  // Guarda el estado actual
         flag_snapshot_taken = 1;  // Establece la bandera indicando que se tomó una instantánea
     }

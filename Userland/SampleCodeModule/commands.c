@@ -19,7 +19,7 @@ static char command_descriptions[COMMAND_LEN][300] = {
     "Display the list of available commands",
     "Display the current system time",
     "Display the register state",
-    "Play the Pong game",
+    "Play the pong game",
     "Set the background color (usage: SETCOLOR <color>, available colors: GREEN, BLUE, BLACK, YELLOW, ORANGE)",
     "Trigger a division by zero exception",
     "Trigger an invalid operation exception",
@@ -169,7 +169,7 @@ void __seek_command__(char * command){
 
 void invalid_pid(){
     call_sys_write("ERROR - PID invalido",20,2);
-    putC('\n');
+    put_c('\n');
 }
 
 void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int fd[2]){
@@ -189,7 +189,7 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
         call_regState();
         return;
     case PONG:
-        fun = get_Pong();
+        fun = get_pong();
         break;
     case SETCOLOR:
         setbg(command);
@@ -198,7 +198,7 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
         Div0();
         return;
     case INVALOP:
-        invalidOp();
+        invalid_op();
         return;
     case BOKE:
         call_boke();
@@ -241,7 +241,7 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
         fun = wc;
         break;
     case PHYLO:
-        fun = get_Phylo();
+        fun = get_phylo();
         break;
     case FILTER:
         fun = filter;
@@ -253,11 +253,11 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
         fun = get_tests();
         break;
     case CLEAR:
-        call_clearColor(color);
+        call_clear_color(color);
         return;
     default:
         call_sys_write("ERROR - Comando no reconocido", 30, 2);
-        putC('\n');
+        put_c('\n');
         return;
     }
     call_create_process(command_list[i], is_fg, heap_and_stack, fun, argv, fd);
@@ -280,9 +280,9 @@ void time(){
     call_timeClock(timeClock);
     char c;
     for (int i = 0; (c = timeClock[i]) != 0; i++){
-        putC(c);
+        put_c(c);
     }
-    putC('\n');
+    put_c('\n');
 }
 
 
@@ -302,22 +302,22 @@ void loop(){
 
 }
 
-uint64_t setbgEnum(int i){
+uint64_t setbg_enum(int i){
     switch (i){
         case GREEN_:
-            call_paintScreen(GREEN);
+            call_paint_screen(GREEN);
             return GREEN;
         case BLUE_:
-            call_paintScreen(BLUE);
+            call_paint_screen(BLUE);
             return BLUE;
         case BLACK_:
-            call_paintScreen(BLACK);
+            call_paint_screen(BLACK);
             return BLACK;
         case YELLOW_:
-            call_paintScreen(YELLOW);
+            call_paint_screen(YELLOW);
             return YELLOW;
         case ORANGE_:
-            call_paintScreen(ORANGE);
+            call_paint_screen(ORANGE);
             return ORANGE;
         default:
             return -1;
@@ -325,14 +325,14 @@ uint64_t setbgEnum(int i){
 }
 
 static char hexArr[COLOR_LEN][10] = {"GREEN","BLUE","BLACK","YELLOW","ORANGE"};
-void findColor(char * color){
+void find_color(char * color){
     for (int i = 0; i < COMMAND_LEN; i++){
         if (strcmp(hexArr[i],color) == 0){
-               color = (char*) setbgEnum(i);
+               color = (char*) setbg_enum(i);
                 return;
         }
     }
-    setbgEnum(-1);
+    setbg_enum(-1);
 }
 
 
@@ -347,15 +347,15 @@ void setbg(char * command){
         partition[j++]=command[i];
     }
     partition[j]=0;
-    findColor(partition);
+    find_color(partition);
 }
 void Div0(){
     int a = 0;
     int b = 1;
      a = b/a;
 }
-void invalidOp(){
-    invalidOpAsm();
+void invalid_op(){
+    invalid_opAsm();
 }
 
 
@@ -363,8 +363,8 @@ void cat() {
     char c;
     char comm[MAX_COMMAND_LENGTH]={0};
     int i=0;
-    while ((c = getC()) != _EOF_){
-        putC(c);
+    while ((c = get_c()) != _EOF_){
+        put_c(c);
         comm[i++]=c;
         if(c=='\n'){
             comm[i]='\0';
@@ -373,7 +373,7 @@ void cat() {
             i=0;
         }
     }
-    putC(c);
+    put_c(c);
     return;
     comm[i++]=c;
 }
@@ -381,16 +381,16 @@ void cat() {
 void wc() {
   int lines = 1;
   char c;
-  while ((c = getC()) != _EOF_) {
+  while ((c = get_c()) != _EOF_) {
     if (c == '\n' ) {
       lines++;
     }
-    putC(c);
+    put_c(c);
   }
-  putC('\n');
+  put_c('\n');
 
   print("Line count: %d\n", lines); 
-  putC('\n');
+  put_c('\n');
 }
 
 
@@ -401,11 +401,11 @@ int is_vowel(char c) {
 
 void filter() {
   char c;
-  while ((c = getC()) != _EOF_) {
+  while ((c = get_c()) != _EOF_) {
     if (!is_vowel(c)) {
-      putC(c);
+      put_c(c);
     }
   }
-  putC('\n');
+  put_c('\n');
   return;
 }

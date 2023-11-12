@@ -16,24 +16,19 @@
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
-//static void *const systemVar = (void *)0x0000000000005A00;
-
-typedef int (*EntryPoint)();
-
-char * args[]={"prueba1", "examen2", NULL};
 
 int fdDefault[] = {0, 0};
 
-void clearBSS(void * bssAddress, uint64_t bssSize)
+void clear_bss(void * bssAddress, uint64_t bssSize)
 {
 	memset(bssAddress, 0, bssSize);
 }
 
-void * retUserland(){
+void * ret_userland(){
 	return sampleCodeModuleAddress;
 }
 
-void * getStackBase()
+void * get_stack_base()
 {
 	return (void*)(
 		(uint64_t)&endOfKernel
@@ -44,127 +39,36 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
-    
-
-/*	
-	char buffer[10];
-
-	ncPrint("[x64BareBones]");
-	ncNewline();
-
-	ncPrint("CPU Vendor:");
-	ncPrint(cpuVendor(buffer));
-	ncNewline();
-
-	ncPrint("[Loading modules]");
-	ncNewline();*/
 	void * moduleAddresses[] = {
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress
 	};
 
-	loadModules(&endOfKernelBinary, moduleAddresses);
-/*	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
+	load_modules(&endOfKernelBinary, moduleAddresses);
 
-	ncPrint("[Initializing kernel's binary]");
-	ncNewline();
-*/
-	clearBSS(&bss, &endOfKernel - &bss);
-/*
-	ncPrint("  text: 0x");
-	ncPrintHex((uint64_t)&text);
-	ncNewline();
-	ncPrint("  rodata: 0x");
-	ncPrintHex((uint64_t)&rodata);
-	ncNewline();
-	ncPrint("  data: 0x");
-	ncPrintHex((uint64_t)&data);
-	ncNewline();
-	ncPrint("  bss: 0x");
-	ncPrintHex((uint64_t)&bss);
-	ncNewline();
+	clear_bss(&bss, &endOfKernel - &bss);
 
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
-	*/
-	return getStackBase();
+	return get_stack_base();
 	
 }
 
-int function1(char * args[]){
-	int c=0;
-	int b=0;
-	for(int i=0; args[i]!=NULL; i++){
-		drawWord(args[i]);
-	}
-	while(1){
-		c += ticks_elapsed();
-		if(c % 10000000 == 1){
-			drawWordColor(RED,"asd");
-			drawNumberColor(RED,c);
-			b++;
-			if(b==2){
-				break;
-			}
-			c+=2;
-		}
-	}
-	return 0;
-}
-
-int write_to_pipe(){
-	int id = create_pipe(1);
-	char message[] = "Probando";
-	drawWord("Por escribir en el pipe\n");
-	pipe_write(id,message,9);
-	pipe pipe = getPipe(id);
-	drawWord("Pipe escrito con :");
-	drawWord(pipe.pipeBuffer);
-	newline();
-	return 0;
-}
-
-int read_from_pipe(){
-	int id = getPipeID(1);
-	pipe pipe = getPipe(id);
-	char dest[10];
-	drawWord("Por leer en el pipe\n");
-	pipe_read(id,dest,8);
-	drawWord("Pipe leido con:");
-	drawWord(pipe.pipeBuffer);
-	newline();
-	drawWord("Se imprime:\n");
-	drawWord(dest);
-	newline();
-	return 0;
-}
-
 extern uint64_t test_sync(char *argv[]);
-//uint64_t test_sync();
+
 int main()
 {
 	load_idt();
-	setFontSize(1);
+	set_font_size(1);
 	init_mm((void *)0x0000000000600000, 0x0000000002700000);
 	init_scheduler(2);
 	initialize_sems();
 	init_keyboard_sem();
 	init_pipes();
-	
-	/*
-	uint32_t *mem_amount = (void *)(systemVar + 132);       // MiB
-    uint64_t mem_amount_bytes = (*mem_amount) * (1 << 20);  // bytes
-    uint32_t *userlandSize = (uint32_t *)0;
-	init_mm(*userlandSize, mem_amount_bytes);*/
 
 	// SHOULD WE CREATE AN "ALMIGHTY" PROCESS that is the ancestor of all processes?
 	
 	// SHELL IS INIT PROCESS
 
-	int shell_pid = create_and_insert_process(1, 1, "shell", 0x0000000000001000, 0x0000000000001000, retUserland(), NULL,0,0); // id=1 indicates OS created it
+	int shell_pid = create_and_insert_process(1, 1, "shell", 0x0000000000001000, 0x0000000000001000, ret_userland(), NULL,0,0); // id=1 indicates OS created it
 	change_process_priority(create_and_insert_process(1, 0, "idle",1,  0x0000000000001000, &idle, NULL,0,0), IDLE_PRIORITY); // id=1 indicates OS created it
 
 	//create_and_insert_process(1, 1, "test", 1, 0x0000000000001000, &function1, args,0,0); // id=1 indicates OS created it
@@ -174,7 +78,7 @@ int main()
 
 	enable_multitasking(shell_pid);
 
-	drawWord("SOMETHING WENT WRONG\n");
+	draw_word("SOMETHING WENT WRONG\n");
 	while(1);
 	return 0;
 }

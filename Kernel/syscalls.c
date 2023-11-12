@@ -30,11 +30,11 @@ void sys_write(char *buf, int len, int filedescriptor){
     if (currentPCB->process->fw == SHELL && currentPCB->process->pid == get_process_foreground_pid())
     {
         switch (filedescriptor){
-        case STDOUT: drawWordLen(buf, len);
+        case STDOUT: draw_wordLen(buf, len);
             return;
-        case STDERR: drawWordColorLen(RED, buf, len);
+        case STDERR: draw_word_colorLen(RED, buf, len);
             return;
-        default: invalidFd();
+        default: invalid_fd();
         }
     }
     else{
@@ -58,25 +58,25 @@ void sys_read( char *buf, int len, int filedescriptor){
     {
         switch (filedescriptor){
         case STDIN:
-            int pos = getBufferPosition();
+            int pos = get_buffer_position();
             char aux = 0;
             for (int i = 0; i < len; ){
                 //_hlt(); I would not use hlt bc we already have sem_wait
                 if(get_process_started()){my_sem_wait(key_sem_id);}
-                aux = getCharAt(pos);
+                aux = get_char_at(pos);
                 if (aux > 0 && aux <= 255){
                     if (aux == 0x39)
                         buf[i++]=' ';
                     else if(aux==_EOF_)
                         buf[i++]=_EOF_;
                     else
-                        buf[i++]=ScanCodes[(int)aux];
-                    setPos(pos+1);
+                        buf[i++]=scan_codes[(int)aux];
+                    set_pos(pos+1);
                 }
-                pos = getBufferPosition();
+                pos = get_buffer_position();
             }
             return;
-        default: invalidFd();
+        default: invalid_fd();
         }
     }
     else{

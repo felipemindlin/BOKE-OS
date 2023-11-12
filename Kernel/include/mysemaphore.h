@@ -21,7 +21,7 @@ typedef struct {
     int allowed_processes[MAX_PROCESSES];  // List of PIDs of processes allowed to use the semaphore
     int allowed_process_count;  // The number of processes currently allowed to use the semaphore
     int being_cleared;
-} mySem_t;
+} my_sem_t;
 
 void initialize_sems();
 uint64_t my_sem_open(uint64_t start_value, char *id);

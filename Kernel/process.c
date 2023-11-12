@@ -21,14 +21,14 @@ int create_and_insert_process(int parent_pid, uint8_t foreground, const char * n
         return -1;
     }/*
     if(argv!=NULL){
-         drawWord("\n create_and_insert_process \n");
+         draw_word("\n create_and_insert_process \n");
             for(int i=0;argv[i]!=NULL;i++){
                 if(argv[i]!=NULL){
-                    drawWord("argv[");
+                    draw_word("argv[");
                     drawNumber(i);
-                    drawWord("]=");
-                    drawWord(argv[i]);
-                    drawWord("\n");
+                    draw_word("]=");
+                    draw_word(argv[i]);
+                    draw_word("\n");
                 }
             }
     }*/
@@ -46,14 +46,14 @@ int create_and_insert_process(int parent_pid, uint8_t foreground, const char * n
 
 process_t * create_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw){
 /*      if(argv!=NULL){
-         drawWord("\nCreate_process\n");
+         draw_word("\nCreate_process\n");
             for(int i=0;argv[i]!=NULL;i++){
                 if(argv[i]!=NULL){
-                    drawWord("argv[");
+                    draw_word("argv[");
                     drawNumber(i);
-                    drawWord("]=");
-                    drawWord(argv[i]);
-                    drawWord("\n");
+                    draw_word("]=");
+                    draw_word(argv[i]);
+                    draw_word("\n");
                 }
             }
     }

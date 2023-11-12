@@ -2,7 +2,7 @@
 #define _FUNCASM_H
 
 
-void invalidOpAsm();
+void invalid_opAsm();
 
 
 #endif /* _FUNCASM_H */

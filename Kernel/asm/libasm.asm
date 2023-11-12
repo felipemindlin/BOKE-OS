@@ -1,4 +1,4 @@
-GLOBAL cpuVendor
+GLOBAL cpu_vendor
 GLOBAL get_seconds
 GLOBAL get_minutes
 GLOBAL get_hours
@@ -6,7 +6,7 @@ GLOBAL get_weekDay
 GLOBAL get_monthDay
 GLOBAL get_month
 GLOBAL get_year
-GLOBAL getKey
+GLOBAL get_key
 GLOBAL inb
 GLOBAL outb
 GLOBAL kbflag
@@ -37,7 +37,7 @@ section .text
   mov rdi, rax
 %endmacro
 
-cpuVendor:
+cpu_vendor:
 	push rbp
 	mov rbp, rsp
 
@@ -103,7 +103,7 @@ get_year:
 	leave_func
   	ret
 
-getKey:
+get_key:
   push rbp
   mov rbp, rsp
   mov rax, 0

@@ -46,7 +46,7 @@ void checkState(Node* node){
 
 void * malloc(uint64_t bytes){
 if (root->size < bytes){
-    drawWord("Error: Not enough memory available");
+    draw_word("Error: Not enough memory available");
     return NULL;
 }
 
@@ -112,15 +112,15 @@ void createChilds(Node * node){
 }
 
 void printMem(){
-    drawWord("Total memory:");
+    draw_word("Total memory:");
     drawNumber(root->size );
-    drawWord("\n");
-    drawWord("Free memory:");
+    draw_word("\n");
+    draw_word("Free memory:");
     drawNumber(root->size - memAllocated);
-    drawWord("\n");
-    drawWord("Allocated memory:");
+    draw_word("\n");
+    draw_word("Allocated memory:");
     drawNumber(memAllocated);
-    drawWord("\n");
+    draw_word("\n");
 }
 
 // Creo que debería se void, porque no tendría sentido devolver un puntero a un espacio de memoria que ya no existe.

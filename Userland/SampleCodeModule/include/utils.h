@@ -8,15 +8,15 @@
 
 #define _EOF_ 1
 
-char getC();
-void putC(char c);
-void putInt(int num);
-void putHexDir(uint64_t num);
-void putString(char * str);
+char get_c();
+void put_c(char c);
+void put_int(int num);
+void put_hex_dir(uint64_t num);
+void put_string(char * str);
 int own_scanf(char * format, ...);
-int readInt(int* d);
-int readString(char *s);
-int readHexInt(int* d);
+int read_int(int* d);
+int read_string(char *s);
+int read_hex_int(int* d);
 void print(char * format, ...);
 int strcmp(char * str1, char * str2);
 int strcmpspace(char * str1, char * str2, uint8_t * is_fg);
