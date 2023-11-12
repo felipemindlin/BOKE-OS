@@ -105,7 +105,8 @@ void __seek_command__(char * command){
                 index_second_command += arg_count;
                 if (end_first_com != 0)
                     __call_command__(i, args[0], is_fg1, argv1, fd1);
-                else {__call_command__(i, args[0], is_fg1, argv1, default_fd);
+                else {
+                    __call_command__(i, args[0], is_fg1, argv1, default_fd);
                     for (int k = 0; k < START_SIZE/8; k++){
                         user_free(args[k]);
                     }
