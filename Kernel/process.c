@@ -195,7 +195,8 @@ int kill_process(int pid) {
     return 0;
 }
 
-int kill_foreground_process(int fg_pid){
+int kill_foreground_process(){
+    int fg_pid = get_process_foreground_pid();
     if(fg_pid == SHELL_PID){
         return -1;
     }

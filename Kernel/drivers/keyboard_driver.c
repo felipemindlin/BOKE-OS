@@ -11,12 +11,11 @@
 #include <mysemaphore.h>
 #include "include/syscalls.h"
 
-char sem_id[]="key";
+char sem_id_keyboard[]="keyboard";
 
 void keyboard_handler() {
     uint16_t key = getKey();  // Obtiene el valor de la tecla presionada
     static int shift_pressed = 0, ctrl_pressed = 0;
-    my_sem_open(1,sem_id);
     
     if (key == 0x00)  // Si no se presionó ninguna tecla, retorna
         return;
@@ -24,34 +23,41 @@ void keyboard_handler() {
     if (key == 0x2A || key == 0x36){
         shift_pressed = 1;
         return;
-        }
+    }
     else if (key == 0xAA || key == 0xB6){
         shift_pressed = 0;
-        return;}
+        return;
+    }
     else if (key == 0x1D){
         ctrl_pressed = 1;
         return;
-        }
+    }
     else if (key == 0x9D){
         ctrl_pressed = 0;
         return;
-        }
+    }
     
-    uint16_t * buff = getBufferAddress();  
-    int buff_pos = getBufferPosition();  
+    uint16_t * buff = getBufferAddress();
+    int buff_pos = getBufferPosition();
     if(ctrl_pressed){
          if(ScanCodes[key] == 'C'){
-            kill_foreground_process(get_process_foreground_pid());
+            drawWord("contorl C");
+            kill_foreground_process();
             clear_buffer();
-            my_sem_post(sem_id);
+            if(get_process_started()){my_sem_post(sem_id_keyboard);}
             
             return;
         } else if(ScanCodes[key] == 'D'){
-            // if(get_pcb_entry(get_process_foreground_pid())->process->fr == SHELL){
+            drawWord("contorl D");
+            if(get_pcb_entry(get_process_foreground_pid())->process->fr == SHELL){
                 key = _EOF_;
                 shift_pressed = 0;
-            // }
-            my_sem_post(sem_id);
+                
+            } else {
+                send_eof_to_foreground();
+                return;
+            }
+            
             
         } else if(ScanCodes[key] == 'P'){
             print_process();
@@ -61,7 +67,6 @@ void keyboard_handler() {
             return;
         return;
         } else {
-            send_eof_to_foreground();
             return;
         }
     }
@@ -90,7 +95,7 @@ void keyboard_handler() {
         saveState();  // Guarda el estado actual
         flag_snapshot_taken = 1;  // Establece la bandera indicando que se tomó una instantánea
     }
-    my_sem_post(sem_id);
+    if(get_process_started()){my_sem_post(sem_id_keyboard);}
     return; 
 }
 
