@@ -5,8 +5,8 @@
 #define _EOF_ 1
 typedef struct pipe{
     int name;
-    int readSemId;
-    int writeSemId;
+    char * readSemId;
+    char * writeSemId;
     unsigned int writePos;
     unsigned int readPos;
     char *pipeBuffer;

@@ -210,7 +210,7 @@ void whiff(uint64_t sem_idx) {
 
 void wake_up_processes(uint64_t sem_idx){
     mySem_t *sem = &(sem_spaces[sem_idx].sem);
-    uint64_t *lock_addr = &(sem->is_locked);
+    //uint64_t *lock_addr = &(sem->is_locked);
 
     for(int i = 0; i < sem->queue_size; i++){
         int pid = remove_from_queue(sem_idx);

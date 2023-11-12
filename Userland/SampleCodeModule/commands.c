@@ -8,7 +8,6 @@
 #include "shell.h"
 #include <test_util.h> 
 uint64_t color = BLACK;
-#define EOF 0x01
 int fd[2] = {0,0};
 size_t heap_and_stack[2] = {0x0000000000001000, 0x0000000000001000};
 static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS", "CLEAR"};
@@ -45,7 +44,7 @@ void __seek_command__(char * command){
     uint8_t is_fg1=1;
     uint8_t is_fg2=1;
 
-    int the_one = -1;
+    //int the_one = -1;
     char ** args = user_malloc(START_SIZE);
     for (int k = 0; k < START_SIZE/8; k++){
         args[k] = user_malloc(COMMAND_SIZE);
@@ -61,7 +60,7 @@ void __seek_command__(char * command){
     int pipe_id = call_pipe_create_anonymous();
     int fd1[2] = {0,pipe_id};
     int fd2[2] = {pipe_id,0};
-    int hs[2] = {1,1};
+    //int hs[2] = {1,1};
 
     for (int i = 0; i < COMMAND_LEN; i++){
         // if (strcmpspace(command_list[i],command, &is_fg) == 0){
@@ -175,7 +174,7 @@ void invalid_pid(){
 
 void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int fd[2]){
     void * fun;
-    void * args=argv;
+    //void * args=argv;
     int pid;
     int priority;
     switch (i)
@@ -321,7 +320,7 @@ uint64_t setbgEnum(int i){
             call_paintScreen(ORANGE);
             return ORANGE;
         default:
-            return;
+            return -1;
     }
 }
 
@@ -329,7 +328,7 @@ static char hexArr[COLOR_LEN][10] = {"GREEN","BLUE","BLACK","YELLOW","ORANGE"};
 void findColor(char * color){
     for (int i = 0; i < COMMAND_LEN; i++){
         if (strcmp(hexArr[i],color) == 0){
-               color = setbgEnum(i);
+               color = (char*) setbgEnum(i);
                 return;
         }
     }
@@ -362,8 +361,8 @@ void invalidOp(){
 
 void cat() {
   char c;
-  char comm[MAX_COMMAND_LENGTH]={0};
-  int i=0;
+  //char comm[MAX_COMMAND_LENGTH]={0};
+  //int i=0;
   while ((c = getC()) != EOF){
     putC(c);
     // comm[i++]=c;

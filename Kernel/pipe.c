@@ -31,8 +31,8 @@ int create_pipe(int name){
     }
 
     pipeArray[found].name = name;
-    pipeArray[found].readSemId = my_sem_open(0, "pipeRead");
-    pipeArray[found].writeSemId = my_sem_open(PIPE_BUFFER_SIZE, "pipeWrite");
+    pipeArray[found].readSemId = (char *) my_sem_open(0, "pipeRead");
+    pipeArray[found].writeSemId = (char *) my_sem_open(PIPE_BUFFER_SIZE, "pipeWrite");
     pipeArray[found].writePos = 0;
     pipeArray[found].readPos = 0;
     pipeArray[found].pipeBuffer = malloc(PIPE_BUFFER_SIZE);

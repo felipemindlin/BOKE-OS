@@ -28,7 +28,7 @@ void sys_write(char *buf, int len, int filedescriptor){
         }
     }
     else{
-        int w = pipe_write(currentPCB->process->fw,buf,len);
+        pipe_write(currentPCB->process->fw,buf,len);
     }
     
 }
@@ -68,7 +68,7 @@ void sys_read( char *buf, int len, int filedescriptor){
         }
     }
     else{
-        int r = pipe_read(currentPCB->process->fr,buf,len);
+        pipe_read(currentPCB->process->fr,buf,len);
     }
     
 }

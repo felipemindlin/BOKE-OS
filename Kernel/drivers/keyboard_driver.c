@@ -18,7 +18,7 @@ void keyboard_handler() {
     static int shift_pressed = 0, ctrl_pressed = 0;
     my_sem_open(1,sem_id);
     
-    if (key == NULL)  // Si no se presionó ninguna tecla, retorna
+    if (key == 0x00)  // Si no se presionó ninguna tecla, retorna
         return;
         
     if (key == 0x2A || key == 0x36){

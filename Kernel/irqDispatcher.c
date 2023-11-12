@@ -18,7 +18,7 @@
 #include <libasm.h>
 #include "include/pipe.h"
 
-static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10);
+//static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10);
 static uint64_t int_20();
 static uint64_t int_21();
 static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
@@ -128,7 +128,7 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		return force_kill(rsi);
 		break;
 	case 25:
-		return create_and_insert_process_from_current_standard(rsi, rdx, rcx, r8, r9, r10); // foreground must be a parameter
+		return create_and_insert_process_from_current_standard((char*)rsi, rdx, (size_t*)rcx,(void*) r8,(void*) r9,(int*) r10); // foreground must be a parameter
 		break;
 	case 26:
 		return my_sem_wait((char*)rsi);
@@ -137,10 +137,10 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		return my_sem_post((char*)rsi);
 		break;
 	case 28:
-		my_sem_close(rsi);
+		my_sem_close((char*)rsi);
 		break;
 	case 29:
-		return my_sem_open(rsi, rdx);
+		return my_sem_open(rsi, (char*)rdx);
 		break;
 	case 30:
 		finish_current_tick();
@@ -152,7 +152,7 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		return get_current_pcb()->process->pid;
 		break;
 	case 33:
-		return malloc((uintptr_t)rsi);
+		return (uint64_t) malloc((uintptr_t)rsi);
 		break;
 	case 34:
 		free((void*)rsi);
@@ -181,7 +181,7 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 	}
 	return 0;
 }
-
+/*
 static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10){
 	drawWord("\nr10: ");
 	drawNumber(r10);
@@ -198,3 +198,4 @@ static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int
 	drawWord("\nrdi: ");
 	drawNumber(rdi);
 }
+*/
