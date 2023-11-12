@@ -12,12 +12,12 @@
 
 int num_philosophers = 0;
 volatile int last = 0;
-int mutex_id;
+char * mutex_id;
 int fork_states[MAX_PHILOSOPHERS];
-uint64_t fork_sem_ids[MAX_PHILOSOPHERS];
+char * fork_sem_ids[MAX_PHILOSOPHERS];
 int philosopher_pids[MAX_PHILOSOPHERS];
-int r_w_sem_index;
-int add_remove_mutex_index;
+char * r_w_sem_index;
+char * add_remove_mutex_index;
 int filedes[2] = {0, 0};
 int phil_qty=0;
 size_t heap_stack_vec[2] = {0x0000000000001000, 0x0000000000001000};
@@ -59,14 +59,14 @@ void vision(){
 int phylo()
 {
     initialize();
-    mutex_id = call_sem_open(1, "mutex");
-    r_w_sem_index = call_sem_open(1, R_W_SEMNAME);
-    add_remove_mutex_index = call_sem_open(1, "philo_ar_mutex");
+    mutex_id = (char*)call_sem_open(1, "mutex");
+    r_w_sem_index = (char*)call_sem_open(1, R_W_SEMNAME);
+    add_remove_mutex_index = (char*)call_sem_open(1, "philo_ar_mutex");
     for (int i = 0; i < MAX_PHILOSOPHERS; i++)
     {
         char sem_name[10];
         itoa(i, sem_name, 10);
-        fork_sem_ids[i] = call_sem_open(0, sem_name); // Semaphore initialized to 0
+        fork_sem_ids[i] = (char*)call_sem_open(0, sem_name); // Semaphore initialized to 0
         fork_states[i] = THINKING;
     }
 

@@ -169,8 +169,8 @@ int main()
 
 	//create_and_insert_process(1, 1, "test", 1, 0x0000000000001000, &function1, args,0,0); // id=1 indicates OS created it
 
-	create_and_insert_process(1, 0, "write",4096,4096,&write_to_pipe,NULL,0,0);
-	create_and_insert_process(1, 0, "read",4096,4096,&read_from_pipe,NULL,0,0);
+	//create_and_insert_process(1, 0, "write",4096,4096,&write_to_pipe,NULL,0,0);
+	//create_and_insert_process(1, 0, "read",4096,4096,&read_from_pipe,NULL,0,0);
 
 	enable_multitasking(shell_pid);
 

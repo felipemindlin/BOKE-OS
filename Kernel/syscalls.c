@@ -80,7 +80,7 @@ void sys_read( char *buf, int len, int filedescriptor){
         }
     }
     else{
-        int r = pipe_read(currentPCB->process->fr,buf,len);
+        pipe_read(currentPCB->process->fr,buf,len);
     }
     
 }

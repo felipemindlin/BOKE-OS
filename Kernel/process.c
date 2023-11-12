@@ -5,6 +5,8 @@
 #include <mysemaphore.h>
 #include <naiveConsole.h>
 
+static size_t pid = 2;
+
 int get_next_pid();
 int getAvailablePid();
 void process_wrapper(void entry_point(char ** argv), char ** argv);

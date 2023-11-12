@@ -17,14 +17,7 @@
 #define MAX_PROCESSES 1024
 
 #define SHELL 0 // FD of shell process
-static char* status_arr[6] ={
-    0,
-    "BLOCKED",
-    "READY",
-    "RUNNING",
-    "DEAD",
-    "ZOMBIE"
-};
+
 enum status_t{
     BLOCKED=1,
     READY,
@@ -59,7 +52,7 @@ typedef struct process_t{
     mem_block_t * heap;
     char sem_name[MAX_SEM_NAME];
     int fr;
-    int fw
+    int fw;
 } process_t;
 
 typedef struct pcb_t{
@@ -68,8 +61,6 @@ typedef struct pcb_t{
     process_t * process;
     registerStructT reg_state;
 } pcb_t;
-
-static size_t pid = 2;
 
 /*
     LEAVE THIS INCLUDE HERE. IT MUST BE HERE BC OF THE ORDER THE INCLUDES ARE PERFORMED.

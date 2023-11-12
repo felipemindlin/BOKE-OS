@@ -14,6 +14,15 @@ pcb_t * current_pcb;
 
 int foreground_pid = 2;
 
+static char* status_arr[6] ={
+    0,
+    "BLOCKED",
+    "READY",
+    "RUNNING",
+    "DEAD",
+    "ZOMBIE"
+};
+
 scheduler_queue * create_queue_array(int quantum);
 int remove_from_queue_by_pid(queue_t * queue, int pid);
 pcb_t * get_idle_pcb();
