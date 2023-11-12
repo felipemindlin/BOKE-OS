@@ -5,8 +5,7 @@
 #include <stdint.h>
 #include <mysemaphore.h>
 
-#define QUEUE_QTY 4 // Depends on the number of priorities we want to have
-
+#define QUEUE_QTY 4 
 /*
     Sugerencia para el scheduler:
         1) Scheduler que retorna siempre el mismo stack

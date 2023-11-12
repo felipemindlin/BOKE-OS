@@ -20,13 +20,8 @@ int64_t test_processes(){
   uint8_t rq;
   uint8_t alive = 0;
   uint8_t action;
-   uint64_t max_processes;// = satoi(argv[0]);
-//   char *argvAux[] = {0};
+   uint64_t max_processes;
 
-//   if (argc != 1)
-//     return -1;
-
-//   if (max_processes == 0 || max_processes > 20)
     max_processes = 5;
 
   p_rq p_rqs[max_processes];
@@ -35,10 +30,8 @@ int64_t test_processes(){
 
   while (1){
 
-    // Create max_processes processes
-    for (rq = 0; rq < max_processes; rq++){
-    //   argvAux[0] = "&";
-      p_rqs[rq].pid = call_create_process("endless_loop",  0, heap_stackd, endless_loop, NULL, filede);
+        for (rq = 0; rq < max_processes; rq++){
+          p_rqs[rq].pid = call_create_process("endless_loop",  0, heap_stackd, endless_loop, NULL, filede);
 
       print("Created PID: %d\n", (int)p_rqs[rq].pid);
 
@@ -51,9 +44,7 @@ int64_t test_processes(){
       }
     }
 
-    // Randomly kills, blocks or unblocks processes until every one has been
-    // killed
-    while (alive > 0){
+            while (alive > 0){
 
       for (rq = 0; rq < max_processes; rq++){
         action = get_uniform(100) % 2;
@@ -84,8 +75,7 @@ int64_t test_processes(){
         }
       }
 
-      // Randomly unblocks processes
-      for (rq = 0; rq < max_processes; rq++)
+            for (rq = 0; rq < max_processes; rq++)
         if (p_rqs[rq].state == BLOCKED && get_uniform(100) % 2){
           if (call_block(p_rqs[rq].pid) == -1){
             print("test_processes: ERROR unblocking process\n");

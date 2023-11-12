@@ -14,8 +14,7 @@ static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", 
 static int command_args[COMMAND_LEN] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0};
 #define START_SIZE 80
 #define COMMAND_SIZE 10
-char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
-static char command_descriptions[COMMAND_LEN][300] = {
+char *test_args[] = {"3", "1"}; static char command_descriptions[COMMAND_LEN][300] = {
     "Display the list of available commands",
     "Display the current system time",
     "Display the register state",
@@ -38,14 +37,11 @@ static char command_descriptions[COMMAND_LEN][300] = {
     "Clears the screen"
 };
 
-//busca el comando en la lista de comandos y llama a la funcion correspondiente
-//busca el comando en la lista de comandos y llama a la funcion correspondiente
 void __seek_command__(char * command){
     uint8_t is_fg1=1;
     uint8_t is_fg2=1;
 
-    //int the_one = -1;
-    char ** args = user_malloc(START_SIZE);
+        char ** args = user_malloc(START_SIZE);
     for (int k = 0; k < START_SIZE/8; k++){
         args[k] = user_malloc(COMMAND_SIZE);
     }
@@ -121,9 +117,7 @@ void __seek_command__(char * command){
         }
     }
 
-    // if (end_first_com == 0)
-    //     return;
-    
+            
 
     char * argv2[2];
 
@@ -151,8 +145,7 @@ void invalid_pid(){
 
 void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int fd[2]){
     void * fun;
-    //void * args=argv;
-    int pid;
+        int pid;
     int priority;
     switch (i){
     case HELP:
@@ -240,7 +233,6 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
     return;
 } 
 #define CYAN 0x00FFFF
-//imprime la lista de comandos disponibles
 void help(){
     call_sys_write("List of available commands:\n", 29, 1);
     for (int i = 0; i < COMMAND_LEN; i++){
@@ -311,7 +303,6 @@ void find_color(char * color){
 }
 
 
-//setea el color de fondo de la pantalla segun el comando ingresado
 void setbg(char * command){
     char partition[20];
     int i=0;

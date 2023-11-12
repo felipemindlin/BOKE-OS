@@ -112,8 +112,7 @@ process_t * create_process(int parent_pid, uint8_t foreground, const char * name
     process->fw = fw;
 
 
-    process->stack->current = create_stackframe((uintptr_t *)entry_point, (void*)argv, process->stack->base + stack_size, &process_wrapper); // is this correct?
-    process->status = READY;
+    process->stack->current = create_stackframe((uintptr_t *)entry_point, (void*)argv, process->stack->base + stack_size, &process_wrapper);     process->status = READY;
     uintToBase(process->pid, process->sem_name, BASE);
     my_sem_open(1, process->sem_name);
     return process;
@@ -137,12 +136,7 @@ int get_next_pid(){
 }
 
 int getAvailablePid(){
-    //int pid_to_ret = get_next_pid();
-    //if(pid_to_ret>=MAX_PROCESSES){
-    //    pid=1;
-    //    pid_to_ret = get_next_pid();
-    //}
-    return pid++;
+                        return pid++;
 }
 
 void save_reg_state(pcb_t * pcb){
@@ -164,10 +158,7 @@ int kill_process(int pid){
     pcb_t *parent_pcb = get_pcb_entry(pcb->process->parent_pid);
     my_sem_post(pcb->process->sem_name);
 
-    // if(pcb->process->foreground){
-    //     set_process_foreground_pid(SHELL_PID);
-    // }
-
+            
 
     if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE){
         pcb->process->status = DEAD;

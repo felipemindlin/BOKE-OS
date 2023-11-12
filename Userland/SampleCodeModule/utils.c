@@ -64,8 +64,7 @@ int own_scanf(char * format, ...){
 
 int read_int(int* d){
     int value = 0;
-    int sign = 1; //en principio positivo
-    char c = get_c();
+    int sign = 1;     char c = get_c();
 
     if(c == '-'){
         sign = -1;
@@ -89,8 +88,7 @@ int read_string(char *s){
         s[i++] = c;
         c = get_c();
     }
-    s[i] = '\0'; //null terminated
-    return i;
+    s[i] = '\0';     return i;
 }
 
 
@@ -226,7 +224,6 @@ int strcmp(char * str1, char * str2){
 
 }
 
-// Similar a strcmp pero solo compara hasta el primer espacio o el fin de la cadena (lo que ocurra primero)
 int strcmpspace(char * str1, char * str2, uint8_t * is_fg){
     char partition[BUFFER_SIZE];
     int j=0;
@@ -234,10 +231,8 @@ int strcmpspace(char * str1, char * str2, uint8_t * is_fg){
         partition[j] = str2[j];
         j++;
     }
-    partition[j] = '\0';  // Null-terminate the partition string
-
-    // Compare str1 and the partition string
-    int i = 0;
+    partition[j] = '\0';  
+        int i = 0;
     while (str1[i] != '\0' && !null_or_space(partition[i])){
         if (str1[i] > partition[i]){
             return 1;
@@ -247,8 +242,7 @@ int strcmpspace(char * str1, char * str2, uint8_t * is_fg){
         i++;
     }
 
-    // Check for equality
-    if (str1[i] == '\0' && null_or_space(partition[i])){
+        if (str1[i] == '\0' && null_or_space(partition[i])){
         return 0;
     } else if (null_or_space(partition[i])){
         return -1;
@@ -280,12 +274,10 @@ int strncmp(char * str1, char * str2, int n){
 }
 /*
 int strcmpspace(char *str1, char *str2, uint8_t *is_fg){
-    // Skip leading whitespaces
-    while (isspace(*str1)) str1++;
+        while (isspace(*str1)) str1++;
     while (isspace(*str2)) str2++;
 
-    // Find the end of the first word in both strings
-    char *end1 = str1;
+        char *end1 = str1;
     char *end2 = str2;
 
     while (*end1 && !isspace(*end1)) end1++;
@@ -293,11 +285,9 @@ int strcmpspace(char *str1, char *str2, uint8_t *is_fg){
 
     int max_len = end1 - str1 > end2 - str2 ? end1 - str1 : end2 - str2;
 
-    // Compare the first word
-    int cmp = strncmp(end1, end2, max_len);
+        int cmp = strncmp(end1, end2, max_len);
 
-    // If the first word doesn't match, return the result
-    if (cmp != 0){
+        if (cmp != 0){
         return cmp;
     }
 
@@ -344,8 +334,7 @@ char * strncpy(char * dest, char * src, int n){
 
 int atoi(char * str){
     int value = 0;
-    int sign = 1; //en principio positivo
-    int i = 0;
+    int sign = 1;     int i = 0;
     if(str[0] == '-'){
         sign = -1;
         i++;
@@ -397,35 +386,29 @@ char* itoa(int num, char* str, int base){
     int i = 0;
     bool isNegative = false;
 
-    // Handle 0 explicitly, otherwise empty string is printed
-    if (num == 0){
+        if (num == 0){
         str[i++] = '0';
         str[i] = '\0';
         return str;
     }
 
-    // Handle negative numbers if base is 10
-    if (num < 0 && base == 10){
+        if (num < 0 && base == 10){
         isNegative = true;
         num = -num;
     }
 
-    // Process individual digits
-    while (num != 0){
+        while (num != 0){
         int rem = num % base;
         str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
         num = num / base;
     }
 
-    // Add negative sign for negative numbers
-    if (isNegative){
+        if (isNegative){
         str[i++] = '-';
     }
 
-    str[i] = '\0'; // Null-terminate the string
-
-    // Reverse the string
-    reverse(str, i);
+    str[i] = '\0'; 
+        reverse(str, i);
 
     return str;
 }

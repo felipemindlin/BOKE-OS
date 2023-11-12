@@ -54,8 +54,7 @@ int phylo(){
     for (int i = 0; i < MAX_PHILOSOPHERS; i++){
         char sem_name[10];
         itoa(i, sem_name, 10);
-        fork_sem_ids[i] = (char*)call_sem_open(0, sem_name); // Semaphore initialized to 0
-        fork_states[i] = THINKING;
+        fork_sem_ids[i] = (char*)call_sem_open(0, sem_name);         fork_states[i] = THINKING;
     }
 
     print("Welcome to the dining philosophers problem.\nPress 'A' to add a philosopher, 'R' to remove one, or 'Q' to quit.\n");
@@ -66,7 +65,6 @@ int phylo(){
     }
     call_create_process("handler", 1, heap_stack_vec, handle, NULL, filedes);
     while(!last);
-    // Clean up philosophers
     for (int i = 0; i < num_philosophers; i++){
         phil_qty--;
         call_force_kill(philosopher_pids[i]);

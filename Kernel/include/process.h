@@ -16,8 +16,7 @@
 #define MAX_PROCESS_ARGUMENTS 20
 #define MAX_PROCESSES 1024
 
-#define SHELL 0 // FD of shell process
-
+#define SHELL 0 
 enum status_t{
     BLOCKED=1,
     READY,
@@ -27,7 +26,6 @@ enum status_t{
 };
 
 
-//#define MAX_PRIORITY 2 NO USEN ESTO. La maxima prioridad depende de QUEUE_QTY pq es el tamaño del scheduler array
 
 typedef enum priority_t{
     IDLE_PRIORITY,
@@ -71,9 +69,7 @@ typedef struct pcb_t{
 process_t * create_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv, int fr, int fw);
 int create_and_insert_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv, int fr, int fw);
 int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack, void * entry_point, void * argv, int * fd);
-void save_reg_state(pcb_t * pcb/*, register_struct_t * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
-// process_t* create_and_insert_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
-int kill_process(int pid);
+void save_reg_state(pcb_t * pcb/*, register_struct_t * registers*/); int kill_process(int pid);
 void kill_current_process();
 int kill_foreground_process();
 int free_process(pcb_t * pcb);

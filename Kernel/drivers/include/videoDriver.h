@@ -2,7 +2,6 @@
 #define _VIDEO_DRIVER_H
 
 #include <stdint.h>
-// Colores predefinidos
 #define RED 0xFF0000
 #define GREEN 0x00FF00
 #define BLUE 0x0000FF
@@ -11,7 +10,6 @@
 #define YELLOW 0xFFFF00
 #define ORANGE 0xFFA500
 
-// Conversión entre componentes RGB y valor hexadecimal
 #define TO_RED(hex) hex & 0xFF
 #define TO_BLUE(hex) (hex >> 8) & 0xFF
 #define TO_GREEN(hex) (hex >> 16) & 0xFF
@@ -51,8 +49,7 @@ void draw_word_colorAt(uint64_t hexColor, char* word, uint32_t x, uint32_t y);
 void set_font_size(uint32_t new_size);
 uint32_t get_font_size();
 void draw_word(char* word);
-void invalid_fd(); //indica que el filedescriptor es invalido
-void clear();
+void invalid_fd(); void clear();
 void clear_color(uint64_t hexColor);
 
 void draw_number_color(int value, uint64_t hexColor);

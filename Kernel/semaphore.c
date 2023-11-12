@@ -56,8 +56,7 @@ uint64_t my_sem_open(uint64_t start_value, char *id){
             sem->counter = start_value;
             sem->is_locked = (start_value > 0) ? 1 : 0;
             str_cpy(sem->identifier, id);
-            sem->allowed_process_count = 1;  // Creator is the first user
-            sem->queue_size = 0;
+            sem->allowed_process_count = 1;              sem->queue_size = 0;
             sem->head = NULL;
             sem->tail = NULL;
             sem->allowed_process_count = 1;
@@ -72,8 +71,7 @@ uint64_t my_sem_open(uint64_t start_value, char *id){
 void my_sem_close(char *id){
     int sem_idx = locate_sem(id);
     if (sem_idx == -1){
-        return;  // Semaphore with this name does not exist
-    }
+        return;      }
     
     my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     int current_pid = current_process_id();
@@ -92,8 +90,7 @@ void my_sem_close(char *id){
 uint64_t my_sem_post(char *id){
     int sem_idx = locate_sem(id);
     if (sem_idx == -1){
-        return 1;  // Semaphore with this name does not exist
-    }
+        return 1;      }
 
     my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     uint64_t *lock_addr = &(sem->is_locked);
@@ -105,8 +102,7 @@ uint64_t my_sem_post(char *id){
 uint64_t my_sem_wait(char *id){
     int sem_idx = locate_sem(id);
     if (sem_idx == -1){
-        return -1;  // Semaphore with this name does not exist
-    }
+        return -1;      }
 
     int current_pid = current_process_id();
     my_sem_t *sem = &(sem_spaces[sem_idx].sem);
@@ -119,8 +115,7 @@ uint64_t my_sem_wait(char *id){
      }
     
      if (!allowed){
-         return -1;  // Current process is not allowed to use this semaphore
-     }
+         return -1;       }
     uint64_t *lock_addr = &(sem->is_locked);
     enter_region(lock_addr, sem_idx);
     return 0;
@@ -194,22 +189,7 @@ int locate_sem(char *id){
     return -1;
 }
 
-// int get_sem(char *id, int start_value){
-//     int sem_idx = locate_sem(id);
-//     if (sem_idx == -1){
-//         sem_idx = my_sem_open(start_value, id);
-//     }
-//     return sem_idx;
-// }
 
-// int put_sem(char *id){
-//     int sem_idx = locate_sem(id);
-//     if (sem_idx == -1){
-//         return -1;
-//     }
-//     my_sem_close(sem_idx);
-//     return 0;
-// }
 
 void whiff(uint64_t sem_idx){
   
@@ -225,8 +205,7 @@ void whiff(uint64_t sem_idx){
 
 void wake_up_processes(uint64_t sem_idx){
     my_sem_t *sem = &(sem_spaces[sem_idx].sem);
-    //uint64_t *lock_addr = &(sem->is_locked);
-
+    
     for(int i = 0; i < sem->queue_size; i++){
         int pid = remove_from_queue(sem_idx);
         os_revive_process(pid);

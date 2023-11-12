@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include "colors.h"
-//#define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
 #define SCREEN_WIDTH 1024
 
@@ -50,17 +49,6 @@ typedef struct {
     uint64_t color;
 } Ball;
 
-void set_paddle(Paddle *paddle, int x, int y, int width, int height, int speed, char directon, uint64_t color); //setea los valores de la estructura paddle
-void draw_paddle(Paddle* paddle, uint64_t color); //dibuja el paddle
-void clear_paddle(Paddle* paddle); //borra el paddle
-void move_paddle_up(Paddle* paddle); //mueve el paddle hacia arriba
-void move_paddle_down(Paddle* paddle); //mueve el paddle hacia abajo
-void set_ball(int x, int y, int size, int speedX, int speedY, uint64_t color); //setea los valores de la estructura ball
-void move_ball(); //mueve la pelota
-void draw_borders(); //dibuja los bordes
-void pong(); //funcion principal del juego pong
-void draw_middle_line(); //dibuja la linea del medio
-void resetGame(); //resetea el juego
-void * get_pong();
+void set_paddle(Paddle *paddle, int x, int y, int width, int height, int speed, char directon, uint64_t color); void draw_paddle(Paddle* paddle, uint64_t color); void clear_paddle(Paddle* paddle); void move_paddle_up(Paddle* paddle); void move_paddle_down(Paddle* paddle); void set_ball(int x, int y, int size, int speedX, int speedY, uint64_t color); void move_ball(); void draw_borders(); void pong(); void draw_middle_line(); void resetGame(); void * get_pong();
 
 #endif /* PONG_H */

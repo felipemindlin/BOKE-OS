@@ -1,5 +1,4 @@
 #include <stdint.h>
-//#define SEM_ID "sem_sem"
 #define TOTAL_PAIR_PROCESSES 10
 #include <UserSyscalls.h>
 #include <utils.h>
@@ -15,11 +14,9 @@ void my_yield(){
 void * get_test_sync(){
   return &test_sync;
 }
-int64_t global = 0; // shared memory
-void  slow_inc(int64_t *p, int64_t inc){
+int64_t global = 0; void  slow_inc(int64_t *p, int64_t inc){
   uint64_t aux = *p;
-  my_yield(); // This makes the race condition highly probable
-  aux += inc;
+  my_yield();   aux += inc;
   *p = aux;
 }
 
@@ -31,8 +28,7 @@ void  slow_inc(int64_t *p, int64_t inc){
   int my_sem = 1;
 
 
- // if (n <= 0 || n > 10)
-    n = 5;
+     n = 5;
 
   if (use_sem){
     if ((my_sem = call_sem_open(0, argv[4])) == -1){
@@ -67,9 +63,7 @@ uint64_t test_sync(char *argv[]){
 
   global=0;
 
-  size_t process_heap_size = 4096; // Example heap size
-  size_t process_stack_size = 4096; // Example stack size
-
+  size_t process_heap_size = 4096;   size_t process_stack_size = 4096; 
   size_t heap_and_stack[2] = {process_heap_size, process_stack_size};
   uint64_t i;
   int fd[2]={0, 0};

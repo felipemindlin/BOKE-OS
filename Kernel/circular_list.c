@@ -34,8 +34,7 @@ int insert_node(queue_t * queue, node_t * new_node){
         new_node->prev = new_node;
         return queue->qty++;
     }
-    // we insert the node at the end of the queue
-    new_node->next = queue->current_node;
+        new_node->next = queue->current_node;
     node_ptr last_node = queue->current_node->prev;
     new_node->prev = last_node;
     last_node->next = new_node;
@@ -51,8 +50,7 @@ node_ptr next(node_ptr node){
     return node->next;
 }
 
-void * remove_node(queue_t * queue, node_ptr node){ // returns the data of the removed node
-    if(queue == NULL || node == NULL){
+void * remove_node(queue_t * queue, node_ptr node){     if(queue == NULL || node == NULL){
         return NULL;
     }
     if(queue->current_node == NULL){

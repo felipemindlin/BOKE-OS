@@ -4,8 +4,7 @@
 #define PAGE_SIZE 32
 #define MAX_MEM 408944640
 
-heap heap_struct; //TO-DO: Implement ADT so we just reserve the memory needed for one memory manager
-
+heap heap_struct; 
 static uintptr_t get_page_index(void * mem);
 static uintptr_t get_first_page_index(void *¨mem);
 static void initialize_pages();
@@ -98,8 +97,7 @@ void* malloc(size_t size){
             } else{
                 heap_struct.pages[i] = START_PAGE_BOUND;
             }
-        } else if(i==page_index+pages_needed-1){ // last page
-            heap_struct.pages[i] = END_PAGE_BOUND;
+        } else if(i==page_index+pages_needed-1){             heap_struct.pages[i] = END_PAGE_BOUND;
         } else{
             heap_struct.pages[i] = ALLOCATED;
         }
@@ -109,7 +107,6 @@ void* malloc(size_t size){
 }
 
 
-// the free recieves a void *. It must free the complete block of memory that was allocated. From page_boud to page_bound
 void free(void * mem){
     uintptr_t page_index = get_page_index(mem);
     if(page_index==INVALID_ADDRESS){

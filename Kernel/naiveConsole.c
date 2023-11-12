@@ -9,22 +9,18 @@ static const uint32_t height = 25 ;
 #define deafultcolor 0x0f
 #define defaultback 0x00
 
-//borra el ultimo caracter
 void ncBackspace(){
-	if(*currentVideo>=0xB8002){ // si no es el primer caracter
-		currentVideo -= 2;
+	if(*currentVideo>=0xB8002){ 		currentVideo -= 2;
 		*currentVideo = ' ';
 	}
 }
 
-//imprime un string
 void nc_print(const char * string){
 	int i;
 
 	for (i = 0; string[i] != 0; i++)
 		nc_print_char(string[i]);
 }
-//imprime un string con un color de letra y de fondo
 void nc_printColor(const char * string, char color, char back){
 	int i;
 	for (i = 0; string[i] != 0; i++)
@@ -32,7 +28,6 @@ void nc_printColor(const char * string, char color, char back){
 
 }
 
-//imprime un caracter con un color de letra y de fondo
 void nc_print_char_color(char character, char color, char back){
 	
 	*currentVideo = character;
@@ -82,14 +77,12 @@ void ncClear(){
 	currentVideo = video;
 }
 
-//convierte un entero a una base dada y lo guarda en un buffer
  uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
 	char *p = buffer;
 	char *p1, *p2;
 	uint32_t digits = 0;
 
-	//Calculate characters for each digit
-	do
+		do
 	{
 		uint32_t remainder = value % base;
 		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
@@ -97,11 +90,9 @@ void ncClear(){
 	}
 	while (value /= base);
 
-	// Terminate string in buffer.
-	*p = 0;
+		*p = 0;
 
-	//Reverse string in buffer.
-	p1 = buffer;
+		p1 = buffer;
 	p2 = p - 1;
 	while (p1 < p2)
 	{

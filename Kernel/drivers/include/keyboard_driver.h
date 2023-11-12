@@ -5,8 +5,6 @@
 #include <stdint.h>
 
 
-void keyboard_handler(); // Función que maneja las interrupciones del teclado
-extern int get_key(); // Función que obtiene el valor de la tecla presionada
-
+void keyboard_handler(); extern int get_key(); 
 
 #endif /* KEYBOARD_DRIVER_H */

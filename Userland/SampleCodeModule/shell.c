@@ -6,11 +6,9 @@
 
 static char buffer[BUFFER_SIZE] = {0};
 
-//Lee linea y la manda a __seek_command__
 void lineRead(char * line){
     __seek_command__(line);
-    //---
-    clear_buffer(buffer);
+        clear_buffer(buffer);
 }
 
 void putLineStart(){   

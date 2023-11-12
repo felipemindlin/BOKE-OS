@@ -23,8 +23,7 @@ int create_pipe(int name){
             found = i;
         }
 
-        // No puede haber dos pipes con el mismo nombre
-        if (pipe_array[i].name == name)
+                if (pipe_array[i].name == name)
         {
             return -1;
         }
@@ -56,8 +55,7 @@ int pipe_write(int id, const char message[], unsigned int size){
     
     for (int i = 0; i < size; i++)
     {
-        my_sem_wait(pipe_array[id].write_sem_id); // Bloquea si no hay espacio para escribir
-
+        my_sem_wait(pipe_array[id].write_sem_id); 
         if (pipe_array[id].write_pos == PIPE_BUFFER_SIZE)
         {
             pipe_array[id].write_pos = 0;
@@ -91,8 +89,7 @@ int pipe_read(int id, char * dest, unsigned int size){
     
     for (int i = 0; i < size; i++)
     {
-        my_sem_wait(pipe_array[id].read_sem_id); // Bloquea si no hay nada para leer
-
+        my_sem_wait(pipe_array[id].read_sem_id); 
         if (pipe_array[id].read_pos == PIPE_BUFFER_SIZE)
         {
             pipe_array[id].read_pos = 0;
@@ -140,10 +137,7 @@ pipe get_pipe(int id){
 }
 
 void send_eof(int id){
-    //pipe_array[id].eof = 1;
-    //pipe_array[id].left_to_read++;
-    //my_sem_post(pipe_array[id].read_sem_id);//should we do this?
-}
+            }
 
 void send_eof_to_foreground(){
     pcb_t * foreground_pcb = get_pcb_entry(get_process_foreground_pid());

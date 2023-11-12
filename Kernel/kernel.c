@@ -30,9 +30,7 @@ void * ret_userland(){
 void * get_stack_base(){
 	return (void*)(
 		(uint64_t)&endOfKernel
-		+ PageSize * 8				//The size of the stack itself, 32KiB
-		- sizeof(uint64_t)			//Begin at the top of the stack
-	);
+		+ PageSize * 8						- sizeof(uint64_t)				);
 }
 
 void * initializeKernelBinary(){
@@ -60,9 +58,7 @@ int main(){
 	init_keyboard_sem();
 	init_pipes();
 
-	int shell_pid = create_and_insert_process(1, 1, "shell", 0x0000000000001000, 0x0000000000001000, ret_userland(), NULL, 0, 0); // id=1 indicates OS created it
-	change_process_priority(create_and_insert_process(1, 0, "idle", 1,  0x0000000000001000, &idle, NULL, 0, 0), IDLE_PRIORITY); // id=1 indicates OS created it
-
+	int shell_pid = create_and_insert_process(1, 1, "shell", 0x0000000000001000, 0x0000000000001000, ret_userland(), NULL, 0, 0); 	change_process_priority(create_and_insert_process(1, 0, "idle", 1,  0x0000000000001000, &idle, NULL, 0, 0), IDLE_PRIORITY); 
 	enable_multitasking(shell_pid);
 
 	while(1);

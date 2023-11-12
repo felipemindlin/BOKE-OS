@@ -123,8 +123,6 @@ void printMem(){
     draw_word("\n");
 }
 
-// Creo que debería se void, porque no tendría sentido devolver un puntero a un espacio de memoria que ya no existe.
-// Para lo único que se me ocurre es para que sepas si se liberó o no, pero eso lo podés saber por el estado del nodo.
 void free(void * mem){
     free_rec(root, mem);
 }

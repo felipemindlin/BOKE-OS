@@ -13,14 +13,9 @@
 
 typedef struct {
     char identifier[MAX_IDENTIFIER];
-    node_t *head;  // first process waiting in queue
-    node_t *tail;  // last process waiting in queue
-    uint64_t is_locked;
+    node_t *head;      node_t *tail;      uint64_t is_locked;
     int counter;
-    uint64_t queue_size;     // number of blocked processes
-    int allowed_processes[MAX_PROCESSES];  // List of PIDs of processes allowed to use the semaphore
-    int allowed_process_count;  // The number of processes currently allowed to use the semaphore
-    int being_cleared;
+    uint64_t queue_size;         int allowed_processes[MAX_PROCESSES];      int allowed_process_count;      int being_cleared;
 } my_sem_t;
 
 void initialize_sems();

@@ -7,7 +7,6 @@
 
 #include "modulePacker.h"
 
-//Parser elements
 const char *argp_program_version =
   "x64BareBones ModulePacker (C) v0.2";
 const char *argp_program_bug_address =
@@ -58,12 +57,10 @@ int buildImage(array_t fileArray, char *output_file){
 		return FALSE;
 	}
 
-	//First, write the kernel
-	FILE *source = fopen(fileArray.array[0], "r");
+		FILE *source = fopen(fileArray.array[0], "r");
 	write_file(target, source);
 
-	//Write how many extra binaries we got.
-	int extraBinaries = fileArray.length - 1;
+		int extraBinaries = fileArray.length - 1;
 	fwrite(&extraBinaries, sizeof(extraBinaries), 1, target);	
 	fclose(source);
 
@@ -71,11 +68,9 @@ int buildImage(array_t fileArray, char *output_file){
 	for (i = 1 ; i < fileArray.length ; i++){
 		FILE *source = fopen(fileArray.array[i], "r");
 		
-		//Write the file size;
-		write_size(target, fileArray.array[i]);
+				write_size(target, fileArray.array[i]);
 
-		//Write the binary
-		write_file(target, source);
+				write_file(target, source);
 
 		fclose(source);
 

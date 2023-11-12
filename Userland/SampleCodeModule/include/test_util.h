@@ -4,7 +4,6 @@
 #include <UserSyscalls.h>
 #include <utils.h>
 
-// HARD CAP AT 0x1000000 ALLOC
 #define TEST_MAXMEM 0x100000
 
 void tests();
