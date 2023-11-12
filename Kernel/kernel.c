@@ -151,6 +151,7 @@ int main()
 	init_mm((void *)0x0000000000600000, 0x0000000002700000);
 	init_scheduler(2);
 	initialize_sems();
+	init_keyboard_sem();
 	init_pipes();
 	
 	/*

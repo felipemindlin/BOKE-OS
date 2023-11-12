@@ -14,6 +14,7 @@
 #define MIN_HEAP_SIZE 0x1000
 #define MIN_STACK_SIZE 0x1000
 #define MAX_PROCESS_ARGUMENTS 20
+#define MAX_PROCESSES 1024
 
 #define SHELL 0 // FD of shell process
 static char* status_arr[5] ={

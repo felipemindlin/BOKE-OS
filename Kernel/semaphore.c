@@ -6,9 +6,6 @@
 extern void enter_region(uint64_t *lock, uint64_t sem_idx);
 extern void leave_region(uint64_t *lock, uint64_t sem_idx);
 
-extern void os_revive_process(int pid);
-extern int os_block_current_process();
-
 typedef struct {
     mySem_t sem;
     uint64_t status;
@@ -19,11 +16,27 @@ static space_t sem_spaces[MAX_SEMS];
 void initialize_sems() {
     for (int i = 0; i < MAX_SEMS; i++) {
         sem_spaces[i].status = AVAILABLE;
-        for (int j = 0; j < MAX_PROCESSES_PER_SEM; j++) {
+        for (int j = 0; j < MAX_PROCESSES; j++) {
             sem_spaces[i].sem.allowed_processes[j] = -1;
         }
         sem_spaces[i].sem.allowed_process_count = 0;
     }
+}
+
+void init_keyboard_sem(){
+    sem_spaces[0].status = UNAVAILABLE;
+    mySem_t *sem = &(sem_spaces[0].sem);
+    sem->counter = 1;
+    sem->is_locked = 0;
+    sem->queue_size = 0;
+    sem->head = NULL;
+    sem->tail = NULL;
+    sem->allowed_process_count = MAX_PROCESSES;
+    for(int i = 1; i <= MAX_PROCESSES; i++){
+        sem->allowed_processes[i] = i;
+    }
+    sem->being_cleared = 0;
+    str_cpy(sem->identifier, "keyboard");
 }
 
 uint64_t my_sem_open(uint64_t start_value, char *id) {
@@ -41,7 +54,7 @@ uint64_t my_sem_open(uint64_t start_value, char *id) {
             sem->counter = start_value;
             sem->is_locked = (start_value > 0) ? 1 : 0;
             str_cpy(sem->identifier, id);
-            sem->users_count = 1;  // Creator is the first user
+            sem->allowed_process_count = 1;  // Creator is the first user
             sem->queue_size = 0;
             sem->head = NULL;
             sem->tail = NULL;
@@ -65,11 +78,11 @@ void my_sem_close(char *id) {
     for (int i = 0; i < sem->allowed_process_count; i++) {
         if (sem->allowed_processes[i] == current_pid) {
             sem->allowed_processes[i] = -1;
-            sem->users_count--;
+            sem->allowed_process_count--;
         }
     }
 
-    if (sem->users_count == 0) {
+    if (sem->allowed_process_count == 0) {
         clear_sem(id);
     }
 }
@@ -246,11 +259,10 @@ int clear_sem(char * sem_id){
         sem_spaces[sem_idx].sem.allowed_processes[i] = 0;
     }
     sem_spaces[sem_idx].sem.allowed_process_count = 0;
-    sem_spaces[sem_idx].sem.users_count = 0;
     sem_spaces[sem_idx].sem.counter = 0;
     sem_spaces[sem_idx].sem.is_locked = 0;
 
-    for(int i = 0; i < MAX_PROCESSES_PER_SEM; i++){
+    for(int i = 0; i < MAX_PROCESSES; i++){
         sem_spaces[sem_idx].sem.identifier[i] = 0;
     }
 

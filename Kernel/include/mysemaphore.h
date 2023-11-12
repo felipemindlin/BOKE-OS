@@ -5,7 +5,6 @@
 
 #define MAX_IDENTIFIER 15
 #define MAX_SEMS 128
-#define MAX_PROCESSES_PER_SEM 250
 
 #define AVAILABLE 1
 #define UNAVAILABLE 0
@@ -18,9 +17,8 @@ typedef struct {
     node_t *tail;  // last process waiting in queue
     uint64_t is_locked;
     int counter;
-    uint64_t users_count;    // number of processes using the semaphore
     uint64_t queue_size;     // number of blocked processes
-    int allowed_processes[MAX_PROCESSES_PER_SEM];  // List of PIDs of processes allowed to use the semaphore
+    int allowed_processes[MAX_PROCESSES];  // List of PIDs of processes allowed to use the semaphore
     int allowed_process_count;  // The number of processes currently allowed to use the semaphore
     int being_cleared;
 } mySem_t;
@@ -37,5 +35,7 @@ int get_sem(char *id, int start_value);
 int put_sem(char *id);
 void whiff(uint64_t sem_idx);
 int clear_sem(char *sem_id);
-
+void os_revive_process(int pid);
+int os_block_current_process();
+void init_keyboard_sem();
 #endif
