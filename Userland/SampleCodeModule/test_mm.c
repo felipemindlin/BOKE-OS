@@ -26,7 +26,7 @@ uint64_t test_mm(){
     uint8_t rq = 0;
     uint32_t total = 0;
 
-        while (rq < MAX_BLOCKS && total < max_memory){
+    while (rq < MAX_BLOCKS && total < max_memory){
       mm_rqs[rq].size = get_uniform(max_memory - total - 1) + 1;
             mm_rqs[rq].address = user_malloc(mm_rqs[rq].size);
       
@@ -36,21 +36,24 @@ uint64_t test_mm(){
       }
     }
 
-        uint32_t i;
-    for (i = 0; i < rq; i++)
+    uint32_t i;
+    for (i = 0; i < rq; i++){
       if (mm_rqs[i].address)
         memset(mm_rqs[i].address, i, mm_rqs[i].size);
-
-        for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address)
+    }
+    for (i = 0; i < rq; i++){
+      if (mm_rqs[i].address){
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)){
           print("test_mm ERROR\n");
           return -1;
         }
-
-        for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address){
-                user_free(mm_rqs[i].address);
       }
+    }
+
+    for (i = 0; i < rq; i++){
+      if (mm_rqs[i].address){
+        user_free(mm_rqs[i].address);
+      }
+    }
   }
 }
