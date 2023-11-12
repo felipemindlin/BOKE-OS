@@ -21,7 +21,7 @@ int get_process_started(){
     return process_started;
 }
 
-char key_sem_id[]="key";
+char key_sem_id[]="keyboard";
 
 void sys_write(char *buf, int len, int filedescriptor){
 
@@ -46,21 +46,23 @@ void sys_write(char *buf, int len, int filedescriptor){
 void sys_read( char *buf, int len, int filedescriptor){
 
     pcb_t * currentPCB = get_current_pcb();
-    
+    int current_pid = current_process_id();
+    if(get_process_foreground_pid() != current_pid){
+        add_to_queue(0, current_pid);
+        os_block_current_process();
+        finish_current_tick();
+        return;
+    }
+
     if (currentPCB->process->fr == SHELL)
     {
-        
         switch (filedescriptor){
         case STDIN:
-            my_sem_open(1,key_sem_id);
-            my_sem_wait(key_sem_id);
-            if(current_process_id()!=SHELL_PID){
-                my_sem_close(key_sem_id);
-            }
             int pos = getBufferPosition();
             char aux = 0;
             for (int i = 0; i < len; ){
-                _hlt();
+                //_hlt(); I would not use hlt bc we already have sem_wait
+                if(get_process_started()){my_sem_wait(key_sem_id);}
                 aux = getCharAt(pos);
                 if (aux > 0 && aux <= 255){
                     if (aux == 0x39)
@@ -78,7 +80,7 @@ void sys_read( char *buf, int len, int filedescriptor){
         }
     }
     else{
-        pipe_read(currentPCB->process->fr,buf,len);
+        int r = pipe_read(currentPCB->process->fr,buf,len);
     }
     
 }
