@@ -83,7 +83,7 @@ void free_queue(queue_t * queue){
         return;
     }
     node_ptr current_node = queue->current_node;
-    if (current_node != NULL) {
+    if (current_node != NULL){
         node_ptr next_node = current_node->next;
         while(current_node != next_node){
             node_ptr aux = next_node->next;

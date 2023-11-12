@@ -4,8 +4,7 @@
 #include "include/interrupts.h"
 
 
-void * memset(void * destination, int32_t c, uint64_t length)
-{
+void * memset(void * destination, int32_t c, uint64_t length){
 	uint8_t chr = (uint8_t)c;
 	char * dst = (char*)destination;
 
@@ -15,8 +14,7 @@ void * memset(void * destination, int32_t c, uint64_t length)
 	return destination;
 }
 
-void * memcpy(void * destination, const void * source, uint64_t length)
-{
+void * memcpy(void * destination, const void * source, uint64_t length){
 	/*
 	* memcpy does not support overlapping buffers, so always do it
 	* forwards. (Don't change this without adjusting memmove.)
@@ -53,24 +51,21 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	return destination;
 }
 
-int str_len(const char * str)
-{
+int str_len(const char * str){
 	int len = 0;
 	while (str[len])
 		len++;
 	return len;
 }
 
-int strcmp(const char * str1, const char * str2)
-{
+int strcmp(const char * str1, const char * str2){
 	int i = 0;
 	while (str1[i] && str2[i] && str1[i] == str2[i])
 		i++;
 	return str1[i] - str2[i];
 }
 
-int str_cpy(char * dst, const char * src)
-{
+int str_cpy(char * dst, const char * src){
 	int i = 0;
 	while (src[i])
 	{
@@ -81,17 +76,17 @@ int str_cpy(char * dst, const char * src)
 	return i;
 }
 
-void sleep(uint32_t seconds) {
+void sleep(uint32_t seconds){
 	uint32_t startTime = seconds_elapsed();
 	while (seconds > seconds_elapsed() - startTime) _hlt();
 };
 
-void sleepms(int mseconds) {
+void sleepms(int mseconds){
 	int startTime = ticks_elapsed();
 	while (mseconds > ticks_elapsed()*18 - startTime*18)_hlt();
 };
 
-void nanoms(int nseconds) {
+void nanoms(int nseconds){
 	int startTime = ticks_elapsed();
 	while (nseconds > ticks_elapsed()*18000 - startTime*18000)_hlt();
 };

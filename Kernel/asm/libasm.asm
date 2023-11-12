@@ -131,8 +131,8 @@ inb:				; Funciones para el correcto funcionamiento del soundDriver
 	push rbp
 	mov rbp, rsp
 
-    mov rdx,rdi
-    in al,dx		; pasaje en 8 bits
+    mov rdx, rdi
+    in al, dx		; pasaje en 8 bits
 
 	mov rsp, rbp
 	pop rbp

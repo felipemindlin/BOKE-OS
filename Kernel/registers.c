@@ -1,7 +1,7 @@
 #include <registers.h>
 #include "../drivers/include/videoDriver.h"
 int flag_snapshot_taken = 0;
-void printRegisters(register_struct_t * registers) {
+void printRegisters(register_struct_t * registers){
 	if (flag_snapshot_taken == 0){
 		draw_word_color(RED, "Error - No hay snapshot de registros\nPresione(';') para crear uno\n");
 		return;

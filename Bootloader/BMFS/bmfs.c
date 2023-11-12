@@ -53,8 +53,7 @@ void write(char *filename);
 void delete(char *filename);
 
 /* Program code */
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
 	/* Parse arguments */
 	if (argc < 3)
 	{
@@ -200,8 +199,7 @@ int main(int argc, char *argv[])
 }
 
 
-int findfile(char *filename, struct BMFSEntry *fileentry, int *entrynumber)
-{
+int findfile(char *filename, struct BMFSEntry *fileentry, int *entrynumber){
 	int tint;
 
 	for (tint = 0; tint < 64; tint++)
@@ -229,8 +227,7 @@ int findfile(char *filename, struct BMFSEntry *fileentry, int *entrynumber)
 }
 
 
-void list()
-{
+void list(){
 	int tint;
 
 	printf("%s\nDisk Size: %d MiB\n", diskname, disksize);
@@ -255,8 +252,7 @@ void list()
 }
 
 
-void format()
-{
+void format(){
 	memset(DiskInfo, 0, 512);
 	memset(Directory, 0, 4096);
 	memcpy(DiskInfo, fs_tag, 4);				// Add the 'BMFS' tag
@@ -268,8 +264,7 @@ void format()
 }
 
 
-int initialize(char *diskname, char *size, char *mbr, char *boot, char *kernel)
-{
+int initialize(char *diskname, char *size, char *mbr, char *boot, char *kernel){
 	unsigned long long diskSize = 0;
 	unsigned long long writeSize = 0;
 	const char *bootFileType = NULL;
@@ -592,8 +587,7 @@ int initialize(char *diskname, char *size, char *mbr, char *boot, char *kernel)
 
 
 // helper function for qsort, sorts by StartingBlock field
-static int StartingBlockCmp(const void *pa, const void *pb)
-{
+static int StartingBlockCmp(const void *pa, const void *pb){
 	struct BMFSEntry *ea = (struct BMFSEntry *)pa;
 	struct BMFSEntry *eb = (struct BMFSEntry *)pb;
 	// empty records go to the end
@@ -605,8 +599,7 @@ static int StartingBlockCmp(const void *pa, const void *pb)
 	return (ea->StartingBlock - eb->StartingBlock);
 }
 
-void create(char *filename, unsigned long long maxsize)
-{
+void create(char *filename, unsigned long long maxsize){
 	struct BMFSEntry tempentry;
 	int slot;
 	
@@ -717,8 +710,7 @@ void create(char *filename, unsigned long long maxsize)
 }
 
 
-void read(char *filename)
-{
+void read(char *filename){
 	struct BMFSEntry tempentry;
 	FILE *tfile;
 	int tint, slot;
@@ -749,8 +741,7 @@ void read(char *filename)
 }
 
 
-void write(char *filename)
-{
+void write(char *filename){
 	struct BMFSEntry tempentry;
 	FILE *tfile;
 	int tint, slot;
@@ -797,8 +788,7 @@ void write(char *filename)
 }
 
 
-void delete(char *filename)
-{
+void delete(char *filename){
 	struct BMFSEntry tempentry;
 	char delmarker = 0x01;
 	int slot;

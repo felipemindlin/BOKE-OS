@@ -18,23 +18,22 @@ void ncBackspace(){
 }
 
 //imprime un string
-void ncPrint(const char * string)
-{
+void nc_print(const char * string){
 	int i;
 
 	for (i = 0; string[i] != 0; i++)
-		ncPrintChar(string[i]);
+		nc_print_char(string[i]);
 }
 //imprime un string con un color de letra y de fondo
-void ncPrintColor(const char * string, char color, char back){
+void nc_printColor(const char * string, char color, char back){
 	int i;
 	for (i = 0; string[i] != 0; i++)
-		ncPrintCharColor(string[i], color, back);
+		nc_print_char_color(string[i], color, back);
 
 }
 
 //imprime un caracter con un color de letra y de fondo
-void ncPrintCharColor(char character, char color, char back){
+void nc_print_char_color(char character, char color, char back){
 	
 	*currentVideo = character;
 	char font = color | back;   
@@ -45,44 +44,37 @@ void ncPrintCharColor(char character, char color, char back){
 
 }
 
-void ncPrintChar(char character)
-{
+void nc_print_char(char character){
 	
-	ncPrintCharColor(character, deafultcolor, defaultback);
+	nc_print_char_color(character, deafultcolor, defaultback);
 }
 
-void ncNewline()
-{
+void ncNewline(){
 	do
 	{
-		ncPrintChar(' ');
+		nc_print_char(' ');
 	}
 	while((uint64_t)(currentVideo - video) % (width * 2) != 0);
 }
 
-void ncPrintDec(uint64_t value)
-{
-	ncPrintBase(value, 10);
+void nc_printDec(uint64_t value){
+	nc_print_base(value, 10);
 }
 
-void ncPrintHex(uint64_t value)
-{
-	ncPrintBase(value, 16);
+void nc_print_hex(uint64_t value){
+	nc_print_base(value, 16);
 }
 
-void ncPrintBin(uint64_t value)
-{
-	ncPrintBase(value, 2);
+void nc_printBin(uint64_t value){
+	nc_print_base(value, 2);
 }
 
-void ncPrintBase(uint64_t value, uint32_t base)
-{
+void nc_print_base(uint64_t value, uint32_t base){
     uintToBase(value, buffer, base);
-    ncPrint(buffer);
+    nc_print(buffer);
 }
 
-void ncClear()
-{
+void ncClear(){
 	int i;
 
 	for (i = 0; i < height * width; i++)
@@ -91,8 +83,7 @@ void ncClear()
 }
 
 //convierte un entero a una base dada y lo guarda en un buffer
- uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base)
-{
+ uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
 	char *p = buffer;
 	char *p1, *p2;
 	uint32_t digits = 0;
@@ -132,21 +123,21 @@ int get_monthDay();
 int get_month();
 int get_year();
 
-void convertToGMTMinus3(int *hours, int *days, int *month, int *year) {
-    int daysInMonth[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+void convertToGMTMinus3(int *hours, int *days, int *month, int *year){
+    int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     int monthDays = daysInMonth[(*month - 1) % 12];
 	
-    if ( *year % 4 == 0 && (*year % 100 != 0 || *year % 400 == 0)) {
+    if ( *year % 4 == 0 && (*year % 100 != 0 || *year % 400 == 0)){
         daysInMonth[1] = 29;
     }
     *hours -= 3;
-    if (*hours < 0) {
+    if (*hours < 0){
         *hours += 24;
         *days -= 1;
-        if (*days < 1) {
+        if (*days < 1){
             *month -= 1;
 			monthDays=daysInMonth[(*month - 1) % 12];
-            if (*month < 1) {
+            if (*month < 1){
                 *month = 12;
                 *year -= 1;
             }

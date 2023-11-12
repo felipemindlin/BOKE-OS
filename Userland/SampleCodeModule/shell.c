@@ -13,8 +13,7 @@ void lineRead(char * line){
     clear_buffer(buffer);
 }
 
-void putLineStart()
-{   
+void putLineStart(){   
     char s[] = "O] ";
     print(s);
     clear_buffer(buffer);
@@ -35,7 +34,7 @@ void bufferize (){
     int i = 0;
     int end_of_buffer = 0;
     int put_falg = 0;
-    while (i < BUFFER_SIZE) {
+    while (i < BUFFER_SIZE){
         char c = get_c();
         end_of_buffer = (i == BUFFER_SIZE-1);
         if (c == '\b'){

@@ -18,7 +18,7 @@
 #include <libasm.h>
 #include "include/pipe.h"
 
-//static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10);
+
 static uint64_t int_20();
 static uint64_t int_21();
 static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
@@ -30,26 +30,26 @@ InterruptHandler interruption[256] = {
     [96] = (InterruptHandler)int_80,
 };
 
-//maneja las interrupciones y recibe el numero de la interrupcion y los registros en el momento de la interrupcion
-uint64_t irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10) {
-    if (irq >= 0 && irq < 256 && interruption[irq] != NULL) {
+
+uint64_t irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10){
+    if (irq >= 0 && irq < 256 && interruption[irq] != NULL){
         InterruptHandler handler = interruption[irq];
         return handler(rdi, rsi, rdx, rcx, r8, r9, r10);
     }
 	return -1;
 }
-uint64_t int_20() {
+uint64_t int_20(){
 	timer_handler();
 	return 0;
 }
 
-uint64_t int_21() {
+uint64_t int_21(){
 	keyboard_handler();
 	return 0;
 }
-int fd[2] = {0,0};
-//maneja las syscalls y recibe el numero de la syscall y los registros en el momento de la syscall
-uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10) {
+int fd[2] = {0, 0};
+
+uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10){
 
     switch (rdi)
 	{
@@ -109,10 +109,10 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		beep(rsi, rdx);
 		break;
 	case 19:
-		add_process_to_creation_queue(1, 1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL,fd);
+		add_process_to_creation_queue(1, 1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL, fd);
 		break;
 	case 20:
-		add_process_to_creation_queue(1, 1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL,fd);
+		add_process_to_creation_queue(1, 1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL, fd);
 		break;
 	case 21:
 		// return kill_process(rsi);
@@ -181,21 +181,3 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 	}
 	return 0;
 }
-/*
-static void example_func(int rdi, int rsi, int rdx, int rcx, int r8, int r9, int r10){
-	draw_word("\nr10: ");
-	drawNumber(r10);
-	draw_word("\nr9: ");
-	drawNumber(r9);
-	draw_word("\nr8: ");
-	drawNumber(r8);
-	draw_word("\nrcx: ");
-	drawNumber(rcx);
-	draw_word("\nrdx: ");
-	drawNumber(rdx);
-	draw_word("\nrsi: ");
-	drawNumber(rsi);
-	draw_word("\nrdi: ");
-	drawNumber(rdi);
-}
-*/

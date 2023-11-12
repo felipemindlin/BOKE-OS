@@ -30,31 +30,31 @@ void kill_processes_in_removal_queue();
 void create_processes_in_creation_queue();
 //int remove_process_from_removal_queue();
 
-pcb_t * find_next_process( pcb_t * pcb ) {
+pcb_t * find_next_process( pcb_t * pcb ){
     pcb_t * keep_running = NULL;
-    for (int i = HIGH_PRIORITY; i >=LOW_PRIORITY; i--) {
+    for (int i = HIGH_PRIORITY; i >=LOW_PRIORITY; i--){
         node_t * node = scheduler[i]->queue->current_node;
-        while (node) {
+        while (node){
             pcb_t *pcb = (pcb_t *)node->data;
-            if (pcb->process->status == ZOMBIE) {
+            if (pcb->process->status == ZOMBIE){
                 node = node->next;
                 continue;
             }
-            if (pcb->process->status == RUNNING) { // there is only one process that should be with status RUNNING: the current process
+            if (pcb->process->status == RUNNING){ // there is only one process that should be with status RUNNING: the current process
                 keep_running = pcb;
             }
-            if (pcb->process->status == READY) {
+            if (pcb->process->status == READY){
                 pcb->process->status = RUNNING;
                 scheduler[i]->queue->current_node = node->next;
                 return pcb;
             }
             node = node->next;
-            if (node == scheduler[i]->queue->current_node) {
+            if (node == scheduler[i]->queue->current_node){
                 break; 
             }
         }
     }
-    if (keep_running) {
+    if (keep_running){
         return keep_running;
     }
     return get_idle_pcb();
@@ -65,23 +65,23 @@ pcb_t * get_idle_pcb(){
     return (pcb_t *) scheduler[0]->queue->current_node->data;
 }
 
-pcb_t * get_pcb_entry(int pid) {
+pcb_t * get_pcb_entry(int pid){
     /*if(pid == 0){
         return OS_pcb;
     }*/
-    for (int i = 0; i < QUEUE_QTY; i++) {
+    for (int i = 0; i < QUEUE_QTY; i++){
         node_t * current_node = scheduler[i]->queue->current_node;
 
-        while (current_node) {
+        while (current_node){
             pcb_t *pcb = (pcb_t *)current_node->data;
 
-            if (pcb->process->pid == pid) {
+            if (pcb->process->pid == pid){
                 return pcb;
             }
 
             current_node = current_node->next;
 
-            if (current_node == scheduler[i]->queue->current_node) {
+            if (current_node == scheduler[i]->queue->current_node){
                 break; 
             }
         }
@@ -90,22 +90,19 @@ pcb_t * get_pcb_entry(int pid) {
     return NULL;
 }
 
-void init_scheduler(int quantum){ // for now, every queue has the same quantum. Is that correct?
-    //init_OS_pcb();
+void init_scheduler(int quantum){
     for(int i=0 ; i<QUEUE_QTY ; i++){
-        scheduler[i]=create_queue_array(quantum);
+        scheduler[i]=create_queue_array(1);
         if(scheduler[i] == NULL){
             return;
         }
     }
     waiting_for_remove = create_queue();
     if(waiting_for_remove == NULL){
-        // maybe we should do smth here
         return;
     }
     creation_queue = create_queue();
     if(creation_queue == NULL){
-        // maybe we should do smth here
         return;
     }
 }
@@ -175,7 +172,7 @@ scheduler_queue * create_queue_array(int quantum){
     return queue;
 }
 
-int ticks_remaining() {
+int ticks_remaining(){
     if(current_pcb->ticks >= scheduler[current_pcb->priority]->quantum){
         return 0;
     } else {
@@ -203,7 +200,7 @@ pcb_t * get_current_pcb(){
 
 
 
-void print_process() {
+void print_process(){
     // Constants defining the width of each column
     const int NAME_WIDTH = 16;
     const int STATUS_WIDTH = 12;
@@ -220,10 +217,10 @@ void print_process() {
     draw_word_padded(WHITE, "Parent PID", PID_WIDTH);
     draw_word("\n");
 
-    for (int i = HIGH_PRIORITY; i >= 0; i--) {
+    for (int i = HIGH_PRIORITY; i >= 0; i--){
         node_t *node = scheduler[i]->queue->current_node;
 
-        while (node) {
+        while (node){
             pcb_t *pcb = (pcb_t *)node->data;
 
             draw_word_padded(WHITE, pcb->process->name, NAME_WIDTH);
@@ -237,7 +234,7 @@ void print_process() {
             // Move to the next node
             node = node->next;
 
-            if (node == scheduler[i]->queue->current_node) {
+            if (node == scheduler[i]->queue->current_node){
                 break;
             }
         }
@@ -258,7 +255,7 @@ void print_process() {
 
 
 
-uintptr_t * switch_context(uintptr_t * current_rsp) {
+uintptr_t * switch_context(uintptr_t * current_rsp){
     current_pcb->process->stack->current = current_rsp; // save current rsp for next time
     //draw_word("\n");
     //draw_word_color(RED, current_pcb->process->name);
@@ -281,19 +278,19 @@ uintptr_t * switch_context(uintptr_t * current_rsp) {
 }
 
 
-int remove_from_queue_by_pid(queue_t * queue, int pid) {
+int remove_from_queue_by_pid(queue_t * queue, int pid){
     node_t * current_node = queue->current_node;
-    while (current_node) {
+    while (current_node){
         pcb_t *pcb = (pcb_t *)current_node->data;
 
-        if (pcb->process->pid == pid) {
+        if (pcb->process->pid == pid){
             remove_node(queue, current_node);
             return pcb->priority;
         }
 
         current_node = current_node->next;
 
-        if (current_node == queue->current_node) {
+        if (current_node == queue->current_node){
             break; 
         }
     }
@@ -323,10 +320,10 @@ void change_process_priority(int pid, priority_t priority){
     }
 }
 
-void stop_current_process() {
-    if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum) {
+void stop_current_process(){
+    if (current_pcb->ticks >= scheduler[current_pcb->priority]->quantum){
         // Code for moving the process to a lower priority or another appropriate action
-          if (current_pcb->priority > LOW_PRIORITY && current_pcb->priority <= HIGH_PRIORITY) {
+          if (current_pcb->priority > LOW_PRIORITY && current_pcb->priority <= HIGH_PRIORITY){
            change_process_priority(current_pcb->process->pid, current_pcb->priority - 1);
         } 
     } else {
@@ -352,15 +349,15 @@ int get_quantum(){
     return scheduler[current_pcb->priority]->quantum;
 }
 
-void reassign_children_to_shell(int old_parent_pid) {
-    for (int i = 0; i < QUEUE_QTY; i++) {
+void reassign_children_to_shell(int old_parent_pid){
+    for (int i = 0; i < QUEUE_QTY; i++){
         node_t *current_node = scheduler[i]->queue->current_node;
-        if (current_node == NULL) {
+        if (current_node == NULL){
             continue;
         }
         do {
             pcb_t *current_pcb = (pcb_t *)current_node->data;
-            if (current_pcb->process->parent_pid == old_parent_pid) {
+            if (current_pcb->process->parent_pid == old_parent_pid){
                 current_pcb->process->parent_pid = SHELL_PID;
             }
             current_node = current_node->next;
@@ -386,21 +383,21 @@ int current_process_id(){
     return current_pcb->process->pid;
 }
 
-void os_revive_process(int pid) {
+void os_revive_process(int pid){
     pcb_t *pcb = get_pcb_entry(pid); // Fetch the PCB for the given PID
-    if (pcb != NULL && (pcb->process->status == BLOCKED || pcb->process->status == RUNNING)) {
+    if (pcb != NULL && (pcb->process->status == BLOCKED || pcb->process->status == RUNNING)){
         pcb->process->status = READY; // Change status to READY
         // Add the process back to its respective priority queue
 /*        node_t * pcb_node = create_node(pcb);
-        if (pcb_node != NULL) {
+        if (pcb_node != NULL){
             add_pcb_to_scheduler(pcb_node, pcb->priority);
         }*/
     }
 }
 
 
-int os_block_current_process() {
-    if (current_pcb == NULL) {
+int os_block_current_process(){
+    if (current_pcb == NULL){
         return -1; // Error if there is no current process
     }
 
@@ -412,21 +409,21 @@ int os_block_current_process() {
     return current_pcb->process->pid; // Return the PID of the blocked process
 }
 
-int block_process(int pid) {
+int block_process(int pid){
     pcb_t *pcb = get_pcb_entry(pid); // Fetch the PCB for the given PID
-    if (pcb == NULL) {
+    if (pcb == NULL){
         return -1; // Process not found
     }
     
     // Toggle the status of the process based on its current state
-    if (pcb->process->status == READY || pcb->process->status == RUNNING) {
+    if (pcb->process->status == READY || pcb->process->status == RUNNING){
         pcb->process->status = BLOCKED; // Change status to BLOCKED
         // If the process to block is the current running process, then force a context switch
-        if (pcb == current_pcb) {
+        if (pcb == current_pcb){
             finish_current_tick();
         }
         return 1; // Indicate the process was successfully blocked
-    } else if (pcb->process->status == BLOCKED) {
+    } else if (pcb->process->status == BLOCKED){
         pcb->process->status = READY; // Change status to READY
         // No need to add it back to the queue, as we are not removing it when blocking
         return 2; // Indicate the process was successfully unblocked
@@ -437,16 +434,16 @@ int block_process(int pid) {
 
 
 
-int add_process_to_creation_queue(int parent_pid, uint8_t foreground, char * name, size_t stack_size, size_t heap_size, void * entry_point, void * args,int fd[2]){
-    process_t * new_process = create_process(parent_pid, foreground, name, heap_size, stack_size, entry_point, args,fd[0],fd[1]);
-    if (new_process == NULL) {
+int add_process_to_creation_queue(int parent_pid, uint8_t foreground, char * name, size_t stack_size, size_t heap_size, void * entry_point, void * args, int fd[2]){
+    process_t * new_process = create_process(parent_pid, foreground, name, heap_size, stack_size, entry_point, args, fd[0], fd[1]);
+    if (new_process == NULL){
         return -1; // Error if the process could not be created
     }
     node_t * new_node = create_node(new_process);
-    if (new_node == NULL) {
+    if (new_node == NULL){
         return -1; // Error if the node could not be created
     }
-    if (insert_node(creation_queue, new_node) < 0) {
+    if (insert_node(creation_queue, new_node) < 0){
         return -1; // Error if the node could not be inserted
     }
     //draw_word("\n");

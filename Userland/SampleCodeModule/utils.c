@@ -171,18 +171,18 @@ void put_string(char * str){
     }
 }
 
-void put_int(int num) {
-    if (num < 0) {
+void put_int(int num){
+    if (num < 0){
         put_c('-');
         num = -num;
     }
 
     int divisor = 1;
-    while (num / divisor >= 10) {
+    while (num / divisor >= 10){
         divisor *= 10;
     }
 
-    while (divisor > 0) {
+    while (divisor > 0){
         int digit = num / divisor;
         put_c('0' + digit);
         num %= divisor;
@@ -218,9 +218,9 @@ int strcmp(char * str1, char * str2){
 			return -1;
 		}
 	}
-	if (str1[i] == '\0' && str2[i] == '\0') {
+	if (str1[i] == '\0' && str2[i] == '\0'){
         return 0;
-    } else if (str1[i] == '\0') {
+    } else if (str1[i] == '\0'){
         return -1; 
     } else return 1;
 
@@ -230,7 +230,7 @@ int strcmp(char * str1, char * str2){
 int strcmpspace(char * str1, char * str2, uint8_t * is_fg){
     char partition[BUFFER_SIZE];
     int j=0;
-    while (str2[j] != '\0' && str2[j] != ' ') {
+    while (str2[j] != '\0' && str2[j] != ' '){
         partition[j] = str2[j];
         j++;
     }
@@ -238,19 +238,19 @@ int strcmpspace(char * str1, char * str2, uint8_t * is_fg){
 
     // Compare str1 and the partition string
     int i = 0;
-    while (str1[i] != '\0' && !null_or_space(partition[i])) {
-        if (str1[i] > partition[i]) {
+    while (str1[i] != '\0' && !null_or_space(partition[i])){
+        if (str1[i] > partition[i]){
             return 1;
-        } else if (str1[i] < partition[i]) {
+        } else if (str1[i] < partition[i]){
             return -1;
         }
         i++;
     }
 
     // Check for equality
-    if (str1[i] == '\0' && null_or_space(partition[i])) {
+    if (str1[i] == '\0' && null_or_space(partition[i])){
         return 0;
-    } else if (null_or_space(partition[i])) {
+    } else if (null_or_space(partition[i])){
         return -1;
     } else {
         return 1;
@@ -271,15 +271,15 @@ int strncmp(char * str1, char * str2, int n){
             return -1;
         }
     }
-    if (i == n) {
+    if (i == n){
         return 0;
-    } else if (str1[i] == '\0') {
+    } else if (str1[i] == '\0'){
         return -1; 
     } else return 1;
 
 }
 /*
-int strcmpspace(char *str1, char *str2, uint8_t *is_fg) {
+int strcmpspace(char *str1, char *str2, uint8_t *is_fg){
     // Skip leading whitespaces
     while (isspace(*str1)) str1++;
     while (isspace(*str2)) str2++;
@@ -297,7 +297,7 @@ int strcmpspace(char *str1, char *str2, uint8_t *is_fg) {
     int cmp = strncmp(end1, end2, max_len);
 
     // If the first word doesn't match, return the result
-    if (cmp != 0) {
+    if (cmp != 0){
         return cmp;
     }
 
@@ -357,7 +357,7 @@ int atoi(char * str){
 }
 
 
-int64_t satoi(char *str) {
+int64_t satoi(char *str){
   uint64_t i = 0;
   int64_t res = 0;
   int8_t sign = 1;
@@ -365,12 +365,12 @@ int64_t satoi(char *str) {
   if (!str)
     return 0;
 
-  if (str[i] == '-') {
+  if (str[i] == '-'){
     i++;
     sign = -1;
   }
 
-  for (; str[i] != '\0'; ++i) {
+  for (; str[i] != '\0'; ++i){
     if (str[i] < '0' || str[i] > '9')
       return 0;
     res = res * 10 + str[i] - '0';
@@ -381,10 +381,10 @@ int64_t satoi(char *str) {
 
 
 
-void reverse(char str[], int length) {
+void reverse(char str[], int length){
     int start = 0;
     int end = length - 1;
-    while (start < end) {
+    while (start < end){
         char temp = str[start];
         str[start] = str[end];
         str[end] = temp;
@@ -393,32 +393,32 @@ void reverse(char str[], int length) {
     }
 }
 
-char* itoa(int num, char* str, int base) {
+char* itoa(int num, char* str, int base){
     int i = 0;
     bool isNegative = false;
 
     // Handle 0 explicitly, otherwise empty string is printed
-    if (num == 0) {
+    if (num == 0){
         str[i++] = '0';
         str[i] = '\0';
         return str;
     }
 
     // Handle negative numbers if base is 10
-    if (num < 0 && base == 10) {
+    if (num < 0 && base == 10){
         isNegative = true;
         num = -num;
     }
 
     // Process individual digits
-    while (num != 0) {
+    while (num != 0){
         int rem = num % base;
         str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
         num = num / base;
     }
 
     // Add negative sign for negative numbers
-    if (isNegative) {
+    if (isNegative){
         str[i++] = '-';
     }
 

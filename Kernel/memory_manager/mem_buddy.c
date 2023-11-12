@@ -8,7 +8,7 @@
 Node * root;
 uint64_t memAllocated = 0;
 
-void* malloc_rec(Node* node,uint64_t bytes);
+void* malloc_rec(Node* node, uint64_t bytes);
 void createChilds(Node * node);
 void * free_rec(Node * node, void * ptr);
 
@@ -57,18 +57,18 @@ if (!IS_POWER_OF_TWO(bytes)){
     }
     bytes = i;
 }
-    void * rta = malloc_rec(root,bytes);  
+    void * rta = malloc_rec(root, bytes);  
     return rta;
 }
 
-void * malloc_rec(Node* node,uint64_t bytes){    
+void * malloc_rec(Node* node, uint64_t bytes){    
     if (node->state == ALLOCATED){
         return NULL;
     }
    if(node->left != NULL || node->right != NULL){
-    void * newNode = malloc_rec(node->left,bytes);
+    void * newNode = malloc_rec(node->left, bytes);
     if (newNode == NULL){
-        newNode = malloc_rec(node->right,bytes);
+        newNode = malloc_rec(node->right, bytes);
     }
     checkState(node);
     return newNode;
@@ -81,7 +81,7 @@ void * malloc_rec(Node* node,uint64_t bytes){
     
     if((node->size)/2 >= bytes){
         createChilds(node);
-        void * newNode = malloc_rec(node->left,bytes);
+        void * newNode = malloc_rec(node->left, bytes);
         checkState(node);
         return newNode;
     }
@@ -126,7 +126,7 @@ void printMem(){
 // Creo que debería se void, porque no tendría sentido devolver un puntero a un espacio de memoria que ya no existe.
 // Para lo único que se me ocurre es para que sepas si se liberó o no, pero eso lo podés saber por el estado del nodo.
 void free(void * mem){
-    free_rec(root,mem);
+    free_rec(root, mem);
 }
 
 void * free_rec(Node * node, void * ptr){
@@ -136,10 +136,10 @@ void * free_rec(Node * node, void * ptr){
 
     if (node->left != NULL || node->right != NULL){
         if ((uint64_t)node->right->start > (uint64_t) ptr){
-            free_rec(node->left,ptr);
+            free_rec(node->left, ptr);
         }
         else{
-            free_rec(node->right,ptr);
+            free_rec(node->right, ptr);
         }
         checkState(node);
         if (node->state == FREE)

@@ -8,10 +8,10 @@
 #include "shell.h"
 #include <test_util.h> 
 uint64_t color = BLACK;
-int fd[2] = {0,0};
+int fd[2] = {0, 0};
 size_t heap_and_stack[2] = {0x0000000000001000, 0x0000000000001000};
 static char command_list[COMMAND_LEN][10] = {"HELP", "TIME", "REGSTATE","PONG", "SETCOLOR","DIV0", "INVALOP", "BOKE","PS", "MEM", "KILL", "NICE", "BLOCK", "CAT", "WC", "PHYLO","FILTER", "LOOP","TESTS", "CLEAR"};
-static int command_args[COMMAND_LEN] = {0,0,0,0,1,0,0,0,0,0,1,2,1,0,0,0,0,0,0,0};
+static int command_args[COMMAND_LEN] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0};
 #define START_SIZE 80
 #define COMMAND_SIZE 10
 char *test_args[] = {"3", "1"}; // Test with 10 iterations and semaphores enabled
@@ -50,7 +50,7 @@ void __seek_command__(char * command){
         args[k] = user_malloc(COMMAND_SIZE);
     }
 
-    int default_fd[2] = {0,0};
+    int default_fd[2] = {0, 0};
 
     int w = 0;
     int j=0;
@@ -58,22 +58,16 @@ void __seek_command__(char * command){
     int arg_count = 0;
 
     int pipe_id = call_pipe_create_anonymous();
-    int fd1[2] = {0,pipe_id};
-    int fd2[2] = {pipe_id,0};
-    //int hs[2] = {1,1};
+    int fd1[2] = {0, pipe_id};
+    int fd2[2] = {pipe_id, 0};
 
     for (int i = 0; i < COMMAND_LEN; i++){
-        // if (strcmpspace(command_list[i],command, &is_fg) == 0){
-        //         __call_command__(i, command, is_fg);
-        //         return;
-        // }
 
         args[w][j] = command[i];
         j++;
 
         if (command[i] == ' '){
             args[w][j-1] = '\0';
-            // print(args[w]);
             j=0;
             w++;
         }
@@ -94,20 +88,10 @@ void __seek_command__(char * command){
             is_fg1 = 0;
             break;
         }
-        // args[w][j] = '\0';  // Null-terminate the partition string
         
     }
 
     int index_second_command = 1;
-    // int command_number = 0;
-    // for (int i = 0; i <= COMMAND_LEN;i++){
-    //     command_number = strcmp(command_list[i],args[0]);
-       
-    //     if (command_number == 0){
-    //         break;
-    //     }
-    // }
-    
 
     char * argv1[2];
     
@@ -117,15 +101,15 @@ void __seek_command__(char * command){
 
     for (int i = 0; i < COMMAND_LEN; i++){
         
-        if (strcmp(command_list[i],args[0]) == 0){
+        if (strcmp(command_list[i], args[0]) == 0){
                 arg_count = command_args[i];
                 for (int k = 1; k <= arg_count; k++){
                     argv1[k-1] = args[k];
                 }
                 index_second_command += arg_count;
                 if (end_first_com != 0)
-                    __call_command__(i, args[0], is_fg1, argv1,fd1);
-                else {__call_command__(i, args[0], is_fg1, argv1,default_fd);
+                    __call_command__(i, args[0], is_fg1, argv1, fd1);
+                else {__call_command__(i, args[0], is_fg1, argv1, default_fd);
                     for (int k = 0; k < START_SIZE/8; k++){
                         user_free(args[k]);
                     }
@@ -147,28 +131,21 @@ void __seek_command__(char * command){
          
     for (int i = 0; i < COMMAND_LEN; i++){
      
-        if (strcmp(command_list[i],args[index_second_command]) == 0){
+        if (strcmp(command_list[i], args[index_second_command]) == 0){
                 arg_count = command_args[i];
                 for (int k = 1; k <= arg_count; k++){
                     argv2[k-1] = args[index_second_command+k];
                 }
-                __call_command__(i, args[index_second_command], is_fg2, argv2,fd2);
+                __call_command__(i, args[index_second_command], is_fg2, argv2, fd2);
                
                 i=COMMAND_LEN;
         }
     }
-
-
-
-    //     print(args[0]);
-    // print(" and ");
-    // print(args[index_second_command]);
-
 }
 
 
 void invalid_pid(){
-    call_sys_write("ERROR - PID invalido",20,2);
+    call_sys_write("ERROR - PID invalido", 20, 2);
     put_c('\n');
 }
 
@@ -177,8 +154,7 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
     //void * args=argv;
     int pid;
     int priority;
-    switch (i)
-{
+    switch (i){
     case HELP:
         fun = help;
         break;
@@ -215,7 +191,6 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
             invalid_pid();
             return;
         }
-        print(" pid pid %d", pid);
         call_kill(pid);
         return;
     case NICE:
@@ -228,7 +203,7 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
         return;
     case BLOCK:
         pid = satoi(argv[0]);
-        if (pid == -1) {
+        if (pid == -1){
             invalid_pid();
             return;
         }
@@ -266,9 +241,9 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
 } 
 #define CYAN 0x00FFFF
 //imprime la lista de comandos disponibles
-void help() {
+void help(){
     call_sys_write("List of available commands:\n", 29, 1);
-    for (int i = 0; i < COMMAND_LEN; i++) {
+    for (int i = 0; i < COMMAND_LEN; i++){
         call_print_word_color(CYAN, command_list[i]);
         print(":\t%s\n\n", command_descriptions[i]);
     }
@@ -327,7 +302,7 @@ uint64_t setbg_enum(int i){
 static char hexArr[COLOR_LEN][10] = {"GREEN","BLUE","BLACK","YELLOW","ORANGE"};
 void find_color(char * color){
     for (int i = 0; i < COMMAND_LEN; i++){
-        if (strcmp(hexArr[i],color) == 0){
+        if (strcmp(hexArr[i], color) == 0){
                color = (char*) setbg_enum(i);
                 return;
         }
@@ -359,7 +334,7 @@ void invalid_op(){
 }
 
 
-void cat() {
+void cat(){
     char c;
     char comm[MAX_COMMAND_LENGTH]={0};
     int i=0;
@@ -378,11 +353,11 @@ void cat() {
     comm[i++]=c;
 }
 
-void wc() {
+void wc(){
   int lines = 1;
   char c;
-  while ((c = get_c()) != _EOF_) {
-    if (c == '\n' ) {
+  while ((c = get_c()) != _EOF_){
+    if (c == '\n' ){
       lines++;
     }
     put_c(c);
@@ -394,15 +369,15 @@ void wc() {
 }
 
 
-int is_vowel(char c) {
+int is_vowel(char c){
   return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
           c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U');
 }
 
-void filter() {
+void filter(){
   char c;
-  while ((c = get_c()) != _EOF_) {
-    if (!is_vowel(c)) {
+  while ((c = get_c()) != _EOF_){
+    if (!is_vowel(c)){
       put_c(c);
     }
   }

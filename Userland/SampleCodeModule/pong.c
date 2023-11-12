@@ -40,11 +40,11 @@ int sound =1;
 int gsound =1;
 int player1Score = 0;
 int player2Score = 0;
-int movement_vector[] = {-1,1,0};
+int movement_vector[] = {-1, 1, 0};
 
 // Recibe un caracter ascii y devuelve el codigo de tecla correspondiente
-int asciiToKeyCode(char ascii) {
-    switch (ascii) {
+int asciiToKeyCode(char ascii){
+    switch (ascii){
         case 0x1B: return 0x01;  // Escape
         case 0x08: return 0x0E;  // Backspace
         case 0x09: return 0x0F;  // Tab
@@ -242,23 +242,23 @@ static char scan_codes[256] = {
 };
 
 
-void setPlayer1Up(uint64_t key) {
+void setPlayer1Up(uint64_t key){
     player1Up = key;
     player1Upbeak = key + 0x80;
 }
 
-void setPlayer1Down(uint64_t key) {
+void setPlayer1Down(uint64_t key){
     player1Down = key;
     player1Downbeak = key + 0x80;
 }
 
 
-void setPlayer2Up(uint64_t key) {
+void setPlayer2Up(uint64_t key){
     player2Up = key;
     player2Upbeak = key + 0x80;
 }
 
-void setPlayer2Down(uint64_t key) {
+void setPlayer2Down(uint64_t key){
     player2Down = key;
     player2Downbeak = key + 0x80;
 }
@@ -266,36 +266,36 @@ void setPlayer2Down(uint64_t key) {
 
 
 
-void draw_paddle(Paddle* paddle, uint64_t color) {
+void draw_paddle(Paddle* paddle, uint64_t color){
     call_draw_rectangle(color, paddle->x, paddle->y, paddle->width, paddle->height);
 }
 
 
-void clear_paddle(Paddle* paddle) {
+void clear_paddle(Paddle* paddle){
     draw_paddle(paddle, BACKGROUND_COLOR);
 }
 
 
-void clearBall() {
+void clearBall(){
     call_draw_ball(BACKGROUND_COLOR, ball.size, ball.x, ball.y);
 }
 
 // Mueve el paddle y lo dibuja
-void movePaddle(Paddle* paddle) {
+void movePaddle(Paddle* paddle){
     clear_paddle(paddle); // Borra el paddle en su posición actual
     int move;
 
-    if (paddle->direction == UP) {
+    if (paddle->direction == UP){
         move = paddle->y - movement_vector[(int)paddle->direction] * paddle->speed; // Calcula la nueva posición hacia arriba
-        if (move >= BORDER_SIZE) { // Verifica si la nueva posición está dentro de los límites superiores
+        if (move >= BORDER_SIZE){ // Verifica si la nueva posición está dentro de los límites superiores
             paddle->y = move; // Actualiza la posición del paddle
         } else {
             paddle->y = BORDER_SIZE; // Establece la posición en el límite superior
             paddle->direction = STOP; // Detiene el movimiento del paddle
         }
-    } else if (paddle->direction == DOWN) {
+    } else if (paddle->direction == DOWN){
         move = paddle->y + paddle->speed; // Calcula la nueva posición hacia abajo
-        if (move + paddle->height <= SCREEN_HEIGHT - BORDER_SIZE) { // Verifica si la nueva posición está dentro de los límites inferiores
+        if (move + paddle->height <= SCREEN_HEIGHT - BORDER_SIZE){ // Verifica si la nueva posición está dentro de los límites inferiores
             paddle->y = move; // Actualiza la posición del paddle
         } else {
             paddle->y = SCREEN_HEIGHT - BORDER_SIZE - paddle->height; // Establece la posición en el límite inferior
@@ -342,11 +342,11 @@ char checkScored(){
     return 0;
 }       
 
-void move_ball() {
+void move_ball(){
     clearBall(); // Borra la pelota en su posición actual
 
-    if (checkScored()) { // Verifica si se ha anotado un punto
-        if (gsound) {
+    if (checkScored()){ // Verifica si se ha anotado un punto
+        if (gsound){
             goal(); // Reproduce el sonido de gol
         }
         clearBall(); // Borra la pelota
@@ -357,39 +357,39 @@ void move_ball() {
     ball.x += ball.speedX; // Actualiza la posición en el eje X de la pelota
     ball.y += ball.speedY; // Actualiza la posición en el eje Y de la pelota
 
-    if (ball.x <= BORDER_SIZE) { // Verifica si la pelota ha alcanzado el límite izquierdo
+    if (ball.x <= BORDER_SIZE){ // Verifica si la pelota ha alcanzado el límite izquierdo
         ball.x = BORDER_SIZE; // Establece la posición en el límite izquierdo
         ball.speedX *= -1; // Invierte la dirección horizontal de la pelota
-        if (sound == 1) {
+        if (sound == 1){
             bounce(); // Reproduce el sonido de rebote
         }
-    } else if (ball.x + ball.size >= SCREEN_WIDTH - BORDER_SIZE) { // Verifica si la pelota ha alcanzado el límite derecho
+    } else if (ball.x + ball.size >= SCREEN_WIDTH - BORDER_SIZE){ // Verifica si la pelota ha alcanzado el límite derecho
         ball.x = SCREEN_WIDTH - BORDER_SIZE - ball.size; // Establece la posición en el límite derecho
         ball.speedX *= -1; // Invierte la dirección horizontal de la pelota
-        if (sound == 1) {
+        if (sound == 1){
             bounce(); // Reproduce el sonido de rebote
         }
     }
 
-    if (ball.y <= BORDER_SIZE) { // Verifica si la pelota ha alcanzado el límite superior
-        if (sound == 1) {
+    if (ball.y <= BORDER_SIZE){ // Verifica si la pelota ha alcanzado el límite superior
+        if (sound == 1){
             bounce(); // Reproduce el sonido de rebote
         }
         ball.y = BORDER_SIZE; // Establece la posición en el límite superior
         ball.speedY = -ball.speedY; // Invierte la dirección vertical de la pelota
-    } else if (ball.y + ball.size >= SCREEN_HEIGHT - BORDER_SIZE * 2) { // Verifica si la pelota ha alcanzado el límite inferior
-        if (sound == 1) {
+    } else if (ball.y + ball.size >= SCREEN_HEIGHT - BORDER_SIZE * 2){ // Verifica si la pelota ha alcanzado el límite inferior
+        if (sound == 1){
             bounce(); // Reproduce el sonido de rebote
         }
         ball.y = SCREEN_HEIGHT - BORDER_SIZE * 2 - ball.size; // Establece la posición en el límite inferior
         ball.speedY = -ball.speedY; // Invierte la dirección vertical de la pelota
     }
 
-    if (ball.x <= paddle1.x + paddle1.width && ball.x + ball.size >= paddle1.x && ball.y + ball.size >= paddle1.y && ball.y <= paddle1.y + paddle1.height) {
-        if (sound == 1) {
+    if (ball.x <= paddle1.x + paddle1.width && ball.x + ball.size >= paddle1.x && ball.y + ball.size >= paddle1.y && ball.y <= paddle1.y + paddle1.height){
+        if (sound == 1){
             bounce(); // Reproduce el sonido de rebote
         }
-        if (paddle1.direction == STOP) {
+        if (paddle1.direction == STOP){
             ball.speedY = 0;
             ball.speedX = BALL_SPEED_HORIZONTAL;
         } else {
@@ -401,12 +401,12 @@ void move_ball() {
         }
     }
 
-    if (ball.x + ball.size >= paddle2.x && ball.x <= paddle2.x + paddle2.width && ball.y + ball.size >= paddle2.y && ball.y <= paddle2.y + paddle2.height) {
+    if (ball.x + ball.size >= paddle2.x && ball.x <= paddle2.x + paddle2.width && ball.y + ball.size >= paddle2.y && ball.y <= paddle2.y + paddle2.height){
         ball.speedX *= -1;
-        if (sound == 1) {
+        if (sound == 1){
             bounce(); // Reproduce el sonido de rebote
         }
-        if (paddle2.direction == STOP) {
+        if (paddle2.direction == STOP){
             ball.speedY = 0;
             ball.speedX = -1 * BALL_SPEED_HORIZONTAL;
         } else {
@@ -424,7 +424,7 @@ void move_ball() {
 
 
 
-void resetGame() {
+void resetGame(){
     clear_paddle(&paddle1);
     clear_paddle(&paddle2);
 
@@ -450,7 +450,7 @@ void draw_middle_line(){
 
 
 
-void draw_borders() {
+void draw_borders(){
     call_draw_rectangle(BORDER_COLOR, 0, 0, SCREEN_WIDTH, BORDER_SIZE); 
     call_draw_rectangle(BORDER_COLOR, 0, SCREEN_HEIGHT - BORDER_SIZE, SCREEN_WIDTH, BORDER_SIZE);  
 }
@@ -474,10 +474,10 @@ void unpause(){
     pauseModular(BACKGROUND_COLOR);
 }
 
-void training(Paddle* paddle2) {
-    if (ball.y + ball.size < paddle2->y + paddle2->height / 2) {
+void training(Paddle* paddle2){
+    if (ball.y + ball.size < paddle2->y + paddle2->height / 2){
         paddle2->direction = UP;
-    } else if (ball.y > paddle2->y + paddle2->height / 2) {
+    } else if (ball.y > paddle2->y + paddle2->height / 2){
         paddle2->direction = DOWN;
     } else {
         paddle2->direction = STOP;
@@ -496,7 +496,7 @@ int benchmark(){
 void sleepbm(int bm){
     for (long i = 0; i < SLEEP_BENCHMARK_UPPER_BOUND;i+=bm);
 }
-void options() {
+void options(){
     print("\tCONFIGURATION\n");
     print("Press 1 to change the ball speed\n");
     print("Press 2 to change the paddle speed\n");
@@ -516,13 +516,13 @@ void options() {
 }
 
 
-int getNumber() {
+int getNumber(){
     char c = ' ';
     int number = 0;
-    while (c != '\n') {
+    while (c != '\n'){
         c = get_c();
-        if ((c >= '0' && c <= '9') || c == '\b') {
-            if (c == '\b' && number != 0) {
+        if ((c >= '0' && c <= '9') || c == '\b'){
+            if (c == '\b' && number != 0){
                 number = number / 10;
                 print("\b \b");
             } else {
@@ -551,9 +551,9 @@ uint64_t COMMON_COLORS[NUM_COMMON_COLORS] = {
 };
 
 
-void showColorOptions() {
+void showColorOptions(){
     print("Choose a color:\n");
-    for (int i = 0; i < NUM_COMMON_COLORS; i++) {
+    for (int i = 0; i < NUM_COMMON_COLORS; i++){
         uint64_t color = COMMON_COLORS[i];
         print("%d", i+1);
 
@@ -578,16 +578,16 @@ void showColorOptions() {
 
 void configuration(){
     char c;
-   while (1) {
+   while (1){
         options();
         c = get_c();
-        switch (c) {
+        switch (c){
             case '1': {
                 call_clear_color(BACKGROUND_COLOR);
                 print("Current ball speed: %d\n", BALL_SPEED);
                 print("Enter the new ball speed: ");
                 int speed = getNumber();
-                if (speed > 0) {
+                if (speed > 0){
                     BALL_SPEED_HORIZONTAL = speed*2;
                     BALL_SPEED = speed;
                     ball.speedX = BALL_SPEED;
@@ -599,7 +599,7 @@ void configuration(){
                 print("Current paddle speed: %d \n", paddle1.speed);
                 print("Enter the new paddle speed: ");
                 int speed = getNumber();
-                if (speed > 0) {
+                if (speed > 0){
                     paddle1.speed = speed;
                     paddle2.speed = speed;
                 }
@@ -614,7 +614,7 @@ void configuration(){
                 print("Current ball size: %d \n", ball.size);
                 print("Enter the new ball size: ");
                 int size = getNumber();
-                if (size > 0) {
+                if (size > 0){
                     ball.size=size;
                 }
                 break;
@@ -627,7 +627,7 @@ void configuration(){
                 print("\n");
                 showColorOptions();
                 int color = getNumber(); 
-                if (color >= 1 && color <= 10) {
+                if (color >= 1 && color <= 10){
                     BORDER_COLOR = COMMON_COLORS[color-1];
                 }
                 break;
@@ -638,14 +638,14 @@ void configuration(){
                 print("Current player1 paddle height: %d \n", paddle1.height);
                 print("Enter the new paddle height: ");
                 int height = getNumber();
-                if (height > 0) {
+                if (height > 0){
                     paddle1.height = height;
 
                 }
                 print("\nCurrent player2 paddle height: %d \n", paddle2.height);
                 print("Enter the new paddle height: ");
                 height = getNumber();
-                if (height > 0) {
+                if (height > 0){
                     paddle2.height = height;
 
                 }
@@ -657,14 +657,14 @@ void configuration(){
                 print("Enter the new paddle width: ");
             
                 int width = getNumber();
-                if (width > 0) {
+                if (width > 0){
                     paddle1.width = width;
                 }
                 print("\nCurrent player2 paddle width: %d \n", paddle2.width);
                 print("Enter the new paddle width: ");
               
                 width = getNumber();
-                if (width > 0) {
+                if (width > 0){
                     paddle1.width = width;
                 }
                 break;
@@ -677,7 +677,7 @@ void configuration(){
                 print("\n");
                 showColorOptions();
                 int color = getNumber(); 
-                if (color >= 1 && color <= 10) {
+                if (color >= 1 && color <= 10){
                     ball.color = COMMON_COLORS[color-1];
                 }
                 break;
@@ -690,7 +690,7 @@ void configuration(){
                 print("\n");
                 showColorOptions();
                 int color = getNumber();
-                if (color >= 1 && color <= 10) {
+                if (color >= 1 && color <= 10){
                         paddle1.color = COMMON_COLORS[color-1];
                         paddle2.color = COMMON_COLORS[color-1];
                 }
@@ -699,12 +699,12 @@ void configuration(){
             case '0': {
                 call_clear_color(BACKGROUND_COLOR);
                 print("Current background color: ");
-                call_put_square(SCREEN_WIDTH / 2 , 2, 25, WHITE);
+                call_put_square(SCREEN_WIDTH / 2, 2, 25, WHITE);
                 call_put_square(SCREEN_WIDTH / 2  + (25 - 20) / 2, 2 + (25 - 20) / 2, 20, BACKGROUND_COLOR);
                 print("\n");
                 showColorOptions();
                 int color = getNumber();
-                if (color >= 1 && color <= 10) {
+                if (color >= 1 && color <= 10){
                     BACKGROUND_COLOR = COMMON_COLORS[color-1];
                 }
                 break;
@@ -721,14 +721,14 @@ void configuration(){
                 char c;
  
                 c = get_c();
-                if (c != 0) {
+                if (c != 0){
                     setPlayer1Up(asciiToKeyCode(c));
                 }
                 put_c(c);
                 print("\nCurrent down key: %c", scan_codes[player1Down]);
                 print("\nEnter the new down key: ");
                 c = get_c();
-                if (c != 0) {
+                if (c != 0){
                     setPlayer1Down(asciiToKeyCode(c));
                 }
                 put_c(c);
@@ -741,14 +741,14 @@ void configuration(){
                 print("\nEnter the new up key: ");
                 char c;
                 c = get_c();
-                if (c != 0) {
+                if (c != 0){
                     setPlayer2Up(asciiToKeyCode(c));
                 }
                 put_c(c);
                 print("\nCurrent down key: %c", scan_codes[player2Down]);
                 print("\nEnter the new down key: ");
                 c = get_c();
-                if (c != 0) {
+                if (c != 0){
                     setPlayer2Down(asciiToKeyCode(c));
                 }
                 put_c(c);
@@ -760,7 +760,7 @@ void configuration(){
                 print("Current score to win: %d \n", score);
                 print("Enter the new score to win: ");
                 int newScore = getNumber();
-                if (newScore > 0) {
+                if (newScore > 0){
                     score = newScore;
                 }
 
@@ -786,7 +786,7 @@ void configuration(){
 
 
 
-void set_paddle(Paddle *paddle, int x, int y, int width, int height, int speed, char directon, uint64_t color) {
+void set_paddle(Paddle *paddle, int x, int y, int width, int height, int speed, char directon, uint64_t color){
     paddle->x = x;
     paddle->y = y;
     paddle->width = width;
@@ -797,7 +797,7 @@ void set_paddle(Paddle *paddle, int x, int y, int width, int height, int speed, 
 
 }
 Ball ball;
-void set_ball(int x, int y, int size, int speedX, int speedY, uint64_t color) {
+void set_ball(int x, int y, int size, int speedX, int speedY, uint64_t color){
     ball.x = x;
     ball.y = y;
     ball.size = size;
@@ -807,7 +807,7 @@ void set_ball(int x, int y, int size, int speedX, int speedY, uint64_t color) {
 }
 
 
-void pong() {
+void pong(){
     call_clear_color(BACKGROUND_COLOR);
     set_paddle( &paddle1, 50, SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED, STOP, WHITE);
     set_paddle( &paddle2, SCREEN_WIDTH - 50 - PADDLE_WIDTH, SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2, PADDLE_WIDTH, PADDLE_HEIGHT, PADDLE_SPEED, STOP, WHITE);
@@ -841,9 +841,9 @@ void pong() {
      call_set_font_size(DEFAULT_FONT_SIZE);
     call_draw_word_colorAt(WHITE, "Press T for training", 0, SCREEN_HEIGHT/2+100);
     call_draw_word_colorAt(WHITE, "Press C for configuration", 0, SCREEN_HEIGHT/2+130);
-    call_draw_word_colorAt(WHITE, "Press any other key to begin 2 player PONG: ",0, SCREEN_HEIGHT/2+160);
-    call_draw_word_colorAt(WHITE, "Player 1 goes up with \"W\" and down with \"S\"",0, SCREEN_HEIGHT/2+190);
-    call_draw_word_colorAt(WHITE, "Player 2 goes up with \"^\" and down with \"v\"",0, SCREEN_HEIGHT/2+220);
+    call_draw_word_colorAt(WHITE, "Press any other key to begin 2 player PONG: ", 0, SCREEN_HEIGHT/2+160);
+    call_draw_word_colorAt(WHITE, "Player 1 goes up with \"W\" and down with \"S\"", 0, SCREEN_HEIGHT/2+190);
+    call_draw_word_colorAt(WHITE, "Player 2 goes up with \"^\" and down with \"v\"", 0, SCREEN_HEIGHT/2+220);
     int Training = 0;
     char t;
     t = get_c();
@@ -867,7 +867,7 @@ void pong() {
 
    
     resetGame();
-    while (1) {
+    while (1){
         showScoreCard(WHITE);
         if (c==0x19){
             pauseGame();
@@ -906,9 +906,9 @@ void pong() {
 
             unpause();
         }
-        while (pos <= call_get_buffer_position()) {
+        while (pos <= call_get_buffer_position()){
             c = call_get_char_at(pos++-1);
-            if (c == player1Up) {
+            if (c == player1Up){
                 paddle1.direction = UP;
             }
             else if (c == player1Upbeak){
@@ -949,7 +949,7 @@ void pong() {
             movePaddle(&paddle2);
             move_ball();
 
-            if (player1Score >= score || player2Score >= score) {
+            if (player1Score >= score || player2Score >= score){
                 call_clear_color(BACKGROUND_COLOR);
                 call_set_font_size(6);
                 call_set_font_size(DEFAULT_FONT_SIZE);

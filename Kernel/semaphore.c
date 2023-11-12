@@ -14,10 +14,10 @@ typedef struct {
 
 static space_t sem_spaces[MAX_SEMS];
 
-void initialize_sems() {
-    for (int i = 0; i < MAX_SEMS; i++) {
+void initialize_sems(){
+    for (int i = 0; i < MAX_SEMS; i++){
         sem_spaces[i].status = AVAILABLE;
-        for (int j = 0; j < MAX_PROCESSES; j++) {
+        for (int j = 0; j < MAX_PROCESSES; j++){
             sem_spaces[i].sem.allowed_processes[j] = -1;
         }
         sem_spaces[i].sem.allowed_process_count = 0;
@@ -41,16 +41,16 @@ void init_keyboard_sem(){
     set_process_started(1);
 }
 
-uint64_t my_sem_open(uint64_t start_value, char *id) {
+uint64_t my_sem_open(uint64_t start_value, char *id){
     int sem_idx = locate_sem(id);
-    if (sem_idx != -1) {
+    if (sem_idx != -1){
         int creating_pid = current_process_id();
         sem_spaces[sem_idx].sem.allowed_processes[sem_spaces[sem_idx].sem.allowed_process_count++] = creating_pid;
         return sem_idx;
     }
     
-    for (int i = 0; i < MAX_SEMS; i++) {
-        if (sem_spaces[i].status == AVAILABLE) {
+    for (int i = 0; i < MAX_SEMS; i++){
+        if (sem_spaces[i].status == AVAILABLE){
             sem_spaces[i].status = UNAVAILABLE;
             my_sem_t *sem = &(sem_spaces[i].sem);
             sem->counter = start_value;
@@ -69,29 +69,29 @@ uint64_t my_sem_open(uint64_t start_value, char *id) {
     return -1;
 }
 
-void my_sem_close(char *id) {
+void my_sem_close(char *id){
     int sem_idx = locate_sem(id);
-    if (sem_idx == -1) {
+    if (sem_idx == -1){
         return;  // Semaphore with this name does not exist
     }
     
     my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     int current_pid = current_process_id();
-    for (int i = 0; i < sem->allowed_process_count; i++) {
-        if (sem->allowed_processes[i] == current_pid) {
+    for (int i = 0; i < sem->allowed_process_count; i++){
+        if (sem->allowed_processes[i] == current_pid){
             sem->allowed_processes[i] = -1;
             sem->allowed_process_count--;
         }
     }
 
-    if (sem->allowed_process_count == 0) {
+    if (sem->allowed_process_count == 0){
         clear_sem(id);
     }
 }
 
-uint64_t my_sem_post(char *id) {
+uint64_t my_sem_post(char *id){
     int sem_idx = locate_sem(id);
-    if (sem_idx == -1) {
+    if (sem_idx == -1){
         return 1;  // Semaphore with this name does not exist
     }
 
@@ -102,9 +102,9 @@ uint64_t my_sem_post(char *id) {
     return 0;
 }
 
-uint64_t my_sem_wait(char *id) {
+uint64_t my_sem_wait(char *id){
     int sem_idx = locate_sem(id);
-    if (sem_idx == -1) {
+    if (sem_idx == -1){
         return -1;  // Semaphore with this name does not exist
     }
 
@@ -112,13 +112,13 @@ uint64_t my_sem_wait(char *id) {
     my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     
     int allowed = 0;
-     for (int i = 0; i < sem->allowed_process_count && !allowed; i++) {
-         if (sem->allowed_processes[i] == current_pid) {
+     for (int i = 0; i < sem->allowed_process_count && !allowed; i++){
+         if (sem->allowed_processes[i] == current_pid){
              allowed = 1;
          }
      }
     
-     if (!allowed) {
+     if (!allowed){
          return -1;  // Current process is not allowed to use this semaphore
      }
     uint64_t *lock_addr = &(sem->is_locked);
@@ -127,15 +127,15 @@ uint64_t my_sem_wait(char *id) {
 }
 
 
-int add_to_queue(int sem_idx, int pid) {
-    if (sem_idx < 0 || sem_idx >= MAX_SEMS) {
+int add_to_queue(int sem_idx, int pid){
+    if (sem_idx < 0 || sem_idx >= MAX_SEMS){
         return -1;
     }
 
     my_sem_t *sem = &(sem_spaces[sem_idx].sem);
     node_t *new_node = (node_t *)malloc(sizeof(node_t));
 
-    if (!new_node) {
+    if (!new_node){
         return -1;
     }
 
@@ -143,7 +143,7 @@ int add_to_queue(int sem_idx, int pid) {
     new_node->next = NULL;
     new_node->prev = sem->tail;
 
-    if (sem->tail) {
+    if (sem->tail){
         sem->tail->next = new_node;
     } else {
         sem->head = new_node;
@@ -155,13 +155,13 @@ int add_to_queue(int sem_idx, int pid) {
     return 0;
 }
 
-int remove_from_queue(int sem_idx) {
-    if (sem_idx < 0 || sem_idx >= MAX_SEMS) {
+int remove_from_queue(int sem_idx){
+    if (sem_idx < 0 || sem_idx >= MAX_SEMS){
         return -1;
     }
 
     my_sem_t *sem = &(sem_spaces[sem_idx].sem);
-    if (!sem->head) {
+    if (!sem->head){
         return -1;
     }
 
@@ -169,7 +169,7 @@ int remove_from_queue(int sem_idx) {
     int pid = (int)(uintptr_t)node_to_remove->data;
 
     sem->head = node_to_remove->next;
-    if (sem->head) {
+    if (sem->head){
         sem->head->prev = NULL;
     } else {
         sem->tail = NULL;
@@ -184,37 +184,37 @@ int remove_from_queue(int sem_idx) {
     return pid;
 }
 
-int locate_sem(char *id) {
-    for (int i = 0; i < MAX_SEMS; i++) {
+int locate_sem(char *id){
+    for (int i = 0; i < MAX_SEMS; i++){
         if (sem_spaces[i].status == UNAVAILABLE &&
-            strcmp(sem_spaces[i].sem.identifier, id) == 0) {
+            strcmp(sem_spaces[i].sem.identifier, id) == 0){
             return i;
         }
     }
     return -1;
 }
 
-// int get_sem(char *id, int start_value) {
+// int get_sem(char *id, int start_value){
 //     int sem_idx = locate_sem(id);
-//     if (sem_idx == -1) {
+//     if (sem_idx == -1){
 //         sem_idx = my_sem_open(start_value, id);
 //     }
 //     return sem_idx;
 // }
 
-// int put_sem(char *id) {
+// int put_sem(char *id){
 //     int sem_idx = locate_sem(id);
-//     if (sem_idx == -1) {
+//     if (sem_idx == -1){
 //         return -1;
 //     }
 //     my_sem_close(sem_idx);
 //     return 0;
 // }
 
-void whiff(uint64_t sem_idx) {
+void whiff(uint64_t sem_idx){
   
     int pid = current_process_id();
-    if (pid < 0) {
+    if (pid < 0){
         return;
     }
 

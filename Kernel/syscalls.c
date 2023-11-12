@@ -23,11 +23,11 @@ int get_process_started(){
 
 char key_sem_id[]="keyboard";
 
-void sys_write(char *buf, int len, int filedescriptor) {
+void sys_write(char *buf, int len, int filedescriptor){
     pcb_t *currentPCB = get_current_pcb();
 
-    if (currentPCB->process->fw == SHELL && currentPCB->process->pid == get_process_foreground_pid()) {
-        switch (filedescriptor) {
+    if (currentPCB->process->fw == SHELL && currentPCB->process->pid == get_process_foreground_pid()){
+        switch (filedescriptor){
             case STDOUT:
                 draw_wordLen(buf, len);
                 return;
@@ -42,12 +42,12 @@ void sys_write(char *buf, int len, int filedescriptor) {
     }
 }
 
-void sys_read(char *buf, int len, int filedescriptor) {
+void sys_read(char *buf, int len, int filedescriptor){
     pcb_t *currentPCB = get_current_pcb();
     int current_pid = current_process_id();
     int foreground_pid = get_process_foreground_pid();
 
-    if (foreground_pid != current_pid) {
+    if (foreground_pid != current_pid){
         add_to_queue(0, current_pid);
         os_block_current_process();
         finish_current_tick();
@@ -57,19 +57,19 @@ void sys_read(char *buf, int len, int filedescriptor) {
     int processStarted = get_process_started();
     int pos = get_buffer_position();
 
-    if (currentPCB->process->fr == SHELL) {
-        switch (filedescriptor) {
+    if (currentPCB->process->fr == SHELL){
+        switch (filedescriptor){
             case STDIN:
                 char aux;
-                for (int i = 0; i < len; ) {
-                    if (processStarted) {
+                for (int i = 0; i < len; ){
+                    if (processStarted){
                         my_sem_wait(key_sem_id);
                     }
                     aux = get_char_at(pos);
-                    if (aux > 0 && aux <= 255) {
-                        if (aux == 0x39) {
+                    if (aux > 0 && aux <= 255){
+                        if (aux == 0x39){
                             buf[i++] = ' ';
-                        } else if (aux == _EOF_) {
+                        } else if (aux == _EOF_){
                             buf[i++] = _EOF_;
                         } else {
                             buf[i++] = scan_codes[(int)aux];

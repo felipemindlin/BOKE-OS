@@ -302,7 +302,7 @@ os_int_to_string:
 	mov rbx, 10				; base of the decimal system
 	xor rcx, rcx				; number of digits generated
 os_int_to_string_next_divide:
-	xor rdx, rdx				; RAX extended to (RDX,RAX)
+	xor rdx, rdx				; RAX extended to (RDX, RAX)
 	div rbx					; divide by the number-base
 	push rdx				; save remainder on the stack
 	inc rcx					; and count this remainder

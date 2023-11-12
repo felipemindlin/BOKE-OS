@@ -16,7 +16,7 @@
 #define TO_BLUE(hex) (hex >> 8) & 0xFF
 #define TO_GREEN(hex) (hex >> 16) & 0xFF
 
-#define FROM_RGB(r,g,b) (r << 16) | (g << 8) | b
+#define FROM_RGB(r, g, b) (r << 16) | (g << 8) | b
 
 #define is_minusc(x) ((x)<='a'?(((x)>='z')?1:0):0)
 #define DEFAULT_FONT_SIZE 2

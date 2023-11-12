@@ -10,30 +10,18 @@ static size_t pid = 2;
 int get_next_pid();
 int getAvailablePid();
 void process_wrapper(void entry_point(char ** argv), char ** argv);
-int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack,void * entry_point, void * argv,int * fd){
-    return create_and_insert_process(get_current_pcb()->process->pid, foreground, name, heap_and_stack[0],heap_and_stack[1], entry_point, argv,fd[0],fd[1]);
+int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack, void * entry_point, void * argv, int * fd){
+    return create_and_insert_process(get_current_pcb()->process->pid, foreground, name, heap_and_stack[0], heap_and_stack[1], entry_point, argv, fd[0], fd[1]);
 }
-int create_and_insert_process_from_current(const char * name, uint8_t foreground, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fd[2]){
-    return create_and_insert_process(get_current_pcb()->process->pid, foreground, name, heap_size, stack_size, entry_point, argv,fd[0],fd[1]);
+int create_and_insert_process_from_current(const char * name, uint8_t foreground, size_t heap_size, size_t stack_size, void * entry_point, char ** argv, int fd[2]){
+    return create_and_insert_process(get_current_pcb()->process->pid, foreground, name, heap_size, stack_size, entry_point, argv, fd[0], fd[1]);
 }
-int create_and_insert_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw){
+int create_and_insert_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv, int fr, int fw){
     if(name == NULL || entry_point == NULL){
         return -1;
-    }/*
-    if(argv!=NULL){
-         draw_word("\n create_and_insert_process \n");
-            for(int i=0;argv[i]!=NULL;i++){
-                if(argv[i]!=NULL){
-                    draw_word("argv[");
-                    drawNumber(i);
-                    draw_word("]=");
-                    draw_word(argv[i]);
-                    draw_word("\n");
-                }
-            }
-    }*/
+    }
 
-    process_t * process = create_process(parent_pid, foreground, name, heap_size, stack_size, entry_point, argv,fr,fw);
+    process_t * process = create_process(parent_pid, foreground, name, heap_size, stack_size, entry_point, argv, fr, fw);
 
     if(process == NULL){
         return -1;
@@ -44,20 +32,8 @@ int create_and_insert_process(int parent_pid, uint8_t foreground, const char * n
 
 }
 
-process_t * create_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw){
-/*      if(argv!=NULL){
-         draw_word("\nCreate_process\n");
-            for(int i=0;argv[i]!=NULL;i++){
-                if(argv[i]!=NULL){
-                    draw_word("argv[");
-                    drawNumber(i);
-                    draw_word("]=");
-                    draw_word(argv[i]);
-                    draw_word("\n");
-                }
-            }
-    }
-*/
+process_t * create_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv, int fr, int fw){
+
     process_t * process = (process_t *) malloc(sizeof(process_t));
     if(process == NULL){
         return NULL;
@@ -149,7 +125,6 @@ void process_wrapper(void entry_point(char ** argv), char ** argv){
 
     force_kill(get_current_pcb()->process->pid);
 
-    //while(1); // waiting for OP to remove it from scheduler
     finish_current_tick();
 }
 
@@ -178,9 +153,9 @@ void save_reg_state(pcb_t * pcb){
 
 
 
-int kill_process(int pid) {
+int kill_process(int pid){
     pcb_t *pcb = get_pcb_entry(pid);
-    if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID) {
+    if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID){
         return -1;
     }
 
@@ -194,7 +169,7 @@ int kill_process(int pid) {
     // }
 
 
-    if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE) {
+    if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE){
         pcb->process->status = DEAD;
         add_process_to_removal_queue(pcb->process->pid);
     } else {
@@ -217,13 +192,13 @@ int kill_foreground_process(){
     return force_kill(fg_pid);
 }
 
-void kill_current_process() {
+void kill_current_process(){
     kill_process(get_current_pcb()->process->pid);
 }
 
 int force_kill(int pid){
     pcb_t *pcb = get_pcb_entry(pid);
-    if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID) {
+    if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID){
         return -1;
     }
     
@@ -237,7 +212,7 @@ int force_kill(int pid){
     pcb->process->status = DEAD;
     add_process_to_removal_queue(pcb->process->pid);
 
-    if (pid == current_process_id()) {
+    if (pid == current_process_id()){
         finish_current_tick();
     }
     return 1;
@@ -259,7 +234,7 @@ int free_process(pcb_t * pcb){
     
     return 0;
 }
-//int fd1[2] = {0,0};
+
 int pidd=0;
 void loop(){
     if(!pid){
