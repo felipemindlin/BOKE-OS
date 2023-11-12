@@ -33,37 +33,25 @@ void remove_philosopher();
 void print_state();
 void handle();
 
-int left(int i)
-{
+int left(int i){
     return (i + num_philosophers - 1) % num_philosophers;
 }
 
-int right(int i)
-{
+int right(int i){
     return (i + 1) % num_philosophers;
 }
 
-void initialize()
-{
+void initialize(){
     num_philosophers = 0;
     last = 0;
 }
-
-void vision(){
-    while (!last){
-        print_state();
-        call_sleepms(100);
-    }
-}
-
-int phylo()
-{
+int eating=0;
+int phylo(){
     initialize();
     mutex_id = (char*)call_sem_open(1, "mutex");
     r_w_sem_index = (char*)call_sem_open(1, R_W_SEMNAME);
     add_remove_mutex_index = (char*)call_sem_open(1, "philo_ar_mutex");
-    for (int i = 0; i < MAX_PHILOSOPHERS; i++)
-    {
+    for (int i = 0; i < MAX_PHILOSOPHERS; i++){
         char sem_name[10];
         itoa(i, sem_name, 10);
         fork_sem_ids[i] = (char*)call_sem_open(0, sem_name); // Semaphore initialized to 0
@@ -72,60 +60,59 @@ int phylo()
 
     print("Welcome to the dining philosophers problem.\nPress 'A' to add a philosopher, 'R' to remove one, or 'Q' to quit.\n");
 
-    for (int i = 0; i < START_PHILOSOPHERS; i++)
-    {
+    for (int i = 0; i < START_PHILOSOPHERS; i++){
         add_philosopher();
         phil_qty++;
     }
-    call_create_process("philo_vision", 1, heap_stack_vec, vision, NULL, filedes);
-    handle();
-
+    call_create_process("handler", 1, heap_stack_vec, handle, NULL, filedes);
+    while(!last);
     // Clean up philosophers
-    for (int i = 0; i < num_philosophers; i++)
-    {
+    for (int i = 0; i < num_philosophers; i++){
         phil_qty--;
         call_force_kill(philosopher_pids[i]);
         call_sem_close(fork_sem_ids[i]);
     }
-
     call_sem_close(mutex_id);
     call_sem_close(r_w_sem_index);
     call_sem_close(add_remove_mutex_index);
-
+    
     return 0;
 }
 
-void handle()
-{
+void handle(){
     char c;
-    while (!last)
-    {
-        c = get_c();
-        if (c == 'A' || c == 'a')
-        {
-            if (num_philosophers < MAX_PHILOSOPHERS)
-            {
+    int times_eaten=0;
+    int pos=0;
+    pos = call_get_buffer_position();
+    while (!last ){
+        if(times_eaten<eating){
+            times_eaten=eating;
+            print_state();
+        }
+        if(pos<=call_get_buffer_position()){
+            c= call_get_char_at(pos++-1);
+        }
+        
+        if (c == 'A' || c == 0x1E){
+            if (num_philosophers < MAX_PHILOSOPHERS){
                 add_philosopher();
                 phil_qty++;
             }
         }
-        else if (c == 'R' || c == 'r')
-        {
-            if (num_philosophers > MIN_PHILOSOPHERS)
-            {
+        else if (c == 'R' || c == 0x13){
+            if (num_philosophers > MIN_PHILOSOPHERS){
                 remove_philosopher();
                 phil_qty--;
             }
         }
-        else if (c == 'Q' || c == 'q')
-        {
+        else if (c == 'Q' || c == 0x10){
             last = 1;
         }
     }
+    print("Thank you for using the dining philosophers problem.\n");
 }
 
-void add_philosopher()
-{
+void add_philosopher(){
     call_sem_wait(mutex_id);
     int philosopher_num = num_philosophers;
     fork_states[philosopher_num] = THINKING;
@@ -135,8 +122,7 @@ void add_philosopher()
     concat(name, philosopher_id);
     philosopher_pids[philosopher_num] = call_create_process(name, 0, heap_stack_vec, philosopher, (void *)(uint64_t)philosopher_num, filedes);
 
-    if (philosopher_pids[philosopher_num] == -1)
-    {
+    if (philosopher_pids[philosopher_num] == -1){
         print("Failed to create philosopher process.\n");
         call_sem_post(mutex_id);
         return;
@@ -146,14 +132,11 @@ void add_philosopher()
     call_sem_post(mutex_id);
 }
 
-void remove_philosopher()
-{
+void remove_philosopher(){
     call_sem_wait(add_remove_mutex_index);
-    if (num_philosophers > MIN_PHILOSOPHERS)
-    {
+    if (num_philosophers > MIN_PHILOSOPHERS){
         int philosopher_num = num_philosophers - 1;
-        if (fork_states[philosopher_num] == EATING)
-        {
+        if (fork_states[philosopher_num] == EATING){
             call_sem_post(add_remove_mutex_index);
             call_sleepms(100);
             call_sem_wait(add_remove_mutex_index);
@@ -170,10 +153,8 @@ void remove_philosopher()
     call_sem_post(add_remove_mutex_index);
 }
 
-void philosopher(uint64_t id)
-{
-    while (!last)
-    {
+void philosopher(uint64_t id){
+    while (!last){
         think(id);
         take_forks(id);
         eat(id);
@@ -181,25 +162,21 @@ void philosopher(uint64_t id)
     }
 }
 
-void take_forks(uint64_t philosopher_num)
-{
+void take_forks(uint64_t philosopher_num){
     call_sem_wait(mutex_id);
     fork_states[philosopher_num] = HUNGRY;
     call_sem_post(r_w_sem_index);
     test(philosopher_num);
-    if (fork_states[philosopher_num] != EATING)
-    {
+    if (fork_states[philosopher_num] != EATING){
         call_sem_post(mutex_id);
         call_sem_wait(fork_sem_ids[philosopher_num]);
     }
-    else
-    {
+    else{
         call_sem_post(mutex_id);
     }
 }
 
-void put_forks(uint64_t philosopher_num)
-{
+void put_forks(uint64_t philosopher_num){
     call_sem_wait(mutex_id);
     fork_states[philosopher_num] = THINKING;
     call_sem_post(r_w_sem_index);
@@ -208,42 +185,35 @@ void put_forks(uint64_t philosopher_num)
     call_sem_post(mutex_id);
 }
 
-void test(uint64_t philosopher_num)
-{
+void test(uint64_t philosopher_num){
     if (fork_states[philosopher_num] == HUNGRY &&
         fork_states[left(philosopher_num)] != EATING &&
-        fork_states[right(philosopher_num)] != EATING)
-    {
+        fork_states[right(philosopher_num)] != EATING){
         fork_states[philosopher_num] = EATING;
         call_sem_post(fork_sem_ids[philosopher_num]);
     }
 }
 
-void think(uint64_t philosopher_num)
-{
+void think(uint64_t philosopher_num){
     call_sleepms(100);
 }
 
-void eat(uint64_t philosopher_num)
-{
-    if (fork_states[philosopher_num] == EATING)
-    {
+void eat(uint64_t philosopher_num){
+   
+    if (fork_states[philosopher_num] == EATING){   
+         eating++;
         call_sleepms(100);
     }
 }
 
-void print_state()
-{
+void print_state(){
     call_sem_wait(mutex_id);
     print("State of the table with %d philosophers: ", num_philosophers);
-    for (int i = 0; i < num_philosophers; i++)
-    {
-        if (fork_states[i] == EATING)
-        {
+    for (int i = 0; i < num_philosophers; i++){
+        if (fork_states[i] == EATING){
             print("E ");
         }
-        else
-        {
+        else{
             print(". ");
         }
     }
@@ -251,7 +221,6 @@ void print_state()
     call_sem_post(mutex_id);
 }
 
-void *get_phylo()
-{
+void *get_phylo(){
     return &phylo;
 }

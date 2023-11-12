@@ -23,65 +23,68 @@ int get_process_started(){
 
 char key_sem_id[]="keyboard";
 
-void sys_write(char *buf, int len, int filedescriptor){
+void sys_write(char *buf, int len, int filedescriptor) {
+    pcb_t *currentPCB = get_current_pcb();
 
-    pcb_t * currentPCB = get_current_pcb();
-
-    if (currentPCB->process->fw == SHELL && currentPCB->process->pid == get_process_foreground_pid())
-    {
-        switch (filedescriptor){
-        case STDOUT: draw_wordLen(buf, len);
-            return;
-        case STDERR: draw_word_colorLen(RED, buf, len);
-            return;
-        default: invalid_fd();
+    if (currentPCB->process->fw == SHELL && currentPCB->process->pid == get_process_foreground_pid()) {
+        switch (filedescriptor) {
+            case STDOUT:
+                draw_wordLen(buf, len);
+                return;
+            case STDERR:
+                draw_word_colorLen(RED, buf, len);
+                return;
+            default:
+                invalid_fd();
         }
+    } else {
+        pipe_write(currentPCB->process->fw, buf, len);
     }
-    else{
-        pipe_write(currentPCB->process->fw,buf,len);
-    }
-    
 }
 
-void sys_read( char *buf, int len, int filedescriptor){
-
-    pcb_t * currentPCB = get_current_pcb();
+void sys_read(char *buf, int len, int filedescriptor) {
+    pcb_t *currentPCB = get_current_pcb();
     int current_pid = current_process_id();
-    if(get_process_foreground_pid() != current_pid){
+    int foreground_pid = get_process_foreground_pid();
+
+    if (foreground_pid != current_pid) {
         add_to_queue(0, current_pid);
         os_block_current_process();
         finish_current_tick();
         return;
     }
 
-    if (currentPCB->process->fr == SHELL)
-    {
-        switch (filedescriptor){
-        case STDIN:
-            int pos = get_buffer_position();
-            char aux = 0;
-            for (int i = 0; i < len; ){
-                //_hlt(); I would not use hlt bc we already have sem_wait
-                if(get_process_started()){my_sem_wait(key_sem_id);}
-                aux = get_char_at(pos);
-                if (aux > 0 && aux <= 255){
-                    if (aux == 0x39)
-                        buf[i++]=' ';
-                    else if(aux==_EOF_)
-                        buf[i++]=_EOF_;
-                    else
-                        buf[i++]=scan_codes[(int)aux];
-                    set_pos(pos+1);
+    int processStarted = get_process_started();
+    int pos = get_buffer_position();
+
+    if (currentPCB->process->fr == SHELL) {
+        switch (filedescriptor) {
+            case STDIN:
+                char aux;
+                for (int i = 0; i < len; ) {
+                    if (processStarted) {
+                        my_sem_wait(key_sem_id);
+                    }
+                    aux = get_char_at(pos);
+                    if (aux > 0 && aux <= 255) {
+                        if (aux == 0x39) {
+                            buf[i++] = ' ';
+                        } else if (aux == _EOF_) {
+                            buf[i++] = _EOF_;
+                        } else {
+                            buf[i++] = scan_codes[(int)aux];
+                        }
+                        set_pos(pos + 1);
+                    }
+                    pos = get_buffer_position();
                 }
-                pos = get_buffer_position();
-            }
-            return;
-        default: invalid_fd();
+                return;
+            default:
+                invalid_fd();
         }
+    } else {
+        pipe_read(currentPCB->process->fr, buf, len);
     }
-    else{
-        pipe_read(currentPCB->process->fr,buf,len);
-    }
-    
 }
+
 
