@@ -5,6 +5,8 @@
 #include <mysemaphore.h>
 #include <naiveConsole.h>
 
+int get_next_pid();
+int getAvailablePid();
 void process_wrapper(void entry_point(char ** argv), char ** argv);
 int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack,void * entry_point, void * argv,int * fd){
     return create_and_insert_process(get_current_pcb()->process->pid, foreground, name, heap_and_stack[0],heap_and_stack[1], entry_point, argv,fd[0],fd[1]);
@@ -149,7 +151,20 @@ void process_wrapper(void entry_point(char ** argv), char ** argv){
     finish_current_tick();
 }
 
+int get_next_pid(){
+    int pid_candidate = pid;
+    while(get_pcb_entry(pid_candidate) != NULL){
+        pid_candidate++;
+    }
+    return pid_candidate;
+}
+
 int getAvailablePid(){
+    //int pid_to_ret = get_next_pid();
+    //if(pid_to_ret>=MAX_PROCESSES){
+    //    pid=1;
+    //    pid_to_ret = get_next_pid();
+    //}
     return pid++;
 }
 
@@ -176,9 +191,6 @@ int kill_process(int pid) {
     //     set_process_foreground_pid(SHELL_PID);
     // }
 
-   if(get_process_foreground_pid() == pcb->process->pid){
-        set_process_foreground_pid(SHELL_PID);
-    }
 
     if (pcb->process->parent_pid == OS_PID || parent_pcb == NULL || parent_pcb->process->status == DEAD || pcb->process->status == ZOMBIE) {
         pcb->process->status = DEAD;
@@ -200,7 +212,6 @@ int kill_foreground_process(){
     if(fg_pid == SHELL_PID){
         return -1;
     }
-    set_process_foreground_pid(SHELL_PID);
     return force_kill(fg_pid);
 }
 
@@ -213,11 +224,8 @@ int force_kill(int pid){
     if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID) {
         return -1;
     }
-
-    // if(pcb->process->foreground){
-    //     set_process_foreground_pid(SHELL_PID);
-    // }
-  if(get_process_foreground_pid() == pcb->process->pid){
+    
+    if(get_process_foreground_pid() == pcb->process->pid){
         set_process_foreground_pid(SHELL_PID);
     }
     reassign_children_to_shell(pid);

@@ -17,7 +17,8 @@
 #define MAX_PROCESSES 1024
 
 #define SHELL 0 // FD of shell process
-static char* status_arr[5] ={
+static char* status_arr[6] ={
+    0,
     "BLOCKED",
     "READY",
     "RUNNING",
@@ -25,7 +26,7 @@ static char* status_arr[5] ={
     "ZOMBIE"
 };
 enum status_t{
-    BLOCKED,
+    BLOCKED=1,
     READY,
     RUNNING,
     DEAD,
@@ -79,7 +80,6 @@ static size_t pid = 2;
 process_t * create_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw);
 int create_and_insert_process(int parent_pid, uint8_t foreground, const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv,int fr, int fw);
 int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack,void * entry_point, void * argv,int * fd);
-int getAvailablePid();
 void save_reg_state(pcb_t * pcb/*, registerStructT * registers*/); // COMENTO ESTO PQ ME TIRA ERROR SINO
 // process_t* create_and_insert_process(const char * name, size_t heap_size, size_t stack_size, void * entry_point, char ** argv);
 int kill_process(int pid);

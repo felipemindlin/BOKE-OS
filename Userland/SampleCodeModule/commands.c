@@ -363,7 +363,7 @@ void cat() {
   char c;
   //char comm[MAX_COMMAND_LENGTH]={0};
   //int i=0;
-  while ((c = getC()) != EOF){
+  while ((c = getC()) != _EOF_){
     putC(c);
     // comm[i++]=c;
     // if(c=='\n'){
@@ -381,7 +381,7 @@ void cat() {
 void wc() {
   int lines = 1;
   char c;
-  while ((c = getC()) != EOF) {
+  while ((c = getC()) != _EOF_) {
     if (c == '\n' ) {
       lines++;
     }
@@ -401,7 +401,7 @@ int is_vowel(char c) {
 
 void filter() {
   char c;
-  while ((c = getC()) != EOF) {
+  while ((c = getC()) != _EOF_) {
     if (!is_vowel(c)) {
       putC(c);
     }

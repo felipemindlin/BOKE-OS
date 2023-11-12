@@ -2,6 +2,7 @@
 #include <string.h>
 #include <scheduler.h>
 #include "../memory_manager/include/memory_manager.h"
+#include "include/syscalls.h"
 
 extern void enter_region(uint64_t *lock, uint64_t sem_idx);
 extern void leave_region(uint64_t *lock, uint64_t sem_idx);
@@ -37,6 +38,7 @@ void init_keyboard_sem(){
     }
     sem->being_cleared = 0;
     str_cpy(sem->identifier, "keyboard");
+    set_process_started(1);
 }
 
 uint64_t my_sem_open(uint64_t start_value, char *id) {
