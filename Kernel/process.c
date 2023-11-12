@@ -127,7 +127,7 @@ process_t * create_process(int parent_pid, uint8_t foreground, const char * name
     process->foreground = foreground;
 
     if (process->foreground){
-        (process->pid);
+        set_process_foreground_pid(process->pid);
     }
 
     process->fr = fr;
