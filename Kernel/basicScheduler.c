@@ -407,11 +407,11 @@ int block_process(int pid) {
     }
     
     // Toggle the status of the process based on its current state
-    if (pcb->process->status == READY) {
+    if (pcb->process->status == READY || pcb->process->status == RUNNING) {
         pcb->process->status = BLOCKED; // Change status to BLOCKED
         // If the process to block is the current running process, then force a context switch
         if (pcb == current_pcb) {
-            force_context_switch((uintptr_t *)pcb->process->stack->current);
+            finish_current_tick();
         }
         return 1; // Indicate the process was successfully blocked
     } else if (pcb->process->status == BLOCKED) {
