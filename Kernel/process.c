@@ -8,6 +8,7 @@
 static size_t pid = 2;
 
 int get_next_pid();
+static void free_mem_zone(pcb_t * pcb);
 int get_available_pid();
 void process_wrapper(void entry_point(char ** argv), char ** argv);
 int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack, void * entry_point, void * argv, int * fd){
@@ -76,6 +77,8 @@ process_t * create_process(int parent_pid, uint8_t foreground, const char * name
     process->heap->current = (uintptr_t *) process->heap->base;
 
     process->heap->size = heap_size;
+
+    process->mem_idx=0;
 
     process->stack = (mem_block_t *) malloc(sizeof(mem_block_t));
     if(process->stack == NULL){
@@ -152,7 +155,7 @@ int kill_process(int pid){
     if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID){
         return -1;
     }
-
+    free_mem_zone(pcb);
     reassign_children_to_shell(pid);
 
     pcb_t *parent_pcb = get_pcb_entry(pcb->process->parent_pid);
@@ -187,6 +190,14 @@ void kill_current_process(){
     kill_process(get_current_pcb()->process->pid);
 }
 
+static void free_mem_zone(pcb_t * pcb){
+    for(int i=0; i<=pcb->process->mem_idx; i++){
+        if(pcb->process->mem_allocated[i]!=FREE){
+            free(pcb->process->mem_allocated[i]);
+        }
+    }
+}
+
 int force_kill(int pid){
     pcb_t *pcb = get_pcb_entry(pid);
     if (pcb == NULL || pcb->process == NULL || pid==SHELL_PID){
@@ -196,6 +207,8 @@ int force_kill(int pid){
     if(get_process_foreground_pid() == pcb->process->pid){
         set_process_foreground_pid(SHELL_PID);
     }
+
+    free_mem_zone(pcb);
     reassign_children_to_shell(pid);
 
     my_sem_post(pcb->process->sem_name);

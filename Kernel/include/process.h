@@ -15,6 +15,7 @@
 #define MIN_STACK_SIZE 0x1000
 #define MAX_PROCESS_ARGUMENTS 20
 #define MAX_PROCESSES 1024
+#define MAX_MEM_ZONES 256
 
 #define SHELL 0 
 enum status_t{
@@ -51,6 +52,8 @@ typedef struct process_t{
     char sem_name[MAX_SEM_NAME];
     int fr;
     int fw;
+    void * mem_allocated[MAX_MEM_ZONES];
+    int mem_idx;
 } process_t;
 
 typedef struct pcb_t{

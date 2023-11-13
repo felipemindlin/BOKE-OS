@@ -150,7 +150,10 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		return get_current_pcb()->process->pid;
 		break;
 	case 33:
-		return (uint64_t) malloc((uintptr_t)rsi);
+		pcb_t * current_pid = get_current_pcb();
+		void * new_mem_zone = (uint64_t) malloc((uintptr_t)rsi);
+		current_pid->process->mem_allocated[current_pid->process->mem_idx++]=new_mem_zone;
+		return new_mem_zone;
 		break;
 	case 34:
 		free((void*)rsi);
