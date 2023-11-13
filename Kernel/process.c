@@ -78,6 +78,10 @@ process_t * create_process(int parent_pid, uint8_t foreground, const char * name
 
     process->heap->size = heap_size;
 
+    for(int i=0; i<MAX_MEM_ZONES; i++){
+        process->mem_allocated[i] = FREE;
+    }
+
     process->mem_idx=0;
 
     process->stack = (mem_block_t *) malloc(sizeof(mem_block_t));

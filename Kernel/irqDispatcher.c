@@ -115,7 +115,7 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		add_process_to_creation_queue(1, 1, "print_mem", 0x0000000000001000, 0x0000000000001000, &print_mem, NULL, fd);
 		break;
 	case 21:
-				return force_kill(rsi);
+		return force_kill(rsi);
 		break;
 	case 22:
 		change_process_priority(rsi, rdx);
@@ -151,9 +151,9 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		break;
 	case 33:
 		pcb_t * current_pid = get_current_pcb();
-		void * new_mem_zone = (uint64_t) malloc((uintptr_t)rsi);
+		void * new_mem_zone = malloc((uintptr_t)rsi);
 		current_pid->process->mem_allocated[current_pid->process->mem_idx++]=new_mem_zone;
-		return new_mem_zone;
+		return (uint64_t) new_mem_zone;
 		break;
 	case 34:
 		free((void*)rsi);
