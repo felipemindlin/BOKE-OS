@@ -36,7 +36,7 @@ char *test_args[] = {"3", "1"}; static char command_descriptions[COMMAND_LEN][30
     "Run system tests (opens a menu with the following options:\n\t\t- Test memory manager\n\t\t- Test priority\n\t\t- Test processes\n\t\t- Test synchronization\n\t\t- Test without synchronization\n",
     "Clears the screen"
 };
-
+int loop_pid=0;
 void __seek_command__(char * command){
     uint8_t is_fg1=1;
     uint8_t is_fg2=1;
@@ -216,8 +216,8 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
         fun = filter;
         break;
     case LOOP:
-        fun = loop; 
-        break;
+        loop_pid = call_create_process(command_list[i], is_fg, heap_and_stack, loop, argv, fd);
+        return;
     case TESTS:
         fun = get_tests();
         break;
@@ -260,7 +260,7 @@ void loop(){
     while(1){
         ticks = call_ticks_elapsed();
         if(ticks % 18 == 0 && flag){
-            print("asd");
+            print("Loop PID = %d ", loop_pid);
             flag=0;
         }
         if(ticks % 18 == 1 && !flag){
