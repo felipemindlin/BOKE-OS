@@ -8,9 +8,9 @@ unsigned int SCREEN_WIDTH = 1024;
 unsigned int SCREEN_HEIGHT = 768;
 unsigned int BPP = 3;
 
-void drawChar(uint64_t hexColor, char character);
-void putPixel(uint64_t hexColor, uint32_t x, uint32_t y);
-void checkLineUp();
+void draw_char(uint64_t hex_color, char character);
+void put_pixel(uint64_t hex_color, uint32_t x, uint32_t y);
+void check_line_up();
 
 struct vbe_mode_info_structure { 
 	uint16_t attributes;			uint8_t window_a;				uint8_t window_b;				uint16_t granularity;			uint16_t window_size;
@@ -53,15 +53,15 @@ uint32_t get_font_size(){
     return size;
 }
 
-void putPixel(uint64_t hexColor, uint32_t x, uint32_t y){
+void put_pixel(uint64_t hex_color, uint32_t x, uint32_t y){
 	uint8_t * screen = (uint8_t *) ((uint64_t) (VBE_mode_info->framebuffer));
     uint32_t offset = VBE_mode_info->pitch*y + x*3;
     
-    screen[offset] = TO_RED(hexColor);
-    screen[offset+1] = TO_BLUE(hexColor);
-    screen[offset+2] = TO_GREEN(hexColor);
+    screen[offset] = TO_RED(hex_color);
+    screen[offset+1] = TO_BLUE(hex_color);
+    screen[offset+2] = TO_GREEN(hex_color);
 }
-uint64_t getPixelHex(uint32_t x, uint32_t y){
+uint64_t get_pixel_hex(uint32_t x, uint32_t y){
 	uint8_t * screen = (uint8_t *) ((uint64_t) (VBE_mode_info->framebuffer));
     uint32_t offset = VBE_mode_info->pitch*y + x*3;
     
@@ -74,22 +74,22 @@ uint64_t getPixelHex(uint32_t x, uint32_t y){
 void draw_rectangle(uint64_t color, uint32_t x, uint32_t y, uint32_t width, uint32_t height){
     for (int i = 0; i < height; i++){
         for (int j = 0; j < width; j++){
-            putPixel(color, x + j, y + i);
+            put_pixel(color, x + j, y + i);
         }
     }
     return;
 }
 
-void draw_circle(uint64_t hexColor, uint32_t b, uint32_t radius, uint32_t x, uint32_t y);
+void draw_circle(uint64_t hex_color, uint32_t b, uint32_t radius, uint32_t x, uint32_t y);
 
-void drawSquare(uint64_t hexColor, uint32_t side_length, uint32_t x, uint32_t y){
-	draw_rectangle(hexColor, side_length, side_length, x, y);
+void drawSquare(uint64_t hex_color, uint32_t side_length, uint32_t x, uint32_t y){
+	draw_rectangle(hex_color, side_length, side_length, x, y);
 }
 
-void fill_section(uint64_t hexColor, int startY, int endY){
+void fill_section(uint64_t hex_color, int startY, int endY){
     for (int y = startY; y < endY; y++){
         for (int x = 0; x < VBE_mode_info->width; x++){
-            putPixel(hexColor, x, y);
+            put_pixel(hex_color, x, y);
         }
     }
 }
@@ -109,10 +109,10 @@ void clear(){
 	clear_color(bg_color);
 	return;
 }
-void clear_color(uint64_t hexColor){
+void clear_color(uint64_t hex_color){
 	for (int x = 0; x < VBE_mode_info->width; x++){
 		for (int y = 0; y < VBE_mode_info-> height; y++){
-			putPixel(hexColor, x, y);
+			put_pixel(hex_color, x, y);
 		}
 	}
     cursorX=0;
@@ -121,12 +121,12 @@ void clear_color(uint64_t hexColor){
 }
 
 
-void paint_screen(uint64_t hexColor){
-    bg_color = hexColor;
+void paint_screen(uint64_t hex_color){
+    bg_color = hex_color;
 	for (int x = 0; x < VBE_mode_info->width; x++){
 		for (int y = 0; y < VBE_mode_info-> height; y++){
-            if (getPixelHex(x, y) != font_color && getPixelHex(x, y) != RED)
-			    putPixel(hexColor, x, y);
+            if (get_pixel_hex(x, y) != font_color && get_pixel_hex(x, y) != RED)
+			    put_pixel(hex_color, x, y);
 		}
 	}
 	return;
@@ -157,10 +157,10 @@ unsigned int get_max_width(){
 }
 
 
-void put_square(uint32_t x, uint32_t y, uint32_t size, uint64_t hexColor){
+void put_square(uint32_t x, uint32_t y, uint32_t size, uint64_t hex_color){
     for (uint32_t i = 0; i < size; i++){
         for (uint32_t j = 0; j < size; j++){
-            putPixel(hexColor, x + i, y + j);
+            put_pixel(hex_color, x + i, y + j);
         }
     }
 }
@@ -177,57 +177,57 @@ void backspace(){
 void newline(){
     cursorX = 0;
     cursorY += (size*16);
-    checkLineUp();
+    check_line_up();
     return;
 }
 
-void tab(){     int tabWidth = 5;
-        int spaces = tabWidth - (cursorX / (size*8)) % tabWidth;
+void tab(){     int tab_width = 5;
+        int spaces = tab_width - (cursorX / (size*8)) % tab_width;
 
         for (int i = 0; i < spaces; i++){
-            drawChar(WHITE, ' ');
+            draw_char(WHITE, ' ');
             cursorX += size*8;
         }
         return;
 }
 
-void draw_number_color(int value, uint64_t hexColor){
+void draw_number_color(int value, uint64_t hex_color){
     char buffer[256] = {0};
-    uintToBase(value, buffer, 10);
-    draw_word_color(hexColor, buffer);
+    uint_to_base(value, buffer, 10);
+    draw_word_color(hex_color, buffer);
 }
 
 
-void drawNumber(int value){
+void draw_number(int value){
     draw_number_color(value, WHITE);
 }
 
-void drawRegisters(int value){
+void draw_registers(int value){
         char buffer[256] = {0};
-        uintToBase(value, buffer, 16);
+        uint_to_base(value, buffer, 16);
         draw_word_color(WHITE, buffer);
      newline();
 }
 
-void draw_number_colorAt(uint64_t hexColor, int value,  uint32_t x, uint32_t y){
+void draw_number_color_at(uint64_t hex_color, int value,  uint32_t x, uint32_t y){
     char buffer[256] = {0};
-    uintToBase(value, buffer, 10);
-    draw_word_colorAt(hexColor, buffer, x, y);
+    uint_to_base(value, buffer, 10);
+    draw_word_colorAt(hex_color, buffer, x, y);
 }
 
-void moveOneLineUp(){
+void move_one_line_up(){
     char* dst = (char*)(uintptr_t)(VBE_mode_info->framebuffer);     char* src = dst + VBE_mode_info->pitch * size * 16;     uint64_t numBytes = VBE_mode_info->pitch * (VBE_mode_info->height - size * 16); 
     memcpy(dst, src, numBytes);         draw_rectangle(bg_color, 0, VBE_mode_info->height - size*16, 1024, size*16 );
     cursorY -= (size * 16); }
 
-int isWhiteSpace(char c){
+int is_white_space(char c){
  return  c==' ' || c=='\v' || c=='\r' || c=='\a' || c=='\f';
 }
 
-void character(uint64_t hexColor, char c){
+void character(uint64_t hex_color, char c){
         if (c == '\b'){             backspace();
             return;
-        }else if (isWhiteSpace(c)){             cursorX += size*8;             return;
+        }else if (is_white_space(c)){             cursorX += size*8;             return;
         } else if (c == '\n'){             newline();
             return;
         }
@@ -235,45 +235,45 @@ void character(uint64_t hexColor, char c){
             tab();
             return;
         }
-                checkLineUp();
-        drawChar(hexColor, c);
+                check_line_up();
+        draw_char(hex_color, c);
         cursorX += size*8;
         return;
 }
 
-void checkLineUp(){
+void check_line_up(){
     if (cursorX >= get_max_width()){
         cursorX = 0;
         cursorY += size*16;
     }
     if (cursorY >= get_max_height()){ 
         cursorX = 0;
-        moveOneLineUp();
+        move_one_line_up();
     }
 }
 
-void character_at(uint64_t hexColor, char c, uint32_t x, uint32_t y){
+void character_at(uint64_t hex_color, char c, uint32_t x, uint32_t y){
     uint32_t auxX = cursorX;
     uint32_t auxY = cursorY;
     cursorX = x;
     cursorY = y;
-    character(hexColor, c);
+    character(hex_color, c);
     cursorX = auxX;
     cursorY = auxY;
 }
 
-void draw_word_color(uint64_t hexColor, char* word){
+void draw_word_color(uint64_t hex_color, char* word){
     for (int i=0; word[i] != 0; i++){
-        character(hexColor, word[i]);
+        character(hex_color, word[i]);
     }
 }
 
-void draw_word_colorAt(uint64_t hexColor, char* word, uint32_t x, uint32_t y){
+void draw_word_colorAt(uint64_t hex_color, char* word, uint32_t x, uint32_t y){
     uint32_t auxX = cursorX;
     uint32_t auxY = cursorY;
     cursorX = x;
     cursorY = y;
-    draw_word_color(hexColor, word);
+    draw_word_color(hex_color, word);
     cursorX = auxX;
     cursorY = auxY;
 }
@@ -287,11 +287,11 @@ void draw_word_colorLen(uint64_t color, char * buff, int len){
         character(color, buff[i]);
     }
 }
-void draw_wordLen(char * buff, int len){
+void draw_word_len(char * buff, int len){
     draw_word_colorLen(WHITE, buff, len);
 }
 
-void drawChar(uint64_t hexColor, char character){
+void draw_char(uint64_t hex_color, char character){
     int a = cursorX;      int x = a;      int y = cursorY;      int start = character - 33;      if(start>92*32 || start<0 ){
         start = 3;
     }
@@ -305,12 +305,12 @@ void drawChar(uint64_t hexColor, char character){
         if (i % 2 == 0 && i != 0){
             y += size;              a = x;          }
         
-                font[i + (start * 32)] & (char)0x01 ? put_square(a, y, size, hexColor) : 0;
+                font[i + (start * 32)] & (char)0x01 ? put_square(a, y, size, hex_color) : 0;
         
         a += size;          
         uint8_t aux = 0x02;
         for (int j = 0; j < 8; j++){
-                        ((uint8_t)font[i + (start * 32)] & (uint8_t)aux) >> j ? put_square(a, y, size, hexColor) : 0;
+                        ((uint8_t)font[i + (start * 32)] & (uint8_t)aux) >> j ? put_square(a, y, size, hex_color) : 0;
             a += size;              aux <<= 1;          }
     }
 }
@@ -322,29 +322,29 @@ void invalid_fd(){
 
 void draw_ball(uint64_t color, int size, int x, int y){
     int radius = size / 2;
-    int centerX = x + radius;
-    int centerY = y + radius;
-    int squaredRadius = radius * radius;
+    int center_x = x + radius;
+    int center_y = y + radius;
+    int squared_radius = radius * radius;
 
     for (int y = -radius; y <= radius; y++){
         for (int x = -radius; x <= radius; x++){
-            if ((x * x) + (y * y) <= squaredRadius){
-                putPixel(color, centerX + x, centerY + y);
+            if ((x * x) + (y * y) <= squared_radius){
+                put_pixel(color, center_x + x, center_y + y);
             }
         }
     }
 }
 
-void draw_word_padded(uint64_t hexColor, char* word, int width){
-    int wordLength = str_len(word); 
-    draw_word_color(hexColor, word); 
-    for (int i = wordLength; i < width; i++){
-        character(hexColor, ' '); 
+void draw_word_padded(uint64_t hex_color, char* word, int width){
+    int word_length = str_len(word); 
+    draw_word_color(hex_color, word); 
+    for (int i = word_length; i < width; i++){
+        character(hex_color, ' '); 
     }
 }
 
-void draw_number_padded(uint64_t hexColor, int number, int width){
+void draw_number_padded(uint64_t hex_color, int number, int width){
     char buffer[256];
-    uintToBase(number, buffer, 10); 
-    draw_word_padded(hexColor, buffer, width);
+    uint_to_base(number, buffer, 10); 
+    draw_word_padded(hex_color, buffer, width);
 }

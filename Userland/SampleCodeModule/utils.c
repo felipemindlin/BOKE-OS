@@ -23,7 +23,7 @@ void put_c(char c){
 int own_scanf(char * format, ...){
     va_list args;
     va_start(args, format);
-    int toRet = 0;
+    int to_ret = 0;
 
     while(*format != '\0' ){
 
@@ -33,22 +33,22 @@ int own_scanf(char * format, ...){
                 case 'c': {
                     char* c = va_arg(args, char*);
                     *c = get_c();
-                    toRet++;
+                    to_ret++;
                     break;
                 }
                 case 'd': {
                     int* d = va_arg(args, int*);
-                    toRet += read_int(d);
+                    to_ret += read_int(d);
                     break;
                 }
                 case 's': {
                     char* s = va_arg(args, char*);
-                    toRet += read_string(s);
+                    to_ret += read_string(s);
                     break;
                 }
                 case 'x': {
                     int* d = va_arg(args, int*);
-                    toRet += read_hex_int(d);
+                    to_ret += read_hex_int(d);
                     break;
                 }
                 default:
@@ -59,7 +59,7 @@ int own_scanf(char * format, ...){
     }
     va_end(args);
 
-    return toRet;
+    return to_ret;
 }
 
 int read_int(int* d){
@@ -190,21 +190,21 @@ void put_int(int num){
 
 void put_hex_dir(uint64_t num){
     char * hex = "0123456789ABCDEF";
-    char toPrint[19]={0};
-    toPrint[0] = '0';
-    toPrint[1] = 'x';
-    toPrint[18] = '\0';
+    char to_print[19]={0};
+    to_print[0] = '0';
+    to_print[1] = 'x';
+    to_print[18] = '\0';
     int i = 17;
     while (num > 0 && i > 1){
-        toPrint[i] = hex[num%16];
+        to_print[i] = hex[num%16];
         num /= 16;
         i--;
     }
     while (i > 1){
-        toPrint[i] = '0';
+        to_print[i] = '0';
         i--;
     }
-    put_string(toPrint);
+    put_string(to_print);
 }
 
 int strcmp(char * str1, char * str2){
@@ -281,7 +281,7 @@ char * strtok(char * str, char delim){
     if (*static_str == '\0'){
         return NULL;
     }
-    char * toRet = static_str;
+    char * to_ret = static_str;
     while (*static_str != delim && *static_str != '\0'){
         static_str++;
     }
@@ -289,7 +289,7 @@ char * strtok(char * str, char delim){
         *static_str = '\0';
         static_str++;
     }
-    return toRet;
+    return to_ret;
 }
 
 char * strncpy(char * dest, char * src, int n){
@@ -356,7 +356,7 @@ void reverse(char str[], int length){
 
 char* itoa(int num, char* str, int base){
     int i = 0;
-    bool isNegative = false;
+    bool is_negative = false;
 
         if (num == 0){
         str[i++] = '0';
@@ -365,7 +365,7 @@ char* itoa(int num, char* str, int base){
     }
 
         if (num < 0 && base == 10){
-        isNegative = true;
+        is_negative = true;
         num = -num;
     }
 
@@ -375,7 +375,7 @@ char* itoa(int num, char* str, int base){
         num = num / base;
     }
 
-        if (isNegative){
+        if (is_negative){
         str[i++] = '-';
     }
 

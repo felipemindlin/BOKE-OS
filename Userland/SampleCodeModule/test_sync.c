@@ -5,8 +5,8 @@
 #include <test_util.h>
 char * sem_id[]={"sem_1", "sem_2"};
 
-char *argvDec[] = {"Decreaser", NULL, "-1", NULL, "sem_1"};
-char *argvInc[] = {"Increaser", NULL, "1", NULL, "sem_1"};
+char *argv_dec[] = {"Decreaser", NULL, "-1", NULL, "sem_1"};
+char *argv_inc[] = {"Increaser", NULL, "1", NULL, "sem_1"};
 
 void my_yield(){
   call_force_timer();
@@ -54,11 +54,11 @@ uint64_t test_sync(char *argv[]){
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
 
-  argvDec[1]=argv[0];
-  argvDec[3]=argv[1];
+  argv_dec[1]=argv[0];
+  argv_dec[3]=argv[1];
 
-  argvInc[1]=argv[0];
-  argvInc[3]=argv[1];
+  argv_inc[1]=argv[0];
+  argv_inc[3]=argv[1];
 
 
   global=0;
@@ -68,8 +68,8 @@ uint64_t test_sync(char *argv[]){
   uint64_t i;
   int fd[2]={0, 0};
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    pids[i] = call_create_process( "Decreaser", 0, heap_and_stack, (void *)my_process_inc, argvDec, fd);
-    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", 0, heap_and_stack, (void *)my_process_inc, argvInc, fd);
+    pids[i] = call_create_process( "Decreaser", 0, heap_and_stack, (void *)my_process_inc, argv_dec, fd);
+    pids[i + TOTAL_PAIR_PROCESSES] = call_create_process( "Increaser", 0, heap_and_stack, (void *)my_process_inc, argv_inc, fd);
     print("Created Decreaser with PID: %d\n", (int)pids[i]);
     print("Created Increaser with PID: %d\n", (int)pids[i + TOTAL_PAIR_PROCESSES]);
   }

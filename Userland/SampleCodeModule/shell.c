@@ -8,12 +8,12 @@ static char buffer[BUFFER_SIZE] = {0};
 
 
 
-void lineRead(char * line){
+void line_read(char * line){
     __seek_command__(line);
         clear_buffer(buffer);
 }
 
-void putLineStart(){   
+void put_line_start(){   
     char s[] = "O] ";
     print(s);
     clear_buffer(buffer);
@@ -38,7 +38,7 @@ void bufferize (){
                 return;
             }
             buffer[i]=0;
-            lineRead(buffer);
+            line_read(buffer);
             return;
         } else{
             if (!end_of_buffer)
@@ -63,7 +63,7 @@ void welcome(){
 int __shell_init__(){
     welcome();
     while (1){
-        putLineStart();
+        put_line_start();
         bufferize();
     }
     return 0;

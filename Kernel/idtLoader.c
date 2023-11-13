@@ -30,8 +30,8 @@ void load_idt(){
   setup_IDT_entry (0x21, (uint64_t)&_irq01Handler);
   setup_IDT_entry (0x80, (uint64_t)&_irq60Handler);
 
-		picMasterMask(0xFC); 
-	picSlaveMask(0xFF);
+		pic_master_mask(0xFC); 
+	pic_slave_mask(0xFF);
         
 	_sti();
 }

@@ -14,34 +14,33 @@
 #include "./include/mysemaphore.h"
 #include "include/pipe.h"
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
-static void * const sampleDataModuleAddress = (void*)0x500000;
+static void * const sample_code_module_Address = (void*)0x400000;
+static void * const sample_data_module_address = (void*)0x500000;
 
 int fdDefault[] = {0, 0};
 
-void clear_bss(void * bssAddress, uint64_t bssSize){
-	memset(bssAddress, 0, bssSize);
+void clear_bss(void * bss_address, uint64_t bss_size){
+	memset(bss_address, 0, bss_size);
 }
 
 void * ret_userland(){
-	return sampleCodeModuleAddress;
+	return sample_code_module_Address;
 }
 
 void * get_stack_base(){
-	return (void*)(
-		(uint64_t)&endOfKernel
-		+ PageSize * 8						- sizeof(uint64_t)				);
+	return (void*)((uint64_t)&end_of_kernel 
+	+ page_size * 8 - sizeof(uint64_t));
 }
 
-void * initializeKernelBinary(){
-	void * moduleAddresses[] = {
-		sampleCodeModuleAddress,
-		sampleDataModuleAddress
+void * initialize_kernel_binary(){
+	void * module_addresses[] = {
+		sample_code_module_Address,
+		sample_data_module_address
 	};
 
-	load_modules(&endOfKernelBinary, moduleAddresses);
+	load_modules(&end_of_kernelBinary, module_addresses);
 
-	clear_bss(&bss, &endOfKernel - &bss);
+	clear_bss(&bss, &end_of_kernel - &bss);
 
 	return get_stack_base();
 	

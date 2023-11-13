@@ -6,14 +6,14 @@
 #define MIN_BLOCK 16
 
 Node * root;
-uint64_t memAllocated = 0;
+uint64_t mem_allocated = 0;
 
 void* malloc_rec(Node* node, uint64_t bytes);
-void createChilds(Node * node);
+void create_childs(Node * node);
 void * free_rec(Node * node, void * ptr);
 
-void init_mm(void * baseAddres, uint64_t mem_ammount){
-    root = (Node *) baseAddres;
+void init_mm(void * base_addres, uint64_t mem_ammount){
+    root = (Node *) base_addres;
     root->start =  (void*)mem_ammount;
     root->size = mem_ammount;
     root->state = FREE;
@@ -22,7 +22,7 @@ void init_mm(void * baseAddres, uint64_t mem_ammount){
     root->right= NULL; 
 }
 
-void checkState(Node* node){
+void check_state(Node* node){
     if (node->left == NULL || node->right == NULL)
     {   
         node->state = FREE; 
@@ -66,12 +66,12 @@ void * malloc_rec(Node* node, uint64_t bytes){
         return NULL;
     }
    if(node->left != NULL || node->right != NULL){
-    void * newNode = malloc_rec(node->left, bytes);
-    if (newNode == NULL){
-        newNode = malloc_rec(node->right, bytes);
+    void * new_node = malloc_rec(node->left, bytes);
+    if (new_node == NULL){
+        new_node = malloc_rec(node->right, bytes);
     }
-    checkState(node);
-    return newNode;
+    check_state(node);
+    return new_node;
    }
    else{
     if (bytes > node->size)
@@ -80,46 +80,46 @@ void * malloc_rec(Node* node, uint64_t bytes){
     }
     
     if((node->size)/2 >= bytes){
-        createChilds(node);
-        void * newNode = malloc_rec(node->left, bytes);
-        checkState(node);
-        return newNode;
+        create_childs(node);
+        void * new_node = malloc_rec(node->left, bytes);
+        check_state(node);
+        return new_node;
     }
     node->state = ALLOCATED;
-    memAllocated += bytes;
+    mem_allocated += bytes;
     return node->start;
    }
 }
 
-void createChilds(Node * node){
-    uint64_t parentIndex = node->index;
-    uint64_t leftIndex = parentIndex*2 + 1;
-    uint64_t rightIndex = leftIndex + 1;
-    uint64_t newSize = (node->size)/2;
+void create_childs(Node * node){
+    uint64_t parent_index = node->index;
+    uint64_t left_index = parent_index*2 + 1;
+    uint64_t right_index = left_index + 1;
+    uint64_t new_size = (node->size)/2;
 
-    node->left = node + leftIndex;
+    node->left = node + left_index;
     node->left->start = node->start;
-    node->left->size = newSize;
+    node->left->size = new_size;
     node->left->state = FREE;
-    node->left->index = leftIndex;
+    node->left->index = left_index;
 
-    node->right = node + rightIndex;
-    node->right->start = (void*)((char*) (node->start) + newSize);
-    node->right->size = newSize;
+    node->right = node + right_index;
+    node->right->start = (void*)((char*) (node->start) + new_size);
+    node->right->size = new_size;
     node->right->state = FREE;
-    node->right->index = rightIndex;
+    node->right->index = right_index;
 
 }
 
-void printMem(){
+void print_mem(){
     draw_word("Total memory:");
-    drawNumber(root->size );
+    draw_number(root->size );
     draw_word("\n");
     draw_word("Free memory:");
-    drawNumber(root->size - memAllocated);
+    draw_number(root->size - mem_allocated);
     draw_word("\n");
     draw_word("Allocated memory:");
-    drawNumber(memAllocated);
+    draw_number(mem_allocated);
     draw_word("\n");
 }
 
@@ -139,7 +139,7 @@ void * free_rec(Node * node, void * ptr){
         else{
             free_rec(node->right, ptr);
         }
-        checkState(node);
+        check_state(node);
         if (node->state == FREE)
         {
             node->left = NULL;
@@ -150,7 +150,7 @@ void * free_rec(Node * node, void * ptr){
         if (node->start == ptr)
         {
             node->state = FREE;
-            memAllocated -= node->size;
+            mem_allocated -= node->size;
         }
     }
     

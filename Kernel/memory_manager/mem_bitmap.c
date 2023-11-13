@@ -11,7 +11,7 @@ static void initialize_pages();
 static uintptr_t find_pages(size_t pages_needed, uintptr_t start_page);
 static size_t size_to_num_of_pages(size_t size);
 
-void init_mm(void * baseAddres, uint64_t mem_ammount){
+void init_mm(void * base_addres, uint64_t mem_ammount){
 
     size_t total_mem_needed=mem_ammount;
     size_t bitmap_size = mem_ammount / PAGE_SIZE;
@@ -38,11 +38,11 @@ void init_mm(void * baseAddres, uint64_t mem_ammount){
 
     heap_struct.page_size = PAGE_SIZE;
     heap_struct.page_qty = bitmap_size;
-    heap_struct.start = (uintptr_t) baseAddres + (uintptr_t) bitmap_pages * PAGE_SIZE;
+    heap_struct.start = (uintptr_t) base_addres + (uintptr_t) bitmap_pages * PAGE_SIZE;
     heap_struct.size = total_mem_needed;
-    heap_struct.end = (uintptr_t) baseAddres + total_mem_needed;
+    heap_struct.end = (uintptr_t) base_addres + total_mem_needed;
     heap_struct.last_freed_page = 0;
-    heap_struct.pages = (uint8_t*) baseAddres;
+    heap_struct.pages = (uint8_t*) base_addres;
 
     initialize_pages();
 }
@@ -169,12 +169,12 @@ int calculate_free_pages(){
     return free_pages;
 }
 
-void printMem(){
+void print_mem(){
     int free_pages = calculate_free_pages();
     draw_word("\nTotal memory in bytes: ");
-    drawNumber(heap_struct.size);
+    draw_number(heap_struct.size);
     draw_word("\nUsed memory in bytes: ");
-    drawNumber(heap_struct.size - free_pages * heap_struct.page_size);
+    draw_number(heap_struct.size - free_pages * heap_struct.page_size);
     draw_word("\nFree memory in bytes: ");
-    drawNumber(free_pages * heap_struct.page_size);
+    draw_number(free_pages * heap_struct.page_size);
 }

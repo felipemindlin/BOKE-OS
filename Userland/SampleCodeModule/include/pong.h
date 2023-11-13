@@ -49,6 +49,6 @@ typedef struct {
     uint64_t color;
 } Ball;
 
-void set_paddle(Paddle *paddle, int x, int y, int width, int height, int speed, char directon, uint64_t color); void draw_paddle(Paddle* paddle, uint64_t color); void clear_paddle(Paddle* paddle); void move_paddle_up(Paddle* paddle); void move_paddle_down(Paddle* paddle); void set_ball(int x, int y, int size, int speedX, int speedY, uint64_t color); void move_ball(); void draw_borders(); void pong(); void draw_middle_line(); void resetGame(); void * get_pong();
+void set_paddle(Paddle *paddle, int x, int y, int width, int height, int speed, char directon, uint64_t color); void draw_paddle(Paddle* paddle, uint64_t color); void clear_paddle(Paddle* paddle); void move_paddle_up(Paddle* paddle); void move_paddle_down(Paddle* paddle); void set_ball(int x, int y, int size, int speedX, int speedY, uint64_t color); void move_ball(); void draw_borders(); void pong(); void draw_middle_line(); void reset_game(); void * get_pong();
 
 #endif 

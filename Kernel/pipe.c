@@ -3,7 +3,7 @@
 
 pipe pipe_array[MAX_PIPES];
 
-int maxPipe = 1;
+int max_pipe = 1;
 int first_eof = 1;
 
 void init_pipes(){
@@ -38,9 +38,9 @@ int create_pipe(int name){
     pipe_array[found].eof = 0;
     pipe_array[found].left_to_read = 0;
 
-    if (name >= maxPipe)
+    if (name >= max_pipe)
     {
-        maxPipe = name +1;
+        max_pipe = name +1;
     }
     
     return found;
@@ -151,7 +151,7 @@ void send_eof_to_foreground(){
 
 
 int create_pipe_anonymous(){
-    return create_pipe(maxPipe);
+    return create_pipe(max_pipe);
 }
 
 int eof_sent(int id){

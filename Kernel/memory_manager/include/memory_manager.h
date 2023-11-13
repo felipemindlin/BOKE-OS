@@ -31,10 +31,10 @@ typedef struct Node {
     struct Node *right; 
 } Node;
 
-void init_mm(void * baseAddres, uint64_t mem_ammount);
-void initialize_heap(void * baseAddres, uint64_t mem_ammount);
+void init_mm(void * base_addres, uint64_t mem_ammount);
+void initialize_heap(void * base_addres, uint64_t mem_ammount);
 void * malloc(uintptr_t bytes);
 void free(void * mem);
-void printMem();
+void print_mem();
 
 #endif

@@ -156,7 +156,7 @@ void __call_command__(int i, char * command, uint8_t is_fg, char * argv[], int f
         fun = time;
         break;
     case REG_STATE:
-        call_regState();
+        call_reg_state();
         return;
     case PONG:
         fun = get_pong();
@@ -244,10 +244,10 @@ void help(){
 }
 
 void time(){
-    char timeClock[50];
-    call_timeClock(timeClock);
+    char time_clock[50];
+    call_time_clock(time_clock);
     char c;
-    for (int i = 0; (c = timeClock[i]) != 0; i++){
+    for (int i = 0; (c = time_clock[i]) != 0; i++){
         put_c(c);
     }
     put_c('\n');
@@ -292,10 +292,10 @@ uint64_t setbg_enum(int i){
     }
 }
 
-static char hexArr[COLOR_LEN][10] = {"GREEN","BLUE","BLACK","YELLOW","ORANGE"};
+static char hex_arr[COLOR_LEN][10] = {"GREEN","BLUE","BLACK","YELLOW","ORANGE"};
 void find_color(char * color){
     for (int i = 0; i < COMMAND_LEN; i++){
-        if (strcmp(hexArr[i], color) == 0){
+        if (strcmp(hex_arr[i], color) == 0){
                color = (char*) setbg_enum(i);
                 return;
         }

@@ -24,12 +24,12 @@ int get_process_started(){
 char key_sem_id[]="keyboard";
 
 void sys_write(char *buf, int len, int filedescriptor){
-    pcb_t *currentPCB = get_current_pcb();
+    pcb_t *current_pcb = get_current_pcb();
 
-    if (currentPCB->process->fw == SHELL && currentPCB->process->pid == get_process_foreground_pid()){
+    if (current_pcb->process->fw == SHELL && current_pcb->process->pid == get_process_foreground_pid()){
         switch (filedescriptor){
             case STDOUT:
-                draw_wordLen(buf, len);
+                draw_word_len(buf, len);
                 return;
             case STDERR:
                 draw_word_colorLen(RED, buf, len);
@@ -38,12 +38,12 @@ void sys_write(char *buf, int len, int filedescriptor){
                 invalid_fd();
         }
     } else {
-        pipe_write(currentPCB->process->fw, buf, len);
+        pipe_write(current_pcb->process->fw, buf, len);
     }
 }
 
 void sys_read(char *buf, int len, int filedescriptor){
-    pcb_t *currentPCB = get_current_pcb();
+    pcb_t *current_pcb = get_current_pcb();
     int current_pid = current_process_id();
     int foreground_pid = get_process_foreground_pid();
 
@@ -54,15 +54,15 @@ void sys_read(char *buf, int len, int filedescriptor){
         return;
     }
 
-    int processStarted = get_process_started();
+    int process_started = get_process_started();
     int pos = get_buffer_position();
 
-    if (currentPCB->process->fr == SHELL){
+    if (current_pcb->process->fr == SHELL){
         switch (filedescriptor){
             case STDIN:
                 char aux;
                 for (int i = 0; i < len; ){
-                    if (processStarted){
+                    if (process_started){
                         my_sem_wait(key_sem_id);
                     }
                     aux = get_char_at(pos);
@@ -83,7 +83,7 @@ void sys_read(char *buf, int len, int filedescriptor){
                 invalid_fd();
         }
     } else {
-        pipe_read(currentPCB->process->fr, buf, len);
+        pipe_read(current_pcb->process->fr, buf, len);
     }
 }
 

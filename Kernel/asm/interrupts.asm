@@ -1,8 +1,8 @@
 
 GLOBAL _cli
 GLOBAL _sti
-GLOBAL picMasterMask
-GLOBAL picSlaveMask
+GLOBAL pic_master_mask
+GLOBAL pic_slave_mask
 GLOBAL haltcpu
 GLOBAL _hlt
 GLOBAL force_scheduler
@@ -14,24 +14,24 @@ GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
 GLOBAL _irq60Handler
-GLOBAL printRegAsm
+GLOBAL print_reg_asm
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 GLOBAL _exception13Handler
-GLOBAL saveState
+GLOBAL save_state
 GLOBAL force_context_switch
 GLOBAL create_stackframe
-GLOBAL save_reg_stateAsm
+GLOBAL save_reg_state_asm
 
 EXTERN scheduler_enabled
 EXTERN ticks_remaining
 EXTERN switch_context
 EXTERN guru_meditation
 EXTERN ret_userland
-EXTERN printRegisters
-EXTERN irqDispatcher
+EXTERN print_registers
+EXTERN irq_dispatcher
 EXTERN exception_dispatcher
-EXTERN sampleCodeModuleAddress
+EXTERN sample_code_module_Address
 EXTERN clear
 EXTERN clear_color
 EXTERN get_stack_base
@@ -164,17 +164,17 @@ SECTION .text
 	pop rax
 %endmacro
 
-saveState:
+save_state:
 	push_state
 	dState
 	pop_state
 	ret
 
-%macro irqHandlerMaster 1
+%macro irq_handler_master 1
 	push_state
 
 	mov rdi, %1 ; pasaje de parametro
-	call irqDispatcher
+	call irq_dispatcher
 
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
@@ -186,7 +186,7 @@ saveState:
 
 
 
-%macro exceptionHandler 1
+%macro exception_handler 1
 	
 	push_state
 	dState
@@ -216,9 +216,9 @@ saveState:
 	iretq
 %endmacro
 
-printRegAsm:
+print_reg_asm:
 	mov qword rdi, registers
-	call printRegisters
+	call print_registers
 	ret
 
 _hlt:
@@ -235,7 +235,7 @@ _sti:
 	sti
 	ret
 
-picMasterMask:
+pic_master_mask:
 	push rbp
     mov rbp, rsp
     mov ax, di
@@ -243,7 +243,7 @@ picMasterMask:
     pop rbp
     retn
 
-picSlaveMask:
+pic_slave_mask:
 	push    rbp
     mov     rbp, rsp
     mov     ax, di  ; ax = mascara de 16 bits
@@ -275,7 +275,7 @@ create_stackframe: ; rdi: entry point, rsi: args, rdx: stack base, rcx: wrapper
 	mov rsp, r8 ; restore current stack pointer
 	ret
 
-save_reg_stateAsm:
+save_reg_state_asm:
 	push_state
 	dStatePCB
 	pop_state
@@ -304,7 +304,7 @@ _irq00Handler:
 
 .noSchedule:
     mov rdi, 0
-    call irqDispatcher
+    call irq_dispatcher
 
     ; Signal PIC EOI (End of Interrupt)
     mov al, 20h
@@ -318,23 +318,23 @@ _irq00Handler:
 
 ;Keyboard
 _irq01Handler:
-	irqHandlerMaster 1
+	irq_handler_master 1
 
 ;Cascade pic never called
 _irq02Handler:
-	irqHandlerMaster 2
+	irq_handler_master 2
 
 ;Serial Port 2 and 4
 _irq03Handler:
-	irqHandlerMaster 3
+	irq_handler_master 3
 
 ;Serial Port 1 and 3
 _irq04Handler:
-	irqHandlerMaster 4
+	irq_handler_master 4
 
 ;USB
 _irq05Handler:
-	irqHandlerMaster 5
+	irq_handler_master 5
 
 _irq60Handler:
 	push rbx
@@ -353,7 +353,7 @@ _irq60Handler:
 	mov rdx, rsi
 	mov rsi, rdi
 	mov rdi, 60h
-	call irqDispatcher
+	call irq_dispatcher
 
 
 	pop r9
@@ -368,16 +368,16 @@ _irq60Handler:
 	iretq
 ;Zero Division Exception
 _exception0Handler:
-	exceptionHandler 0
+	exception_handler 0
 	jmp haltcpu
 _exception6Handler:
-	exceptionHandler 6
+	exception_handler 6
 	jmp haltcpu
 _exception13Handler:
 	add rsp, 8 			
 	; ^ Necessary, as exception 13 (and a few others) push an error code into the stack
 	; Not doing so will most likely pop the wrong values when iretq executes
-	exceptionHandler 13
+	exception_handler 13
 haltcpu:
 	cli
 	hlt

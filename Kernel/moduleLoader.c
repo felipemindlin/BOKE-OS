@@ -6,9 +6,9 @@
 static void load_module(uint8_t ** module, void * targetModuleAddress);
 static uint32_t read_uint_32(uint8_t ** address);
 
-void load_modules(void * payloadStart, void ** targetModuleAddress){
+void load_modules(void * payload_start, void ** targetModuleAddress){
 	int i;
-	uint8_t * currentModule = (uint8_t*)payloadStart;
+	uint8_t * currentModule = (uint8_t*)payload_start;
 	uint32_t moduleCount = read_uint_32(&currentModule);
 
 	for (i = 0; i < moduleCount; i++)
@@ -23,14 +23,14 @@ static void load_module(uint8_t ** module, void * targetModuleAddress){
 	nc_print(" to 0x");
 	nc_print_hex((uint64_t)targetModuleAddress);
 	nc_print(" (");
-	nc_printDec(moduleSize);
+	nc_print_dec(moduleSize);
 	nc_print(" bytes)");
 
 	memcpy(targetModuleAddress, *module, moduleSize);
 	*module += moduleSize;
 
 	nc_print(" [Done]");
-	ncNewline();
+	nc_newline();
 }
 
 static uint32_t read_uint_32(uint8_t ** address){

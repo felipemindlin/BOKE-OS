@@ -18,7 +18,7 @@ void exception_dispatcher(int exception, register_struct_t * registers){
 	} else if(exception == GENERAL_PROTECTION_EXCEPTION_ID){
 		guru_meditation();
 	}
-	printRegisters(registers);
+	print_registers(registers);
 	draw_word_color(RED, "Press any key to continue");
 	char c;
 	sys_read(&c, 1, 0);

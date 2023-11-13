@@ -8,7 +8,7 @@
 static size_t pid = 2;
 
 int get_next_pid();
-int getAvailablePid();
+int get_available_pid();
 void process_wrapper(void entry_point(char ** argv), char ** argv);
 int create_and_insert_process_from_current_standard(const char * name, uint8_t foreground, size_t *heap_and_stack, void * entry_point, void * argv, int * fd){
     return create_and_insert_process(get_current_pcb()->process->pid, foreground, name, heap_and_stack[0], heap_and_stack[1], entry_point, argv, fd[0], fd[1]);
@@ -45,7 +45,7 @@ process_t * create_process(int parent_pid, uint8_t foreground, const char * name
         process->parent_pid = parent_pid;
     }
 
-    process->pid = getAvailablePid();
+    process->pid = get_available_pid();
     
     process->name = (char *) malloc((size_t)str_len(name) + 1);
     if(process->name == NULL){
@@ -113,7 +113,7 @@ process_t * create_process(int parent_pid, uint8_t foreground, const char * name
 
 
     process->stack->current = create_stackframe((uintptr_t *)entry_point, (void*)argv, process->stack->base + stack_size, &process_wrapper);     process->status = READY;
-    uintToBase(process->pid, process->sem_name, BASE);
+    uint_to_base(process->pid, process->sem_name, BASE);
     my_sem_open(1, process->sem_name);
     return process;
 }
@@ -135,12 +135,12 @@ int get_next_pid(){
     return pid_candidate;
 }
 
-int getAvailablePid(){
+int get_available_pid(){
                         return pid++;
 }
 
 void save_reg_state(pcb_t * pcb){
-	save_reg_stateAsm(&pcb->reg_state);
+	save_reg_state_asm(&pcb->reg_state);
 }
 
 #define SHELL_PID 2
@@ -233,7 +233,7 @@ void loop(){
     }
     while(1){
         if(ticks_elapsed() % 100 == 0){
-            drawNumber(pidd);
+            draw_number(pidd);
         }
     }
 

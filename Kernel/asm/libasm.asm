@@ -2,8 +2,8 @@ GLOBAL cpu_vendor
 GLOBAL get_seconds
 GLOBAL get_minutes
 GLOBAL get_hours
-GLOBAL get_weekDay
-GLOBAL get_monthDay
+GLOBAL get_week_day
+GLOBAL get_month_day
 GLOBAL get_month
 GLOBAL get_year
 GLOBAL get_key
@@ -79,13 +79,13 @@ get_hours:
 	leave_func
   	ret
 
-get_weekDay:
+get_week_day:
 	enter_func
 	get_RTC_val 6
 	leave_func
   	ret
 
-get_monthDay:
+get_month_day:
 	enter_func
 	get_RTC_val 7
 	leave_func

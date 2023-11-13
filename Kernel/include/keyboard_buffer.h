@@ -5,7 +5,7 @@
 typedef struct keyboard_buffer* buff_ptr; 
 
 struct keyboard_buffer { 
-    int bufferPos;
+    int buffer_pos;
     int bufferLen;
     uint16_t buff[BUFF_SIZE];
 };

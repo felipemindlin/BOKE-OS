@@ -88,7 +88,7 @@ void keyboard_handler(){
     buff[buff_pos] = key; 
     
     if (scan_codes[key] == ';'){
-        saveState();
+        save_state();
         flag_snapshot_taken = 1;
     }
     if(get_process_started()){my_sem_post(sem_id_keyboard);}

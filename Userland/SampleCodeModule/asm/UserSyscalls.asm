@@ -1,7 +1,7 @@
 GLOBAL call_sys_read
 GLOBAL call_sys_write
-GLOBAL call_timeClock
-GLOBAL call_regState
+GLOBAL call_time_clock
+GLOBAL call_reg_state
 GLOBAL call_paint_screen
 GLOBAL call_boke
 GLOBAL call_invalid_op
@@ -14,7 +14,7 @@ GLOBAL call_get_char_at
 GLOBAL call_sleepms
 GLOBAL call_ticks_elapsed
 GLOBAL call_set_font_size
-GLOBAL call_draw_word_colorAt
+GLOBAL call_draw_word_color_at
 GLOBAL call_character_at
 GLOBAL call_beep
 GLOBAL call_ps
@@ -63,9 +63,9 @@ call_sys_write:
     call_to_handler 1
 call_sys_read:
     call_to_handler 2
-call_timeClock:
+call_time_clock:
     call_to_handler 3
-call_regState:
+call_reg_state:
     call_to_handler 4
 call_paint_screen:
     call_to_handler 5
@@ -89,7 +89,7 @@ call_ticks_elapsed:
     call_to_handler 14
 call_set_font_size:
     call_to_handler 15
-call_draw_word_colorAt:
+call_draw_word_color_at:
     call_to_handler 16
 call_character_at:
     call_to_handler 17

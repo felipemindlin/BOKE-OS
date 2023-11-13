@@ -16,9 +16,9 @@ void _irq60Handler(void);
 void _exception0Handler(void);
 void _exception6Handler(void);
 void _exception13Handler(void);
-void printRegAsm(void);
-void saveState(void);
-void save_reg_stateAsm( register_struct_t * proc_rec);
+void print_reg_asm(void);
+void save_state(void);
+void save_reg_state_asm( register_struct_t * proc_rec);
 
 void _cli(void);
 
@@ -26,9 +26,9 @@ void _sti(void);
 
 void _hlt(void);
 
-void picMasterMask(uint8_t mask);
+void pic_master_mask(uint8_t mask);
 
-void picSlaveMask(uint8_t mask);
+void pic_slave_mask(uint8_t mask);
 
 void haltcpu(void);
 

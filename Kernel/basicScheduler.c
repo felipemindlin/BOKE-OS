@@ -220,7 +220,7 @@ void print_process(){
         }
     }
     draw_word("Current foreground pid: ");
-    drawNumber(foreground_pid);
+    draw_number(foreground_pid);
     draw_word("\n");
 }
 

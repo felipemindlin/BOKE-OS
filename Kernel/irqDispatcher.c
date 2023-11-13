@@ -23,17 +23,17 @@ static uint64_t int_20();
 static uint64_t int_21();
 static uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
 
-typedef uint64_t (*InterruptHandler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
-InterruptHandler interruption[256] = {
+typedef uint64_t (*interrupt_handler)(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10);
+interrupt_handler interruption[256] = {
     [0] = &int_20,
     [1] = &int_21,
-    [96] = (InterruptHandler)int_80,
+    [96] = (interrupt_handler)int_80,
 };
 
 
-uint64_t irqDispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10){
+uint64_t irq_dispatcher(uint64_t irq, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9, uint64_t r10){
     if (irq >= 0 && irq < 256 && interruption[irq] != NULL){
-        InterruptHandler handler = interruption[irq];
+        interrupt_handler handler = interruption[irq];
         return handler(rdi, rsi, rdx, rcx, r8, r9, r10);
     }
 	return -1;
@@ -61,10 +61,10 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		sys_read((char*)rsi, (int) rdx, (int) rcx);
 		break;
 	case 3:
-		TimeClock((char*)rsi);
+		Time_clock((char*)rsi);
 		break;
 	case 4:
-		printRegAsm();
+		print_reg_asm();
 		break;
 	case 5:
 		paint_screen((uint64_t)rsi);
@@ -112,7 +112,7 @@ uint64_t int_80(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t
 		add_process_to_creation_queue(1, 1, "ps", 0x0000000000001000, 0x0000000000001000, &print_process, NULL, fd);
 		break;
 	case 20:
-		add_process_to_creation_queue(1, 1, "print_mem", 0x0000000000001000, 0x0000000000001000, &printMem, NULL, fd);
+		add_process_to_creation_queue(1, 1, "print_mem", 0x0000000000001000, 0x0000000000001000, &print_mem, NULL, fd);
 		break;
 	case 21:
 				return force_kill(rsi);

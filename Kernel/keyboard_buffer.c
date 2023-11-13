@@ -5,10 +5,10 @@ static struct keyboard_buffer buff = { 0, 0, {0} };
 static buff_ptr ptr = &buff;
 
 int get_buffer_position(){
-    return ptr->bufferPos;
+    return ptr->buffer_pos;
 }
 int set_pos(int new_pos){
-    ptr->bufferPos = new_pos;
+    ptr->buffer_pos = new_pos;
     return new_pos;
 }
 
